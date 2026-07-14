@@ -9,7 +9,7 @@ import { defaultDataRoot } from "../src/runtime-paths.mjs";
 import { browserWindowOptions, isAllowedNavigation, isExternalHttpUrl } from "./config.mjs";
 import { prepareOfficialDemo } from "./demo-assets.mjs";
 import { createDesktopLogger } from "./logger.mjs";
-import { createProcessLauncher } from "./process-launcher.mjs";
+import { createProcessLauncher, resolveBundledNode } from "./process-launcher.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = app.getAppPath();
@@ -42,7 +42,7 @@ async function startDesktop() {
   logger.info("AgentProof desktop starting.", { version: packageJson.version });
 
   const officialDemoRoot = prepareOfficialDemo({ appRoot, dataRoot, version: packageJson.version, logger });
-  launcher = createProcessLauncher({ logger });
+  launcher = createProcessLauncher({ execPath: resolveBundledNode(appRoot), logger });
   const port = await freePort();
   webApp = await startWebServer({
     host: "127.0.0.1",

@@ -454,5 +454,6 @@
 - 安全边界：桌面窗口禁用 Node integration，启用 context isolation、sandbox 和 webSecurity；renderer 不能直接访问 `fs`、`child_process` 或环境变量；桌面模式下 API、报告和证据接口均校验 `x-agentproof-session`，令牌不写入日志、报告或 Manifest。
 - 数据目录：安装版默认写入 `%LOCALAPPDATA%\AgentProof\` 下的 `runs/`、`logs/`、`temp/`、`demo/`、`config/`，继续支持 `AGENTPROOF_DATA_DIR`；官方 Demo 首次复制到 `%LOCALAPPDATA%\AgentProof\demo\0.1.0\`，不在安装目录或被验收项目原地写数据库、报告、截图或临时文件。
 - 打包：新增 `npm run desktop:dev`、`npm run desktop:smoke`、`npm run desktop:pack`、`npm run desktop:dist:win`；生成 `dist-installer\AgentProof-Setup-0.1.0-x64.exe`，安装包未签名，可能触发 Windows SmartScreen，Docker Desktop 仍需单独安装。
+- 原生依赖修正：真实安装测试发现用 Electron Node 模式启动官方 Demo 时，`better-sqlite3` 普通 Node ABI 与 Electron ABI 不兼容；桌面启动器改为优先使用安装包内携带的受控 Node.js 运行时执行 AgentProof 子脚本和官方 Demo，只有找不到便携 Node 时才回退到 `ELECTRON_RUN_AS_NODE=1`。
 - 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\AgentProof.exe --smoke` 和 `npm run desktop:dist:win` 已通过；Electron 二进制下载曾因网络问题临时使用 `ELECTRON_MIRROR` 补齐，未写入仓库配置。
 - 边界：不做自动更新、代码签名、自定义图标、托盘、开机启动、macOS/Linux 安装包、GitHub App、云端 Runner 或账号系统。安装/卸载的完整人工验证步骤已记录在 `docs/windows-installer.md`。

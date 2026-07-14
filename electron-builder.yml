@@ -1,7 +1,8 @@
 appId: io.github.kyrieouhan.agentproof
 productName: AgentProof
-copyright: Copyright © 2026 AgentProof
+copyright: Copyright (c) 2026 AgentProof
 asar: false
+disableDefaultIgnoredFiles: true
 directories:
   output: dist-installer
 files:
@@ -25,6 +26,9 @@ files:
   - "!**/*.db"
   - "!**/*.sqlite"
   - "!**/*.sqlite3"
+extraResources:
+  - from: samples/demo-web-app/pnpm-lock.yaml
+    to: app/samples/demo-web-app/pnpm-lock.yaml
 win:
   target:
     - target: nsis

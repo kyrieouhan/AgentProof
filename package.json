@@ -48,6 +48,7 @@
     "desktop:dist:win": "electron-builder --win --x64"
   },
   "dependencies": {
+    "node": "24.14.1",
     "playwright-core": "1.61.1",
     "zod": "4.4.3"
   },
