@@ -1,6 +1,8 @@
 ﻿# 本地 MVP 支持矩阵
 
-本矩阵描述目标支持承诺，不表示当前 M0 已实现任何能力。第一版保守定义；未列明的组合默认为“暂不支持”，不得自行推断兼容。
+本矩阵描述本地 M3 MVP 的公开支持承诺。第一版保守定义；未列明的组合默认为“暂不支持”，不得自行推断兼容。
+
+当前完整 Playwright 浏览器流程、API 联合检查和 SQLite 联合断言以官方 Demo 为参考实现。外部项目可以按 RunnerProfile 执行 install/build/test；若没有项目专属浏览器步骤、API 断言和数据库断言配置，对应阶段必须返回 `unverifiable`，不能把官方 Demo 的验证结果映射给任意项目。
 
 ## 支持等级
 
@@ -40,7 +42,7 @@
 
 | 维度 | 等级 | 第一版边界 |
 | --- | --- | --- |
-| SQLite | 支持 | 数据文件位于临时工作区；支持只读查询和前后状态对比。 |
+| SQLite | 有条件支持 | 官方 Demo 已支持 SQLite 联合断言；外部项目需要显式配置查询、数据位置和清理策略。运行数据库和临时文件不得残留在目标仓库。 |
 | PostgreSQL | 暂不支持 | 后续需要受控服务编排、凭据注入和清理策略。 |
 | Redis | 暂不支持 | 后续评估隔离实例、清理和确定性。 |
 | Docker Compose | 暂不支持 | 本地 MVP 首版只承诺单目标容器与明确的受控依赖。 |
@@ -70,3 +72,11 @@ M1 Runner 输入规范已固定在 [m1-runner-input-spec.md](m1-runner-input-spe
 M1 可以接受 npm 项目；pnpm 仅在存在 `pnpm-lock.yaml` 且 `package.json` 固定 `packageManager` 时有条件接受。Monorepo、Docker Compose、私有 registry、真实 `.env`、PostgreSQL、Redis、Windows-only 项目、桌面应用、未声明端口、多服务编排和外部生产服务均不进入首版承诺。
 
 若项目无法提供 RunnerProfile 所需字段，或需要本矩阵明确拒绝的能力，Runner 应返回 `rejected_by_policy`、`unverifiable` 或 `infrastructure_error`，不得通过猜测命令、挂载宿主资源或放宽安全边界来“尝试跑通”。
+
+## M3 公开 MVP 边界
+
+- 支持：导入符合 RunnerProfile 的本地 Git 项目，检查路径、分支、提交哈希和工作区状态，并执行 install/build/test。
+- 支持：官方 Demo 的浏览器、API、SQLite 联合验收和五类缺陷回归。
+- 有条件支持：外部项目的浏览器/API/数据库行为验收；前提是后续提供项目专属流程和断言配置。
+- 暂不支持：自动理解任意项目并生成完整验证流程。
+- 结果边界：非官方项目仅 install/build/test 通过时，不得自动给出 `recommend_merge`；核心验收项无法验证时应使用 `human_review` 或 `indeterminate`。

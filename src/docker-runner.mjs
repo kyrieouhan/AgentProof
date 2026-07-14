@@ -4,6 +4,7 @@ import path from "node:path";
 import { checkDocker } from "./docker-preflight.mjs";
 import { DEFAULT_CONTAINER_POLICY, containerPolicyArgs, lifecycleSmokeScript, runnerCommand } from "./runner-policy.mjs";
 import { loadRunnerProfile, validateRunnerProfile } from "./runner-profile.mjs";
+import { createRunnerTempPaths } from "./runtime-paths.mjs";
 
 export function runLifecycleSmoke(profilePath, options = {}) {
   return runWithWorkspace(profilePath, options, (context) => runLifecycleSmokeInWorkspace(context));
@@ -24,23 +25,31 @@ function runWithWorkspace(profilePath, options, callback) {
 
   const run = options.run ?? ((command, args) => runCommand(command, args, profile.resource_limits.command_timeout_ms));
   const runId = `m1-smoke-${Date.now().toString(36)}`;
-  const tempRoot = path.join(repoRoot, ".tmp", "agentproof-runs", runId);
-  const workspace = path.join(tempRoot, "workspace");
+  const paths = createRunnerTempPaths(runId, options);
+  const tempRoot = paths.temp_root;
+  const workspace = paths.workspace;
+  const cacheDir = paths.cache_root;
   const source = path.resolve(repoRoot, profile.repo_path, profile.workdir);
   const commands = [];
   let finalResult;
 
   try {
     copyWorkspace(source, workspace);
-    const context = { profile, docker, run, runId, tempRoot, workspace, commands };
-    commands.push(runDocker(run, docker.dockerCommand, ["image", "inspect", profile.image, "--format", "{{.Id}}"]));
+    let runtimeImage = profile.image;
+    commands.push(runDocker(run, docker.dockerCommand, ["image", "inspect", runtimeImage, "--format", "{{.Id}}"]));
     if (commands.at(-1).exitCode !== 0) {
-      commands.push(runDocker(run, docker.dockerCommand, ["pull", profile.image]));
-      if (commands.at(-1).exitCode !== 0) {
+      const localImage = findLocalImageId(run, docker.dockerCommand, profile.image, commands);
+      if (localImage) {
+        runtimeImage = localImage;
+      } else {
+        commands.push(runDocker(run, docker.dockerCommand, ["pull", profile.image]));
+      }
+      if (!localImage && commands.at(-1).exitCode !== 0) {
         finalResult = result("infrastructure_error", runId, docker, commands, tempRoot, ["docker image pull failed"]);
         return finalResult;
       }
     }
+    const context = { profile, docker, run, runId, tempRoot, workspace, cacheDir, image: runtimeImage, commands };
     finalResult = callback(context);
     return finalResult;
   } finally {
@@ -59,15 +68,15 @@ function runWithWorkspace(profilePath, options, callback) {
 }
 
 function runLifecycleSmokeInWorkspace(context) {
-  const { profile, docker, run, runId, tempRoot, workspace, commands } = context;
-  commands.push(runContainer(run, docker.dockerCommand, runId, workspace, profile.image, lifecycleSmokeScript(), { workspaceMode: "ro" }));
+  const { docker, run, runId, tempRoot, workspace, image, commands } = context;
+  commands.push(runContainer(run, docker.dockerCommand, runId, workspace, image, lifecycleSmokeScript(), { workspaceMode: "ro" }));
   const outcome = failedOutcome(commands.at(-1), "lifecycle smoke");
   if (outcome) return result(outcome.status, runId, docker, commands, tempRoot, [outcome.error]);
   return result("passed", runId, docker, commands, tempRoot, []);
 }
 
 function runProfileCommandsInWorkspace(context) {
-  const { profile, docker, run, runId, tempRoot, workspace, commands } = context;
+  const { profile, docker, run, runId, tempRoot, workspace, cacheDir, image, commands } = context;
   const policy = commandPolicy(profile);
   const phases = [
     ["install", profile.commands.install, "bridge"],
@@ -76,7 +85,7 @@ function runProfileCommandsInWorkspace(context) {
   ];
   for (const [phase, command, network] of phases) {
     if (Array.isArray(command)) continue;
-    commands.push(runContainer(run, docker.dockerCommand, `${runId}-${phase}`, workspace, profile.image, runnerCommand(command, profile.package_manager), { phase, network, workspaceMode: "rw", policy }));
+    commands.push(runContainer(run, docker.dockerCommand, `${runId}-${phase}`, workspace, image, runnerCommand(command, profile.package_manager), { phase, network, workspaceMode: "rw", policy, cacheDir }));
     const outcome = failedOutcome(commands.at(-1), phase);
     if (outcome) return result(outcome.status, runId, docker, commands, tempRoot, [outcome.error]);
     const resourceOutcome = resourceLimitOutcome(commands.at(-1), workspace, profile.resource_limits, phase);
@@ -101,6 +110,17 @@ function runContainer(run, dockerCommand, runId, workspace, image, command, opti
     record.containerCleanup = runDocker(run, dockerCommand, ["rm", "-f", containerName], `${options.phase ?? "container"}:cleanup`);
   }
   return record;
+}
+
+function findLocalImageId(run, dockerCommand, image, commands) {
+  const record = runDocker(run, dockerCommand, ["image", "ls", "--format", "{{.Repository}}:{{.Tag}} {{.ID}}"]);
+  commands.push(record);
+  if (record.exitCode !== 0) return null;
+  for (const line of record.stdout.split(/\r?\n/)) {
+    const [tag, id] = line.trim().split(/\s+/, 2);
+    if (tag === image && id) return id;
+  }
+  return null;
 }
 
 function failedOutcome(record, phase) {

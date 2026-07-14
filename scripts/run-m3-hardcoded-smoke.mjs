@@ -5,11 +5,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { evaluateHardcodedProbe, renderHardcodedMarkdown } from "../src/domain/hardcoded-detection.mjs";
 import { evaluateReadOnlyRules } from "../src/domain/readonly-rules.mjs";
+import { createSmokeRunPaths } from "../src/runtime-paths.mjs";
 
 const repoRoot = path.resolve(process.argv.includes("--repo-root") ? process.argv[process.argv.indexOf("--repo-root") + 1] : path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
 const demoRoot = path.join(repoRoot, "samples", "demo-web-app");
-const artifactDir = path.join(repoRoot, "artifacts", "m3-hardcoded-randomization");
-fs.mkdirSync(artifactDir, { recursive: true });
+const runId = `m3-hardcoded-${Date.now().toString(36)}`;
+const paths = createSmokeRunPaths("m3-hardcoded-randomization", runId);
+const artifactDir = paths.run_dir;
 
 const profile = JSON.parse(fs.readFileSync(path.join(demoRoot, "agentproof.runner-profile.json"), "utf8"));
 const readonlyReport = evaluateReadOnlyRules(profile, { source: "samples/demo-web-app/agentproof.runner-profile.json" });
@@ -21,14 +23,17 @@ const hardcodedReport = evaluateHardcodedProbe({
   randomized_runs: [{ label: "random-equivalent-email", status: observed.randomEmailStatus, expected_status: 201 }]
 });
 const summary = {
+  run_id: runId,
   status: readonlyReport.passed && hardcodedReport.recommendation === "human_review" ? "passed" : "failed",
+  output_dir: artifactDir,
+  summary_path: path.join(artifactDir, "summary.json"),
   readonly: readonlyReport,
   hardcoded: hardcodedReport
 };
 
 fs.writeFileSync(path.join(artifactDir, "summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
 fs.writeFileSync(path.join(artifactDir, "report.md"), renderHardcodedMarkdown(hardcodedReport, readonlyReport), "utf8");
-console.log(JSON.stringify({ status: summary.status, hardcoded_risks: hardcodedReport.risk_count, readonly_passed: readonlyReport.passed }, null, 2));
+console.log(JSON.stringify({ status: summary.status, hardcoded_risks: hardcodedReport.risk_count, readonly_passed: readonlyReport.passed, summary_path: summary.summary_path, output_dir: summary.output_dir }, null, 2));
 if (summary.status !== "passed") process.exit(1);
 
 function run(command, args, options) {

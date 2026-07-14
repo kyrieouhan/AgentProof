@@ -12,24 +12,26 @@ import { demoTaskJoinedAssertion, evaluateJoinedAssertion } from "../src/domain/
 import { createEvidenceManifest, evidenceRef } from "../src/domain/manifest.mjs";
 import { createVerificationReport, renderMarkdownReport } from "../src/domain/report.mjs";
 import { DOMAIN_SCHEMA_VERSION } from "../src/domain/schemas.mjs";
+import { createSmokeRunPaths } from "../src/runtime-paths.mjs";
 
 const repoRoot = path.resolve(process.argv.includes("--repo-root") ? process.argv[process.argv.indexOf("--repo-root") + 1] : path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
 const demoRoot = path.join(repoRoot, "samples", "demo-web-app");
-const artifactDir = path.join(repoRoot, "artifacts", "m3-browser-smoke");
 const runId = `m3-browser-${Date.now().toString(36)}`;
-const databaseName = "m3-browser-smoke";
-const databaseEnv = { DATABASE_URL: `file:./prisma/${databaseName}.db` };
+const runPaths = createSmokeRunPaths("m3-browser", runId);
+const artifactDir = runPaths.run_dir;
+const databasePath = path.join(runPaths.temp_dir, "demo-smoke.db");
+const databaseEnv = { DATABASE_URL: sqliteFileUrl(databasePath) };
 
-fs.mkdirSync(artifactDir, { recursive: true });
-cleanupDatabase(databaseName);
-run("node", ["scripts/init-db.mjs", "--reset"], { cwd: demoRoot, env: databaseEnv });
-
-const port = await freePort();
-const baseUrl = `http://127.0.0.1:${port}`;
-const server = startServer(port);
+let server;
 let browser;
 
 try {
+  cleanupDatabase(databasePath);
+  run("node", ["scripts/init-db.mjs", "--reset"], { cwd: demoRoot, env: databaseEnv });
+
+  const port = await freePort();
+  const baseUrl = `http://127.0.0.1:${port}`;
+  server = startServer(port);
   await waitForHealth(`${baseUrl}/health`);
   const executablePath = findBrowserExecutable();
   browser = await chromium.launch({ executablePath, headless: true });
@@ -56,19 +58,19 @@ try {
     evidenceRef({
       evidence_id: "ev-browser-events",
       type: "browser_event_log",
-      path: "artifacts/m3-browser-smoke/browser-events.json",
+      path: `smoke/m3-browser/${runId}/browser-events.json`,
       content: browserEvents.value
     }),
     evidenceRef({
       evidence_id: "ev-final-screen",
       type: "screenshot",
-      path: "artifacts/m3-browser-smoke/final-screen.png",
+      path: `smoke/m3-browser/${runId}/final-screen.png`,
       content: fs.readFileSync(screenshotPath)
     }),
     evidenceRef({
       evidence_id: "ev-joined-observation",
       type: "joined_observation",
-      path: "artifacts/m3-browser-smoke/joined-observation.json",
+      path: `smoke/m3-browser/${runId}/joined-observation.json`,
       content: joinedObservation
     })
   ];
@@ -76,7 +78,7 @@ try {
     evidence.push(evidenceRef({
       evidence_id: "ev-browser-trace",
       type: "browser_trace",
-      path: "artifacts/m3-browser-smoke/trace.zip",
+      path: `smoke/m3-browser/${runId}/trace.zip`,
       content: fs.readFileSync(tracePath)
     }));
   }
@@ -106,6 +108,8 @@ try {
   const summary = {
     status: report.merge_recommendation === "recommend_merge" ? "passed" : "failed",
     run_id: runId,
+    output_dir: artifactDir,
+    summary_path: path.join(artifactDir, "summary.json"),
     schema_version: DOMAIN_SCHEMA_VERSION,
     base_url: baseUrl,
     browser: {
@@ -133,12 +137,12 @@ try {
   writeJson("manifest.json", manifest);
   writeJson("summary.json", summary);
   fs.writeFileSync(path.join(artifactDir, "report.md"), renderMarkdownReport(report), "utf8");
-  console.log(JSON.stringify({ status: summary.status, run_id: runId, criteria: report.results.length, recommendation: report.merge_recommendation }, null, 2));
+  console.log(JSON.stringify({ status: summary.status, run_id: runId, criteria: report.results.length, recommendation: report.merge_recommendation, summary_path: summary.summary_path, output_dir: summary.output_dir }, null, 2));
   if (summary.status !== "passed") process.exitCode = 1;
 } finally {
   if (browser) await browser.close();
-  await stopServer(server);
-  cleanupDatabase(databaseName);
+  if (server) await stopServer(server);
+  cleanupDatabase(databasePath);
 }
 
 async function collectDemoJoinedObservation(page, { taskTitle }) {
@@ -176,7 +180,7 @@ async function collectDemoJoinedObservation(page, { taskTitle }) {
 function readDemoTasks() {
   const requireFromDemo = createRequire(path.join(demoRoot, "package.json"));
   const Database = requireFromDemo("better-sqlite3");
-  const db = new Database(path.join(demoRoot, "prisma", `${databaseName}.db`), { readonly: true });
+  const db = new Database(databasePath, { readonly: true });
   try {
     return db.prepare('SELECT title, completed FROM "Task" ORDER BY id ASC').all().map(row => ({
       title: row.title,
@@ -325,10 +329,14 @@ function freePort() {
   });
 }
 
-function cleanupDatabase(name) {
+function cleanupDatabase(file) {
   for (const suffix of ["", "-journal", "-wal", "-shm"]) {
-    fs.rmSync(path.join(demoRoot, "prisma", `${name}.db${suffix}`), { force: true, maxRetries: 10, retryDelay: 100 });
+    fs.rmSync(`${file}${suffix}`, { force: true, maxRetries: 10, retryDelay: 100 });
   }
+}
+
+function sqliteFileUrl(file) {
+  return `file:${path.resolve(file).replaceAll(path.sep, "/")}`;
 }
 
 function readIsolationDigest() {

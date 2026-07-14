@@ -435,3 +435,14 @@
 - 兼容：`scripts/run-m3-browser-smoke.mjs` 和 `scripts/run-m3-regression.mjs` 不再依赖已跟踪的旧 artifacts；公开导出后可从空 `artifacts/` 重新生成验证结果。
 - 许可证：当前没有 `LICENSE` 文件；本轮不自行选择许可证，公开上传前需要用户确认许可证类型。
 - 验证：`npm test`、`npm run lint`、`git diff --check`、`npm run m3:web-smoke` 和 `npm run m3:regression` 已在本分支运行；安全扫描未发现高置信真实密钥、Token、Cookie、密码或私钥。
+
+## 2026-07-14 - 公开仓库 M3 范围与运行产物修正
+
+- 背景：用户要求继续完善 `AgentProof-public`，但不进入 M4、不开发 GitHub App、不 push；本轮重点是让公开描述与真实 M3 能力一致，并避免验收过程污染被验收项目。
+- 范围修正：README、支持矩阵、M3 文档和执行状态明确说明：RunnerProfile、Docker、install/build/test 可用于符合支持矩阵的本地 Node.js 项目；完整 Playwright/API/SQLite 联合验收当前以官方 Demo 为参考实现，外部项目需要专属流程和断言配置，不能声称自动理解任意项目。
+- 产物隔离：新增统一运行数据路径模块，默认把 Web 验收、browser smoke、M3 回归、Runner 临时目录和 Runner 缓存写入 AgentProof 数据目录（Windows 为 `%LOCALAPPDATA%\AgentProof`，macOS/Linux 为 `~/.agentproof`，可用 `AGENTPROOF_DATA_DIR` 覆盖），不再默认写入被验收仓库的 `artifacts/` 或 `.tmp/`。
+- 稳定性：Runner 使用 AgentProof 自有 `cache/runner/` 挂载复用 Corepack/pnpm 缓存；当 Docker tag inspect 异常但本地镜像列表仍能匹配 tag 时，Runner 可回退到本地镜像 ID，避免不必要的 Docker Hub pull。
+- 行为边界：非官方项目未配置专属验证流程时，浏览器、API、数据库阶段返回 `unverifiable`；仅 install/build/test 通过不会自动给出 `recommend_merge`。官方 Demo 仍按既有 M3 流程执行完整联合验收。
+- 状态文档：`AGENTS.md` 从旧的“当前处于 M0”修正为公开版本已完成并停止在 M3；`docs/execution-status.md` 明确是否可以自动继续为“否”，下一步 M4 规划或真实项目兼容验证均需用户确认。
+- 公开工程：新增基础 GitHub Actions CI（Node.js 20、`npm ci`、`npm run lint`、`npm test`）和 `SECURITY.md`；CI 不运行 Docker、完整 M3 browser regression 或需要本机 Chrome 的测试。
+- 边界：本轮不修改原始开发仓库，不进入 M4，不创建 GitHub App，不配置云服务，不推送远程。

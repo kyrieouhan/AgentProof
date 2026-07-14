@@ -37,6 +37,24 @@ test("profile command run records install, build and test phases", () => {
   assert.equal(result.commands.find(command => command.phase === "test").command.includes("none"), true);
 });
 
+test("profile command can fall back to a local image id when tag inspect is unavailable", () => {
+  const result = runProfileCommands("samples/demo-web-app/agentproof.runner-profile.json", {
+    repoRoot: ".",
+    run: (_command, args) => {
+      if (args[0] === "--version") return { exitCode: 0, stdout: "Docker version 29.0.0\n", stderr: "" };
+      if (args[0] === "info") return { exitCode: 0, stdout: "\"29.0.0\"\n", stderr: "" };
+      if (args[0] === "image" && args[1] === "inspect") return { exitCode: 1, stdout: "", stderr: "No such image\n" };
+      if (args[0] === "image" && args[1] === "ls") return { exitCode: 0, stdout: "node:20-bookworm local-node-image-id\n", stderr: "" };
+      if (args[0] === "pull") throw new Error("Runner should not pull when local tag is listed.");
+      return { exitCode: 0, stdout: "", stderr: "" };
+    }
+  });
+  assert.equal(result.status, "passed");
+  assert.equal(result.commands.some(command => command.command.includes("pull")), false);
+  assert.equal(result.commands.find(command => command.phase === "install").command.includes("local-node-image-id"), true);
+});
+
+
 test("timed out profile command is classified and force-cleans the container", () => {
   const result = runProfileCommands("samples/demo-web-app/agentproof.runner-profile.json", {
     repoRoot: ".",

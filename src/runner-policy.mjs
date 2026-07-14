@@ -30,6 +30,7 @@ export function containerPolicyArgs(workspace, policy = DEFAULT_CONTAINER_POLICY
     "--workdir", "/workspace",
     "--volume", `${workspace}:/workspace:${workspaceMode}`
   );
+  if (options.cacheDir) args.push("--volume", `${options.cacheDir}:/agentproof-cache:rw`);
   return args;
 }
 
@@ -50,7 +51,11 @@ export function lifecycleSmokeScript() {
 }
 
 export function runnerCommand(command, packageManager) {
-  const setup = "export HOME=/workspace/.agentproof-home COREPACK_HOME=/workspace/.agentproof-corepack npm_config_nodedir=/usr/local && mkdir -p \"$HOME\" \"$COREPACK_HOME\"";
+  const setup = [
+    "export HOME=/workspace/.agentproof-home npm_config_nodedir=/usr/local",
+    "if [ -d /agentproof-cache ]; then export COREPACK_HOME=/agentproof-cache/corepack PNPM_HOME=/agentproof-cache/pnpm-home pnpm_config_store_dir=/agentproof-cache/pnpm-store; else export COREPACK_HOME=/workspace/.agentproof-corepack PNPM_HOME=/workspace/.agentproof-pnpm-home pnpm_config_store_dir=/workspace/.agentproof-pnpm-store; fi",
+    "mkdir -p \"$HOME\" \"$COREPACK_HOME\" \"$PNPM_HOME\" \"$pnpm_config_store_dir\""
+  ].join(" && ");
   if (packageManager === "pnpm") return `${setup} && ${command.replace(/\bpnpm\b/g, "corepack pnpm")}`;
   return `${setup} && ${command}`;
 }

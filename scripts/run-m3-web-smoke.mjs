@@ -1,18 +1,22 @@
 #!/usr/bin/env node
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 import { startWebServer } from "../src/web/server.mjs";
+import { createSmokeRunPaths } from "../src/runtime-paths.mjs";
 
 const repoRoot = path.resolve(process.argv.includes("--repo-root") ? process.argv[process.argv.indexOf("--repo-root") + 1] : path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
-const artifactDir = path.join(repoRoot, "artifacts", "m3-web-smoke");
-fs.mkdirSync(artifactDir, { recursive: true });
+const runId = `m3-web-${Date.now().toString(36)}`;
+const paths = createSmokeRunPaths("m3-web-smoke", runId);
+const artifactDir = paths.run_dir;
 
 const host = "127.0.0.1";
 const port = await freePort();
-const app = await startWebServer({ host, port, repoRoot });
+const initialGitStatus = gitStatus(repoRoot);
+const app = await startWebServer({ host, port, repoRoot, dataDir: paths.data_root });
 const browser = await chromium.launch({ executablePath: findBrowserExecutable(), headless: true });
 const results = [];
 
@@ -34,7 +38,7 @@ try {
 
   await page.close();
   const badDockerPort = await freePort();
-  const badDocker = await startWebServer({ host, port: badDockerPort, repoRoot, dockerCommand: "__agentproof_missing_docker__" });
+  const badDocker = await startWebServer({ host, port: badDockerPort, repoRoot, dataDir: paths.data_root, dockerCommand: "__agentproof_missing_docker__" });
   try {
     const badPage = await browser.newPage();
     await badPage.goto(badDocker.url);
@@ -48,9 +52,14 @@ try {
   }
 
   const consistent = results.every(result => result.status === "passed" && result.recommendation === "recommend_merge");
+  const finalGitStatus = gitStatus(repoRoot);
+  if (finalGitStatus !== initialGitStatus) throw new Error(`Web smoke changed target git status.\nBefore:\n${initialGitStatus}\nAfter:\n${finalGitStatus}`);
   const summary = {
+    run_id: runId,
     status: consistent ? "passed" : "failed",
     address: app.url,
+    output_dir: artifactDir,
+    summary_path: path.join(artifactDir, "summary.json"),
     repeat_count: results.length,
     consistent,
     runs: results,
@@ -59,7 +68,7 @@ try {
   };
   fs.writeFileSync(path.join(artifactDir, "summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
   fs.writeFileSync(path.join(artifactDir, "report.md"), renderReport(summary), "utf8");
-  console.log(JSON.stringify({ status: summary.status, repeat_count: summary.repeat_count, consistent: summary.consistent }, null, 2));
+  console.log(JSON.stringify({ status: summary.status, repeat_count: summary.repeat_count, consistent: summary.consistent, summary_path: summary.summary_path, output_dir: summary.output_dir }, null, 2));
   if (summary.status !== "passed") process.exitCode = 1;
 } finally {
   await browser.close();
@@ -256,4 +265,11 @@ function freePort() {
 
 function close(server) {
   return new Promise(resolve => server.close(resolve));
+}
+
+function gitStatus(cwd) {
+  const result = spawnSync("git", ["-C", cwd, "status", "--short"], { encoding: "utf8", shell: false });
+  if (result.error) throw result.error;
+  if (result.status !== 0) throw new Error(result.stderr.trim() || "git status failed");
+  return result.stdout.trim();
 }

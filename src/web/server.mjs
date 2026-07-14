@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { checkDocker } from "../docker-preflight.mjs";
 import { validateRunnerProfile } from "../runner-profile.mjs";
 import { createVerificationReport, renderHtmlReport, renderMarkdownReport } from "../domain/report.mjs";
+import { createRunPaths } from "../runtime-paths.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STATIC_DIR = path.join(__dirname, "static");
@@ -40,10 +41,13 @@ export function createWebServer(options = {}) {
   const jobs = new Map();
   const activeKeys = new Map();
   const dockerCommand = options.dockerCommand ?? process.env.AGENTPROOF_WEB_DOCKER ?? process.env.AGENTPROOF_DOCKER;
+  const dataDir = options.dataDir;
+  const dockerCheck = options.dockerCheck ?? ((input) => checkDocker(input));
+  const commandRunner = options.commandRunner ?? ((cwd, args, env) => runNode(cwd, args, env));
 
   const server = http.createServer(async (request, response) => {
     try {
-      await route({ request, response, agentproofRoot, jobs, activeKeys, dockerCommand });
+      await route({ request, response, agentproofRoot, jobs, activeKeys, dockerCommand, dataDir, dockerCheck, commandRunner });
     } catch (error) {
       respondJson(response, error.statusCode ?? 500, { error: error.message });
     }
@@ -90,7 +94,8 @@ async function handleProject({ request, response, agentproofRoot }) {
   respondJson(response, 200, { project });
 }
 
-async function handleStartRun({ request, response, agentproofRoot, jobs, activeKeys, dockerCommand }) {
+async function handleStartRun(context) {
+  const { request, response, agentproofRoot, jobs, activeKeys, dataDir } = context;
   const body = await readJson(request);
   const project = inspectProject(body.project_path, { agentproofRoot });
   if (!project.runner_profile) return respondJson(response, 400, { error: "未找到该项目的 Runner Profile。" });
@@ -104,6 +109,7 @@ async function handleStartRun({ request, response, agentproofRoot, jobs, activeK
   if (existing && jobs.get(existing)?.status === "running") return respondJson(response, 202, { run_id: existing, duplicate_of: existing });
 
   const runId = `web-${Date.now().toString(36)}-${crypto.randomBytes(3).toString("hex")}`;
+  const paths = createRunPaths(runId, { dataDir });
   const job = {
     run_id: runId,
     status: "queued",
@@ -127,11 +133,22 @@ async function handleStartRun({ request, response, agentproofRoot, jobs, activeK
     evidence: [],
     report: null,
     report_urls: null,
+    paths,
+    artifact_dir: paths.run_dir,
     created_at: new Date().toISOString()
   };
   jobs.set(runId, job);
   activeKeys.set(key, runId);
-  setImmediate(() => runJob(job, { agentproofRoot, dockerCommand }).finally(() => activeKeys.delete(key)));
+  setImmediate(() => runJob(job, context).catch(error => {
+    finishJob(job, "infrastructure_error", [{
+      criterion_id: "web-internal-error",
+      status: "infrastructure_error",
+      summary: "AgentProof 本地 Web 验收运行异常中止。",
+      evidence: [],
+      errors: [error.message],
+      blocking_security_issue: false
+    }]);
+  }).finally(() => activeKeys.delete(key)));
   respondJson(response, 202, { run_id: runId });
 }
 
@@ -166,11 +183,11 @@ function handleEvidence({ response, jobs }, pathname) {
   fs.createReadStream(file).pipe(response);
 }
 
-async function runJob(job, { agentproofRoot, dockerCommand }) {
+async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, commandRunner }) {
   job.status = "running";
   job.current_stage = "docker";
   updateStage(job, "docker", "running", "正在检查 Docker Desktop 和 Docker Engine。");
-  const docker = checkDocker(dockerCommand ? { docker: dockerCommand } : {});
+  const docker = dockerCheck(dockerCommand ? { docker: dockerCommand } : {});
   if (docker.status !== "passed") {
     updateStage(job, "docker", "infrastructure_error", docker.errors?.join("; ") || "Docker 预检失败。");
     return finishJob(job, "infrastructure_error", [{
@@ -188,7 +205,8 @@ async function runJob(job, { agentproofRoot, dockerCommand }) {
   updateStage(job, "install", "running", "正在通过现有 AgentProof Runner 安装依赖。");
   updateStage(job, "build", "running", "等待构建命令结果。");
   updateStage(job, "test", "running", "等待测试命令结果。");
-  const runner = await runNode(agentproofRoot, ["bin/agentproof.mjs", "run", "--profile", job.project.runner_profile.path, "--repo-root", job.project.git_root, "--commands", "--json"]);
+  const childEnv = { AGENTPROOF_DATA_DIR: job.paths.data_root };
+  const runner = await commandRunner(agentproofRoot, ["bin/agentproof.mjs", "run", "--profile", job.project.runner_profile.path, "--repo-root", job.project.git_root, "--commands", "--json"], childEnv);
   const runnerResult = parseJsonOutput(runner.stdout);
   recordRunnerStages(job, runner, runnerResult);
   if (runner.exitCode !== 0 || runnerResult.status !== "passed") {
@@ -202,12 +220,20 @@ async function runJob(job, { agentproofRoot, dockerCommand }) {
     }], { runner: safeRunnerResult(runnerResult, job) });
   }
 
+  if (!isOfficialDemoProject(job.project, agentproofRoot)) {
+    updateStage(job, "start", "unverifiable", "该项目尚未配置专属启动与行为验收流程。");
+    updateStage(job, "browser", "unverifiable", "当前项目未配置专属浏览器和联合断言流程。");
+    updateStage(job, "api", "unverifiable", "当前项目未配置专属 API 断言流程。");
+    updateStage(job, "database", "unverifiable", "当前项目未配置专属数据库断言流程。");
+    return finishJob(job, "unverifiable", resultsForCriteria(job.criteria, []), { runner: safeRunnerResult(runnerResult, job) });
+  }
+
   job.current_stage = "start";
   updateStage(job, "start", "running", "正在启动目标服务并准备浏览器验证。");
   updateStage(job, "browser", "running", "正在执行 M3 浏览器流程。");
   updateStage(job, "api", "running", "等待同一登录会话的 API 证据。");
   updateStage(job, "database", "running", "等待 SQLite 持久化证据。");
-  const browser = await runNode(agentproofRoot, ["scripts/run-m3-browser-smoke.mjs", "--repo-root", job.project.git_root]);
+  const browser = await commandRunner(agentproofRoot, ["scripts/run-m3-browser-smoke.mjs", "--repo-root", agentproofRoot], childEnv);
   job.logs.push({
     phase: "browser",
     exit_code: browser.exitCode,
@@ -230,13 +256,15 @@ async function runJob(job, { agentproofRoot, dockerCommand }) {
     }]);
   }
 
-  const browserSummaryPath = path.join(job.project.git_root, "artifacts", "m3-browser-smoke", "summary.json");
+  const browserOutput = parseJsonOutput(browser.stdout);
+  const browserSummaryPath = path.resolve(browserOutput.summary_path ?? "");
+  if (!browserSummaryPath || !isInside(job.paths.data_root, browserSummaryPath)) throw new Error("浏览器验证摘要路径不在 AgentProof 数据目录内。");
   const browserSummary = JSON.parse(fs.readFileSync(browserSummaryPath, "utf8"));
   updateStage(job, "start", "passed", "目标服务已启动并完成验证流程。", { duration_ms: browser.durationMs });
   updateStage(job, "browser", browserSummary.status === "passed" ? "passed" : "failed", "浏览器流程已完成。", { duration_ms: browser.durationMs });
   updateStage(job, "api", browserSummary.report.status_counts.failed === 0 ? "passed" : "failed", "已采集并验证 API 观察结果。");
   updateStage(job, "database", browserSummary.report.status_counts.failed === 0 ? "passed" : "failed", "已采集并验证 SQLite 观察结果。");
-  copyEvidence(job);
+  copyEvidence(job, browserSummary);
 
   const results = resultsForCriteria(job.criteria, browserSummary.report.results);
   return finishJob(job, browserSummary.status, results, { runner: safeRunnerResult(runnerResult, job), browser: browserSummary });
@@ -246,7 +274,7 @@ function finishJob(job, status, results, extra = {}) {
   job.current_stage = "report";
   updateStage(job, "report", "running", "正在生成 HTML 和 Markdown 报告。");
   const report = createVerificationReport({ run_id: job.run_id, results });
-  const artifactDir = path.join(job.project.git_root, "artifacts", "web-runs", job.run_id);
+  const artifactDir = job.paths.run_dir;
   fs.mkdirSync(artifactDir, { recursive: true });
   fs.writeFileSync(path.join(artifactDir, "report.html"), renderHtmlReport(report), "utf8");
   fs.writeFileSync(path.join(artifactDir, "report.md"), renderMarkdownReport(report), "utf8");
@@ -287,9 +315,10 @@ function resultsForCriteria(criteria, actualResults) {
   });
 }
 
-function copyEvidence(job) {
-  const sourceDir = path.join(job.project.git_root, "artifacts", "m3-browser-smoke");
-  const targetDir = path.join(job.project.git_root, "artifacts", "web-runs", job.run_id, "evidence");
+function copyEvidence(job, browserSummary) {
+  const sourceDir = path.resolve(browserSummary.output_dir ?? "");
+  if (!sourceDir || !isInside(job.paths.data_root, sourceDir)) throw new Error("浏览器证据目录不在 AgentProof 数据目录内。");
+  const targetDir = job.paths.evidence_dir;
   fs.mkdirSync(targetDir, { recursive: true });
   const files = [
     ["browser-events.json", "application/json; charset=utf-8"],
@@ -334,6 +363,11 @@ function inspectProject(inputPath, { agentproofRoot }) {
       image: profile.image
     } : null
   };
+}
+
+function isOfficialDemoProject(project, agentproofRoot) {
+  const demoProfile = path.join(agentproofRoot, "samples", "demo-web-app", "agentproof.runner-profile.json");
+  return path.resolve(project.git_root) === path.resolve(agentproofRoot) && path.resolve(project.runner_profile?.path ?? "") === path.resolve(demoProfile);
 }
 
 function recordRunnerStages(job, runner, runnerResult) {
@@ -445,10 +479,10 @@ function updateStage(job, id, status, message, extra = {}) {
   Object.assign(item, patch);
 }
 
-function runNode(cwd, args) {
+function runNode(cwd, args, extraEnv = {}) {
   return new Promise(resolve => {
     const started = Date.now();
-    const child = spawn(process.execPath, args, { cwd, shell: false, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(process.execPath, args, { cwd, shell: false, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, ...extraEnv } });
     let stdout = "";
     let stderr = "";
     child.stdout.setEncoding("utf8");
@@ -542,6 +576,7 @@ function redactLocal(value, job) {
   for (const replacement of [
     [job.project.git_root, "[GIT_ROOT]"],
     [path.dirname(job.project.runner_profile.path), "[PROJECT]"],
+    [job.paths?.data_root, "[AGENTPROOF_DATA]"],
     [process.env.USERPROFILE, "[HOME]"]
   ]) {
     if (replacement[0]) text = text.replaceAll(replacement[0], replacement[1]);

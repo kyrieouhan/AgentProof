@@ -37,6 +37,7 @@ blob-report/
 # Generated verification artifacts are local-only in the public export
 artifacts/*
 !artifacts/.gitkeep
+.agentproof-data/
 
 # Source planning documents may contain private metadata; publish derived Markdown instead
 docs/source/*.docx

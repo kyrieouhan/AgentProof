@@ -1,11 +1,11 @@
 ﻿# AgentProof 执行状态
 
-- 最近更新时间：2026-07-13
+- 最近更新时间：2026-07-14
 - 当前里程碑：M3 completed（浏览器验证、防作弊与最小本地 Web 入口 MVP）
-- 当前任务：停止，等待用户明确授权是否进入 M4
+- 当前任务：停止，等待用户明确授权是否进入 M4 或继续真实项目兼容验证
 - 上一个完成任务：M3-07 最小本地 Web 用户入口与 Web 端到端验证
 - 最新相关 Commit：见当前文件所在提交
-- 是否可以自动继续：是
+- 是否可以自动继续：否
 
 ## 已完成内容
 
@@ -43,7 +43,8 @@
 - M3-04 测试与配置 Diff 风险模型：新增 `DiffRiskReportSchema`、`schemas/domain/diff-risk-report.schema.json`、`src/domain/diff-risk.mjs` 和 `npm run m3:diff-risk`；官方 weakened_tests 补丁可输出具体 high/human_review 风险。
 - M3-05 只读规则与随机化硬编码检测：新增 `ReadOnlyRuleReportSchema`、`HardcodedProbeReportSchema`、只读规则检查、随机化硬编码检测和 `npm run m3:hardcoded`；官方 hardcoded_behavior 补丁可输出 human_review 风险。
 - M3-06 官方 Demo 缺陷回归、3 次一致性与内部可用性检查：新增 `npm run m3:regression`、`artifacts/m3-regression/`、`docs/milestones/M3-exit-review.md` 和 ADR-016；M3 退出门禁通过。
-- M3-07 最小本地 Web 用户入口：新增 `src/web/`、`npm run web:dev`、`npm run web:start` 和 `npm run m3:web-smoke`；界面可导入官方 Demo、显示 Git/RunnerProfile 信息、编辑验收项、启动真实 Runner/M3 验收、显示阶段进度、查看证据并导出 HTML/Markdown 报告。
+- M3-07 最小本地 Web 用户入口：新增 `src/web/`、`npm run web:dev`、`npm run web:start` 和 `npm run m3:web-smoke`；界面可导入官方 Demo、显示 Git/RunnerProfile 信息、编辑验收项、启动真实 Runner/M3 验收、显示阶段进度、查看证据并导出 HTML/Markdown 报告。外部项目当前可执行 RunnerProfile install/build/test；未配置项目专属浏览器/API/数据库断言时，相应阶段为 `unverifiable`。
+- 公开版运行数据隔离：M3 Web 与 smoke 当前默认把新运行数据写入 AgentProof 数据目录（Windows 为 `%LOCALAPPDATA%\AgentProof`，macOS/Linux 为 `~/.agentproof`，可用 `AGENTPROOF_DATA_DIR` 覆盖），不再默认写入被验收项目的 `artifacts/`。
 
 ## 未完成内容
 
@@ -51,7 +52,7 @@
 
 ## 实际验证结果
 
-- `git status --short`：M3-01 提交前会复验。
+- `git status --short`：本轮提交前会复验。
 - `git diff --check`：通过。
 - failure-case 统计：`candidate_total=39`，`core_in_scope=19`，`secondary_research=8`，`out_of_scope=12`，`cases/` 为空。
 - Demo 正确基线最近验证：`pnpm install`、`prisma:generate`、`prisma:validate`、`db:init`、`lint`、`typecheck`、`test`、`build` 和 HTTP smoke test 通过，记录于 `dev_log.md`。
@@ -90,7 +91,7 @@
 
 ## 下一项任务
 
-停止在 M3 完成状态。下一步只有在用户明确授权时才能进入 M4；不得自动开发 GitHub App、完整多项目 Web 平台、外部 Alpha 或 M4 能力。
+停止在 M3 完成状态。下一步只能在用户明确授权后执行 M4 规划，或继续真实项目兼容验证；不得自动开发 GitHub App、完整多项目 Web 平台、外部 Alpha、云端 Runner 或其他 M4 能力。
 
 第一条恢复命令：
 

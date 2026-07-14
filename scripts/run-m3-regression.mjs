@@ -3,16 +3,18 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createSmokeRunPaths } from "../src/runtime-paths.mjs";
 
 const repoRoot = path.resolve(process.argv.includes("--repo-root") ? process.argv[process.argv.indexOf("--repo-root") + 1] : path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
 const demoRoot = path.join(repoRoot, "samples", "demo-web-app");
-const artifactDir = path.join(repoRoot, "artifacts", "m3-regression");
-fs.mkdirSync(artifactDir, { recursive: true });
+const runId = `m3-regression-${Date.now().toString(36)}`;
+const paths = createSmokeRunPaths("m3-regression", runId);
+const artifactDir = paths.run_dir;
 
 const browserRuns = [];
 for (let index = 0; index < 3; index += 1) {
-  run("node", ["scripts/run-m3-browser-smoke.mjs", "--repo-root", "."], { cwd: repoRoot });
-  const summary = JSON.parse(fs.readFileSync(path.join(repoRoot, "artifacts", "m3-browser-smoke", "summary.json"), "utf8"));
+  const browserOutput = parseCommandJson(run("node", ["scripts/run-m3-browser-smoke.mjs", "--repo-root", "."], { cwd: repoRoot }).stdout);
+  const summary = JSON.parse(fs.readFileSync(browserOutput.summary_path, "utf8"));
   browserRuns.push({
     run_id: summary.run_id,
     status: summary.status,
@@ -23,11 +25,10 @@ for (let index = 0; index < 3; index += 1) {
 }
 
 const defects = parseDefects(run("node", ["scripts/verify-defect-scenarios.mjs"], { cwd: demoRoot }).stdout);
-const diffRiskBefore = readJsonIfExists(path.join(repoRoot, "artifacts", "m3-diff-risk", "summary.json"));
-run("node", ["scripts/run-m3-diff-risk-smoke.mjs", "--repo-root", "."], { cwd: repoRoot });
-const diffRiskAfter = JSON.parse(fs.readFileSync(path.join(repoRoot, "artifacts", "m3-diff-risk", "summary.json"), "utf8"));
-run("node", ["scripts/run-m3-hardcoded-smoke.mjs", "--repo-root", "."], { cwd: repoRoot });
-const hardcoded = JSON.parse(fs.readFileSync(path.join(repoRoot, "artifacts", "m3-hardcoded-randomization", "summary.json"), "utf8"));
+const diffRiskOutput = parseCommandJson(run("node", ["scripts/run-m3-diff-risk-smoke.mjs", "--repo-root", "."], { cwd: repoRoot }).stdout);
+const diffRiskAfter = JSON.parse(fs.readFileSync(diffRiskOutput.summary_path, "utf8"));
+const hardcodedOutput = parseCommandJson(run("node", ["scripts/run-m3-hardcoded-smoke.mjs", "--repo-root", "."], { cwd: repoRoot }).stdout);
+const hardcoded = JSON.parse(fs.readFileSync(hardcodedOutput.summary_path, "utf8"));
 const usability = usabilityCheck();
 
 const browserConsistent = browserRuns.every(run => run.status === "passed" && run.recommendation === "recommend_merge" && run.passed === 2 && run.failed === 0);
@@ -36,7 +37,10 @@ const diffRiskPassed = diffRiskAfter.risks.some(risk => risk.category === "weake
 const hardcodedPassed = hardcoded.readonly.passed && hardcoded.hardcoded.recommendation === "human_review";
 const status = browserConsistent && defectsPassed && diffRiskPassed && hardcodedPassed && usability.passed ? "passed" : "failed";
 const summary = {
+  run_id: runId,
   status,
+  output_dir: artifactDir,
+  summary_path: path.join(artifactDir, "summary.json"),
   browser_repeatability: {
     repeat_count: browserRuns.length,
     consistent: browserConsistent,
@@ -47,15 +51,15 @@ const summary = {
   hardcoded_randomization: hardcoded,
   usability,
   previous_diff_risk_snapshot: {
-    available: Boolean(diffRiskBefore),
-    risk_count: diffRiskBefore?.risk_count ?? null,
-    recommendation: diffRiskBefore?.recommendation ?? null
+    available: false,
+    risk_count: null,
+    recommendation: null
   }
 };
 
 fs.writeFileSync(path.join(artifactDir, "summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
 fs.writeFileSync(path.join(artifactDir, "report.md"), renderReport(summary), "utf8");
-console.log(JSON.stringify({ status, browser_repeats: browserRuns.length, defects: defects.scenarios.length, usability: usability.passed }, null, 2));
+console.log(JSON.stringify({ status, browser_repeats: browserRuns.length, defects: defects.scenarios.length, usability: usability.passed, summary_path: summary.summary_path, output_dir: summary.output_dir }, null, 2));
 if (status !== "passed") process.exit(1);
 
 function run(command, args, options) {
@@ -80,33 +84,33 @@ function parseDefects(stdout) {
   return JSON.parse(stdout.slice(index));
 }
 
-function readJsonIfExists(file) {
-  if (!fs.existsSync(file)) return null;
-  return JSON.parse(fs.readFileSync(file, "utf8"));
-}
-
 function usabilityCheck() {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
   const executionStatus = fs.readFileSync(path.join(repoRoot, "docs", "execution-status.md"), "utf8");
   const requiredScripts = ["m3:browser-smoke", "m3:diff-risk", "m3:hardcoded"];
   const missingScripts = requiredScripts.filter(name => !packageJson.scripts?.[name]);
-  const requiredArtifacts = [
-    "artifacts/m3-browser-smoke/summary.json",
-    "artifacts/m3-diff-risk/summary.json",
-    "artifacts/m3-hardcoded-randomization/summary.json"
-  ];
-  const missingArtifacts = requiredArtifacts.filter(file => !fs.existsSync(path.join(repoRoot, file)));
   const issues = [
-    ...missingScripts.map(name => `missing package script ${name}`),
-    ...missingArtifacts.map(file => `missing artifact ${file}`)
+    ...missingScripts.map(name => `missing package script ${name}`)
   ];
   if (!executionStatus.includes("M3-06")) issues.push("docs/execution-status.md does not mention M3-06");
   return {
     passed: issues.length === 0,
     issues,
-    required_scripts: requiredScripts,
-    required_artifacts: requiredArtifacts
+    required_scripts: requiredScripts
   };
+}
+
+function parseCommandJson(stdout) {
+  for (let index = 0; index < stdout.length; index += 1) {
+    const candidate = stdout.slice(index).trim();
+    if (!candidate.startsWith("{")) continue;
+    try {
+      return JSON.parse(candidate);
+    } catch {
+      // keep looking
+    }
+  }
+  throw new Error("Could not parse command JSON output.");
 }
 
 function renderReport(summary) {
