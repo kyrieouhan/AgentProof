@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1035",
+  "title": "Code-agent delivery workflow hardcoded TARGET_BRANCH to main",
+  "normalized_title": "代码 Agent 交付工作流将目标分支写死为 main",
+  "primary_category": "hardcoded_behavior",
+  "secondary_categories": [],
+  "description": "M0-02B-2 未核实候选：公开来源称代码 Agent 工作流把 TARGET_BRANCH 固定为 main，用于计算变更和创建 PR；当目标仓库的默认分支为 master、develop 或其他分支时，Agent 虽完成并推送分支，后置脚本仍会因 main 不存在而创建 PR 失败。",
+  "root_cause": "收集者初步推测：交付工作流把一个特定仓库惯例当作通用分支输入，没有解析目标仓库的默认分支或接受显式覆盖。该判断不是来源已确认的根因结论。",
+  "trigger_condition": "在默认分支不是 main 的目标仓库中运行代码 Agent 任务并让其创建 PR。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Code agent hardcodes TARGET_BRANCH to main, breaking repos with non-main default branches",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2345",
+    "source_date": "2026-06-16",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、凭据、完整工作流日志或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "GitHub Actions",
+    "Git",
+    "Pull request workflow"
+  ],
+  "reproduction_status": "steps_available",
+  "reproduction": {
+    "prerequisites": [
+      "仅在隔离环境中使用默认分支不是 main 的测试仓库。",
+      "具备来源所述代码 Agent 工作流和可安全创建测试分支的权限。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "公开来源描述的 GitHub Actions 代码 Agent 工作流；本项目尚未执行隔离复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [
+      "准备默认分支不是 main 的测试仓库。",
+      "创建任务并运行来源所述代码 Agent。",
+      "比较 Agent 推送后用于 PR 创建的目标分支与仓库实际默认分支，并记录命令退出状态。"
+    ],
+    "expected_behavior": "代码 Agent 应检测目标仓库默认分支或使用显式指定的分支，随后以该分支创建 PR。",
+    "actual_behavior": "来源页面陈述的候选现象：工作流固定使用 main，导致非 main 默认分支仓库的 PR 创建在后置脚本阶段失败。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "复现步骤仅根据公开 Issue 的描述整理；尚未由项目人员核实关联工作流、外部运行记录、许可或实际环境。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "default_branch_matrix_check",
+      "description": "在具有不同默认分支的受控仓库中检查工作流配置、PR 基分支和命令退出状态。",
+      "proves": "可证明给定工作流版本是否把目标分支固定为 main，以及该固定值是否使等价的非 main 仓库交付失败。",
+      "does_not_prove": "不能单独证明所有 Git 平台、权限配置或 Agent 版本都会产生相同行为，也不能代替来源核实或最终审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "configuration_diff",
+    "git_diff",
+    "exit_code",
+    "console_log"
+  ],
+  "severity": "high",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "本批次仅完成 URL、标题和失效机制初筛；需人工比较与其他固定环境或分支候选是否同一根因。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-2 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0035; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=来源页面称代码 Agent 工作流将 TARGET_BRANCH 固定为 main，非 main 默认分支仓库中 Agent 推送后仍在 PR 创建阶段失败。; collector_inference=主分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=true; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对工作流来源、默认分支检测条件、关联运行记录、来源许可和是否与其他候选同根因。"
+}

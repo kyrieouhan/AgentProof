@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1038",
+  "title": "Claude Code-generated fallback passed Go checks but broke functional triage runs",
+  "normalized_title": "Claude Code fallback passed Go checks but broke functional triage runs",
+  "primary_category": "build_runtime_mismatch",
+  "secondary_categories": [],
+  "description": "M0-02B-3 unverified candidate: public sources connect a Claude Code-generated PR adding runtime fallback for unconfigured agents to later functional-tests failures on main. The PR test plan reported go vet clean and targeted Go tests passing, but after merge all four triage eval cases failed when runtime harness loading rejected URL-sourced scripts.",
+  "root_cause": "Collector inference: unit and static checks covered fallback selection and fetch behavior but did not exercise the full runtime harness-loading path where a fetched harness without config loads pre/post scripts through LoadWithBase with an empty allowlist. This is not a source-confirmed final root cause.",
+  "trigger_condition": "Run the fullsend functional triage eval path with no config.yaml and agents-repo fallback enabled after PR #2947.",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "functional-tests CI broken by PR #2947: agents-repo fallback allowlist default doesn't propagate to harness resource resolution",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/3396",
+    "source_date": "2026-07-07",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "Public GitHub issue; this candidate stores only the link and a short factual summary, with publication permissions still pending human review.",
+    "can_publish": true,
+    "redaction_notes": "No usernames, credentials, full diffs, or local absolute paths were copied into this record."
+  },
+  "additional_sources": [
+    {
+      "source_type": "public_github_issue",
+      "source_title": "feat(cli): add runtime fallback to agents repo for unconfigured agents",
+      "source_reference": "https://github.com/fullsend-ai/fullsend/pull/2947",
+      "source_date": "2026-07-06",
+      "source_verification_status": "source_pending",
+      "verified": false,
+      "verified_at": null,
+      "verification_method": null,
+      "verification_actor_type": "not_applicable",
+      "verified_by_role": null,
+      "permission_or_authorization": "Public GitHub pull request; this candidate stores only the link and a short factual summary, with publication permissions still pending human review.",
+      "can_publish": true,
+      "redaction_notes": "No usernames, credentials, full diffs, or local absolute paths were copied into this record."
+    }
+  ],
+  "affected_stack": [
+    "Claude Code",
+    "Fullsend CLI",
+    "Go",
+    "GitHub Actions",
+    "Functional tests",
+    "Agent harness"
+  ],
+  "reproduction_status": "steps_available",
+  "reproduction": {
+    "prerequisites": [
+      "Use an isolated checkout of the public fullsend repository.",
+      "Use the PR #2947 commit or a branch containing its agents-repo fallback behavior.",
+      "Use a functional-test configuration where the scaffold fullsend repo has no config.yaml."
+    ],
+    "repository_or_demo_version": "fullsend-ai/fullsend PR #2947 / commit c9e24923",
+    "commit": "c9e24923",
+    "environment": "Public GitHub Actions functional-tests path described by issue #3396; AgentProof has not reproduced it locally.",
+    "install_command": null,
+    "start_command": "make functional-tests",
+    "steps": [
+      "Inspect PR #2947 and confirm its own test plan reports go vet ./... clean and targeted Go tests passing.",
+      "Run or inspect the functional-tests job after the PR #2947 merge.",
+      "Compare the before-merge successful run and after-merge failing run cited by issue #3396.",
+      "Confirm the failing runtime path reports URL-sourced pre_script not in allowed_remote_resources."
+    ],
+    "expected_behavior": "Code that passes the stated Go static and unit checks should still allow the configured functional triage evals to load their harness resources.",
+    "actual_behavior": "The public issue reports that after the Claude Code-generated fallback PR merged, the functional-tests job failed all four triage eval cases with an allowlist resource-resolution error.",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "This candidate is based on public issue and PR summaries only; human review still needs to verify the exact PR body, Actions logs, source license, and reproduction conditions."
+  },
+  "expected_detection_methods": [
+    {
+      "method": "post_build_functional_test_check",
+      "description": "After static and targeted Go tests pass, run the full functional-tests workflow or a minimal harness-load smoke test using the no-config fallback path.",
+      "proves": "Can show whether the same code revision passes build/static checks but fails the real harness-loading execution path.",
+      "does_not_prove": "Does not prove every configured agent path is safe, nor does it replace human source verification, root-cause review, or final approval.",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "build_log",
+    "test_output",
+    "exit_code",
+    "console_log",
+    "configuration_diff"
+  ],
+  "severity": "high",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "Collection phase keeps only public issue and PR links plus short factual summaries; final redaction review is pending.",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "Current text avoids personal names, account handles, credentials, raw logs, and local absolute paths; comments and attachments were not imported."
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "M0-02B-3 only performed URL, title, and failure-mechanism screening; root-cause-level deduplication remains pending.",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-3 public-source candidate, waiting for M0-03 source verification, deduplication, privacy review, and reproduction decision.",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0038; agent_or_tool=Claude Code; collected_at=2026-07-12; source_stated_facts=Issue #3396 says functional-tests started failing on main immediately after PR #2947 merged, all four triage eval cases failed with an allowed_remote_resources error, and the PR #2947 page reports go vet clean, targeted go tests passing, and Generated with Claude Code.; collector_inference=Primary category, root cause, severity, and detection method are provisional; has_reproduction_steps=true; possible_duplicate=false; priority_human_review=true; pending_human_questions=Verify Actions logs, PR body, exact authored-by relationship, license, and whether the minimal functional smoke path is enough for reproduction."
+}

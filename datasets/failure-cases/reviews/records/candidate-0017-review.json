@@ -1,0 +1,39 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0017",
+  "source_accessible": true,
+  "source_check_result": "duplicate_source",
+  "checked_url": "https://github.com/Aider-AI/aider/issues/3010",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "closed",
+  "source_fact_summary": "Issue 报告本地 Ollama 模型没有利用聊天中的文件；评论显示文件实际已发送，维护者将其关闭为 #2901 的重复来源。",
+  "unsupported_claims": [
+    "“Aider 没有发送文件”不受评论支持；详细输出显示文件内容已经发送给模型。"
+  ],
+  "suggested_primary_category": "environment_dependency",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "评论把问题指向本地模型上下文窗口配置；missing_implementation 没有独立检测价值。",
+  "deduplication_result": "duplicate_external_source",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "外部评论含配置片段与用户标识，仓库只保存无个人标识的核查结论。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "medium",
+  "suggested_severity": "medium",
+  "severity_reason": "影响普通工具能力或一致性，有绕过或范围受限，建议中等严重度。",
+  "missing_information": [
+    "需要打开维护者指向的 #2901 作为可能的主来源。",
+    "需要人工确认本地模型和 Aider 的责任边界。",
+    "缺少 AgentProof 独立复现。"
+  ],
+  "recommended_action": "needs_correction",
+  "review_group": "B",
+  "candidate_fields_corrected": [
+    "description",
+    "root_cause",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

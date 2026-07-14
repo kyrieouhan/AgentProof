@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgentProof Demo Web App</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">AgentProof official demo</p>
+        <h1>Correct baseline: accounts, sessions, authorization, and persisted tasks.</h1>
+        <p>This tiny app is intentionally boring. Future branches will break one behavior at a time.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Register</h2>
+        <form id="register-form">
+          <label>Email <input name="email" type="email" required /></label>
+          <label>Password <input name="password" type="password" minlength="8" required /></label>
+          <button type="submit">Create account</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Log in</h2>
+        <form id="login-form">
+          <label>Email <input name="email" type="email" required /></label>
+          <label>Password <input name="password" type="password" required /></label>
+          <button type="submit">Log in</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Current session</h2>
+        <p id="session-state">Checking session...</p>
+        <button id="logout-button" type="button">Log out</button>
+      </section>
+
+      <section class="panel">
+        <h2>Tasks</h2>
+        <form id="task-form">
+          <label>Task title <input name="title" required /></label>
+          <button type="submit">Save task</button>
+        </form>
+        <ul id="task-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Admin check</h2>
+        <p>Normal users should receive a server-side 403 here.</p>
+        <button id="admin-button" type="button">Call admin API</button>
+      </section>
+
+      <section class="panel status-panel">
+        <h2>Status</h2>
+        <p id="status" role="status">Ready.</p>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "@agentproof/demo-web-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AgentProof official demo web app correct baseline.",
+  "type": "commonjs",
+  "packageManager": "pnpm@10.17.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc -p tsconfig.json && node scripts/copy-static.mjs",
+    "start": "node dist/src/server.js",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prisma:generate": "node scripts/run-prisma.mjs generate",
+    "prisma:validate": "node scripts/run-prisma.mjs validate",
+    "db:init": "node scripts/init-db.mjs",
+    "db:push": "node scripts/init-db.mjs",
+    "db:reset": "node scripts/init-db.mjs --reset",
+    "test": "node scripts/test.mjs",
+    "defects:verify": "node scripts/verify-defect-scenarios.mjs",
+    "m0:feasibility": "node scripts/run-m0-feasibility.mjs"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "better-sqlite3": "^12.11.1",
+    "fastify": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.14",
+    "prisma": "^7.8.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,45 @@
+diff --git a/src/app.ts b/src/app.ts
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -40,3 +40,15 @@ function isBoolean(value: unknown): value is boolean {
+ function isBoolean(value: unknown): value is boolean {
+   return typeof value === "boolean";
+ }
++
++type MemoryTask = {
++  id: number;
++  title: string;
++  completed: boolean;
++  userId: number;
++  createdAt: Date;
++  updatedAt: Date;
++};
++
++const memoryTasks = new Map<number, MemoryTask[]>();
++let nextMemoryTaskId = 1;
+@@ -141,6 +153,3 @@ export function buildApp() {
+-    const tasks = await prisma.task.findMany({
+-      where: { userId: user.id },
+-      orderBy: { id: "asc" }
+-    });
++    const tasks = memoryTasks.get(user.id) ?? [];
+     return { tasks };
+   });
+@@ -157,8 +166,11 @@ export function buildApp() {
+-    const task = await prisma.task.create({
+-      data: {
+-        title,
+-        userId: user.id
+-      }
+-    });
++    const task = {
++      id: nextMemoryTaskId++,
++      title,
++      completed: false,
++      userId: user.id,
++      createdAt: new Date(),
++      updatedAt: new Date()
++    };
++    memoryTasks.set(user.id, [...(memoryTasks.get(user.id) ?? []), task]);
+     return reply.code(201).send({ task });
+   });

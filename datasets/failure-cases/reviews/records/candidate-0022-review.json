@@ -1,0 +1,37 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0022",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/cline/cline/issues/10582",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "open",
+  "source_fact_summary": "Issue 记录 Agent 在 go.mod 中写入 HTML 注释；该语法无效，来源称会导致构建错误。",
+  "unsupported_claims": [
+    "来源声称会构建失败，但没有保存实际构建输出。"
+  ],
+  "suggested_primary_category": "incomplete_edge_cases",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "来源描述文件类型特定语法未处理，且构建本身会失败，不满足 build_runtime_mismatch 定义。",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "仓库候选仅保留公开标题、URL 与短摘要，未发现需新增脱敏的个人或凭据信息。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "weak",
+  "suggested_severity": "medium",
+  "severity_reason": "影响普通工具能力或一致性，有绕过或范围受限，建议中等严重度。",
+  "missing_information": [
+    "缺少完整环境、连续操作步骤和可保存的原始输出。",
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [
+    "title",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

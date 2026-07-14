@@ -1,0 +1,39 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0025",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/microsoft/vscode-copilot-release/issues/13062",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "closed",
+  "source_fact_summary": "Issue 记录 Agent 表现为正在编辑，但现有文件未变化且新文件为空；评论确认多种相似现象，也包含模式配置混淆。",
+  "unsupported_claims": [
+    "评论包含 Ask/Agent 模式混淆、工具缺失和大文件等多种原因，不能统一归因为单一编辑缺陷。"
+  ],
+  "suggested_primary_category": "superficial_completion",
+  "suggested_secondary_categories": [
+    "missing_implementation"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "仓库候选仅保留公开标题、URL 与短摘要，未发现需新增脱敏的个人或凭据信息。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "medium",
+  "suggested_severity": "high",
+  "severity_reason": "影响关键代码修改、执行链路或重要工作区状态，建议高严重度供人工确认。",
+  "missing_information": [
+    "缺少部分环境、版本或稳定复现条件。",
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [
+    "title",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

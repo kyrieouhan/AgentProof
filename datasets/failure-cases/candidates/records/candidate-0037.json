@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1037",
+  "title": "Code agent copied a fixed docs/plans path into generic scaffolded skills",
+  "normalized_title": "代码 Agent 将固定 docs plans 路径复制进通用脚手架技能",
+  "primary_category": "hardcoded_behavior",
+  "secondary_categories": [],
+  "description": "M0-02B-2 未核实候选：公开来源称代码 Agent 修改会部署到多个仓库的通用脚手架技能时，把 Issue 中的 docs/plans 路径示例直接写入模板；人工审阅要求移除这些特定路径引用，因为不同目标仓库并不共享该目录结构。",
+  "root_cause": "收集者初步推测：代码 Agent 把来源中的单一仓库路径当作通用规则，而没有将其抽象为与目录布局无关的内容判据。该判断不是来源已确认的根因结论。",
+  "trigger_condition": "代码 Agent 修改面向多个目标仓库部署的脚手架技能，并把来源 Issue 的具体目录示例写入模板。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Code agent should treat scaffolded skill definitions as generic templates",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1909",
+    "source_date": "2026-06-04",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、凭据、完整 Diff 或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "Markdown skill template",
+    "Scaffold generator",
+    "Multi-repository delivery"
+  ],
+  "reproduction_status": "not_attempted",
+  "reproduction": {
+    "prerequisites": [
+      "需要在隔离环境中取得来源关联的公开脚手架模板和至少两个目录结构不同的测试仓库。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "公开来源关联的脚手架技能生成场景；本项目尚未准备或执行隔离复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [],
+    "expected_behavior": "通用脚手架模板应使用与仓库布局无关的内容规则，不能只依赖某个目标仓库的固定目录。",
+    "actual_behavior": "来源页面陈述的候选现象：代码 Agent 将 docs/plans 路径写入部署到多个仓库的通用模板，人工审阅要求移除这些路径引用。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 的必要摘要整理；尚未由项目人员核实模板渲染结果、实际受影响仓库、许可或复现条件。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "portable_path_matrix_check",
+      "description": "比较模板 Diff，并在目录布局不同的受控仓库中检查生成技能是否依赖固定 docs/plans 路径。",
+      "proves": "可证明给定模板版本是否把特定仓库路径当作必要条件，以及替代布局是否会失去预期技能覆盖。",
+      "does_not_prove": "不能单独证明所有生成内容都符合业务语义，也不能代替来源核实、人工去重或最终审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "git_diff",
+    "file_hash",
+    "test_output"
+  ],
+  "severity": "medium",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "本批次仅完成 URL、标题和失效机制初筛；需人工比较与其他固定目录或模板候选是否同一根因。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-2 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0037; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=来源页面称代码 Agent 在通用脚手架技能中复制 docs/plans 路径示例，人工审阅要求删除这些特定路径引用。; collector_inference=主分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=false; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对关联 PR 的模板内容、实际生成结果、受影响目录布局、来源许可、可复现条件及是否与其他候选同根因。"
+}

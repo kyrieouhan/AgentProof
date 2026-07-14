@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentproof.dev/schemas/failure-case-review/1.0.0/review-record-schema.json",
+  "title": "AgentProof M0 Candidate Review Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_schema_version",
+    "candidate_id",
+    "source_accessible",
+    "source_check_result",
+    "checked_url",
+    "source_checked_on",
+    "source_issue_state",
+    "source_fact_summary",
+    "unsupported_claims",
+    "suggested_primary_category",
+    "suggested_secondary_categories",
+    "category_change_reason",
+    "deduplication_result",
+    "possible_duplicate_ids",
+    "privacy_findings",
+    "redaction_required",
+    "reproduction_information_quality",
+    "suggested_severity",
+    "severity_reason",
+    "missing_information",
+    "recommended_action",
+    "review_group",
+    "candidate_fields_corrected",
+    "manual_confirmation_required",
+    "notes"
+  ],
+  "properties": {
+    "review_schema_version": {"const": "1.0.0"},
+    "candidate_id": {"type": "string", "pattern": "^candidate-[0-9]{4}$"},
+    "source_accessible": {"type": "boolean"},
+    "source_check_result": {
+      "enum": ["verified_match", "verified_partial", "unverifiable_access", "unverifiable_content", "mismatch", "duplicate_source", "out_of_scope", "privacy_or_license_risk"]
+    },
+    "checked_url": {"type": "string", "format": "uri", "pattern": "^https://github\\.com/"},
+    "source_checked_on": {"type": "string", "format": "date"},
+    "source_issue_state": {"enum": ["open", "closed", "unknown"]},
+    "source_fact_summary": {"type": "string", "minLength": 20, "maxLength": 2000},
+    "unsupported_claims": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 5, "maxLength": 1000}},
+    "suggested_primary_category": {"$ref": "#/$defs/category"},
+    "suggested_secondary_categories": {"type": "array", "uniqueItems": true, "maxItems": 5, "items": {"$ref": "#/$defs/category"}},
+    "category_change_reason": {"type": "string", "minLength": 10, "maxLength": 1000},
+    "deduplication_result": {"enum": ["no_duplicate_signal", "duplicate_external_source", "merge_candidate", "primary_for_merge_suggestion", "not_assessed_out_of_scope"]},
+    "possible_duplicate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^candidate-[0-9]{4}$"}},
+    "privacy_findings": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 10, "maxLength": 1000}},
+    "redaction_required": {"type": "boolean"},
+    "reproduction_information_quality": {"enum": ["strong", "medium", "weak", "not_applicable", "unknown"]},
+    "suggested_severity": {"enum": ["informational", "low", "medium", "high", "blocking"]},
+    "severity_reason": {"type": "string", "minLength": 10, "maxLength": 1000},
+    "missing_information": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 5, "maxLength": 1000}},
+    "recommended_action": {"enum": ["accept_for_manual_review", "needs_correction", "needs_more_evidence", "merge_with_candidate", "reject_duplicate", "reject_out_of_scope", "reject_unverifiable", "reject_privacy_or_license_risk"]},
+    "review_group": {"enum": ["A", "B", "C"]},
+    "candidate_fields_corrected": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2, "maxLength": 100}},
+    "agentproof_scope": {"enum": ["core_in_scope", "secondary_research", "out_of_scope"]},
+    "detectable_by_mvp": {"enum": ["yes", "partially", "no"]},
+    "applicable_mvp_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["git_diff", "build", "existing_tests", "api", "database", "playwright", "file_or_config", "repeated_runs", "security_boundary"]
+      }
+    },
+    "delivery_artifact_involved": {"type": "boolean"},
+    "completion_claim_involved": {"type": "boolean"},
+    "scope_reason": {"type": "string", "minLength": 20, "maxLength": 2000},
+    "final_scope_recommendation": {"enum": ["keep_for_final_review", "keep_as_secondary_research", "reject_scope"]},
+    "manual_confirmation_required": {"const": true},
+    "notes": {"type": "string", "minLength": 20, "maxLength": 2000}
+  },
+  "$defs": {
+    "category": {
+      "enum": ["missing_implementation", "superficial_completion", "weakened_tests", "authorization_bypass", "hardcoded_behavior", "non_persistent_state", "ui_api_inconsistency", "build_runtime_mismatch", "incomplete_edge_cases", "false_completion_claim", "data_integrity_failure", "security_regression", "nondeterministic_result", "environment_dependency", "needs_review"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"source_accessible": {"const": false}}, "required": ["source_accessible"]},
+      "then": {"properties": {"source_check_result": {"const": "unverifiable_access"}}}
+    },
+    {
+      "if": {"properties": {"deduplication_result": {"enum": ["merge_candidate", "primary_for_merge_suggestion"]}}, "required": ["deduplication_result"]},
+      "then": {"properties": {"possible_duplicate_ids": {"minItems": 1}}}
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@agentproof/minimal-npm-files",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal npm file manifest sample for AgentProof M1 runner repeatability.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "start": "node src/server.mjs"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1004",
+  "title": "App-server process fails with ENOENT due to incorrect binary path (codex/codex vs bin/codex) on macOS ARM64",
+  "normalized_title": "macOS ARM64 安装后 app-server 因二进制路径错误无法启动",
+  "primary_category": "build_runtime_mismatch",
+  "secondary_categories": [
+    "environment_dependency"
+  ],
+  "description": "M0-02 未核实候选：全局安装完成后 app-server 立即以 ENOENT 失败，包装器查找路径与实际安装路径不同。 来源页面可公开访问，但尚未经过人工来源核实、去重、脱敏复核或本地复现。",
+  "root_cause": "收集者初步推测：发布包内包装器和原生二进制布局可能漂移。 该判断不是来源已确认结论。",
+  "trigger_condition": "在 macOS ARM64 全局安装指定包后启动 app-server。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "App-server process fails with ENOENT due to incorrect binary path (codex/codex vs bin/codex) on macOS ARM64",
+    "source_reference": "https://github.com/openai/codex/issues/31840",
+    "source_date": "2026-07-09",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、邮箱、凭据、附件内容或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Codex CLI",
+    "Node.js package",
+    "macOS ARM64"
+  ],
+  "reproduction_status": "steps_available",
+  "reproduction": {
+    "prerequisites": [
+      "仅在隔离环境中使用无敏感数据的测试仓库。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "待人工从来源核实并准备隔离环境；Codex 在 M0-02 未执行复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [
+      "按公开 Issue #31840 中记录的环境准备对应工具。",
+      "在 macOS ARM64 全局安装指定包后启动 app-server。",
+      "记录实际输出、文件状态与退出状态；本候选尚未执行该步骤。"
+    ],
+    "expected_behavior": "工具应完成请求的代码或运行操作，并让结构化状态、实际文件、测试和运行结果保持一致。",
+    "actual_behavior": "来源页面陈述的候选现象：全局安装完成后 app-server 立即以 ENOENT 失败，包装器查找路径与实际安装路径不同。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 正文整理；尚未由项目人员核实来源细节，也未在 AgentProof 环境复现。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "build_start_smoke_check",
+      "description": "在隔离环境中围绕“macOS ARM64 安装后 app-server 因二进制路径错误无法启动”执行确定性前后对照，并保存结构化状态与原始输出。",
+      "proves": "若按记录条件执行，可证明该次运行的实际状态是否与需求及完成声明一致。",
+      "does_not_prove": "不能证明所有版本和环境都受影响，也不能代替来源核实、根因分析或最终人工审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "build_log",
+    "exit_code",
+    "console_log"
+  ],
+  "severity": "high",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "M0-02 仅完成 URL 与标题自动初筛；根因级去重必须由人工确认。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0004; agent_or_tool=Codex; collected_at=2026-07-11; source_stated_facts=来源给出错误码、期望路径、实际路径、启动命令和符号链接绕过结果。; collector_inference=分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=true; possible_duplicate=false; priority_human_review=false; pending_human_questions=核对原文上下文、评论、版本、许可、根因、复现条件与分类。"
+}

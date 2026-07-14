@@ -1,0 +1,37 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0011",
+  "source_accessible": true,
+  "source_check_result": "out_of_scope",
+  "checked_url": "https://github.com/anthropics/claude-code/issues/75495",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "open",
+  "source_fact_summary": "Issue 记录 Agent 视图删除完成会话后重新出现，同一会话还可能重复渲染。",
+  "unsupported_claims": [],
+  "suggested_primary_category": "non_persistent_state",
+  "suggested_secondary_categories": [
+    "nondeterministic_result"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "not_assessed_out_of_scope",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "仓库候选仅保留公开标题、URL 与短摘要，未发现需新增脱敏的个人或凭据信息。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "medium",
+  "suggested_severity": "medium",
+  "severity_reason": "影响普通工具能力或一致性，有绕过或范围受限，建议中等严重度。",
+  "missing_information": [
+    "缺少部分环境、版本或稳定复现条件。",
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "reject_out_of_scope",
+  "review_group": "C",
+  "candidate_fields_corrected": [
+    "title",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

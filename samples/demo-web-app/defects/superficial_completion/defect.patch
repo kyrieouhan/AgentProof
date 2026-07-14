@@ -1,0 +1,20 @@
+diff --git a/src/app.ts b/src/app.ts
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -157,8 +157,10 @@ export function buildApp() {
+-    const task = await prisma.task.create({
+-      data: {
+-        title,
+-        userId: user.id
+-      }
+-    });
++    const task = {
++      id: Date.now(),
++      title,
++      completed: false,
++      userId: user.id,
++      createdAt: new Date(),
++      updatedAt: new Date()
++    };
+     return reply.code(201).send({ task });
+   });

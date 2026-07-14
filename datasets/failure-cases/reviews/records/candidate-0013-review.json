@@ -1,0 +1,34 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0013",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/Aider-AI/aider/issues/3651",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "open",
+  "source_fact_summary": "Issue 记录 Aider 能描述修改，但 SEARCH/REPLACE 块无法匹配，因此代码没有被修改。",
+  "unsupported_claims": [],
+  "suggested_primary_category": "missing_implementation",
+  "suggested_secondary_categories": [
+    "environment_dependency"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "外部原文含示例文件路径，仓库仅保留文件类型和错误类别。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "medium",
+  "suggested_severity": "medium",
+  "severity_reason": "影响普通工具能力或一致性，有绕过或范围受限，建议中等严重度。",
+  "missing_information": [
+    "缺少部分环境、版本或稳定复现条件。",
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

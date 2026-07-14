@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1032",
+  "title": "Code agent added SSL validator tests that exercised mock credentials but not protocol selection",
+  "normalized_title": "代码 Agent 新增 SSL 验证器测试只覆盖 Mock 凭据而未覆盖协议选择",
+  "primary_category": "weakened_tests",
+  "secondary_categories": [],
+  "description": "M0-02B-1 未核实候选：公开来源称代码 Agent 修复 Elasticsearch 验证器的 use_ssl 协议选择后新增测试，但验证器的 testing 模式只检查 Mock 凭据，既不构造 URL 也不检查协议；来源页面称这些测试即使撤销协议修复仍会通过。",
+  "root_cause": "收集者初步推测：代码 Agent 沿用了只验证 Mock 凭据的测试路径，导致新增断言没有覆盖声称修复的协议分支。该判断不是来源已确认的根因结论。",
+  "trigger_condition": "代码 Agent 为 Elasticsearch 验证器的 use_ssl 协议选择修复新增或修改测试。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Code agent should verify new tests exercise the specific code path being changed, not just adjacent mock logic",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/4057",
+    "source_date": "2026-07-10",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、凭据、附件内容、完整 Diff 或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "Go",
+    "Elasticsearch validator",
+    "Mock testing path"
+  ],
+  "reproduction_status": "not_attempted",
+  "reproduction": {
+    "prerequisites": [
+      "需要在隔离环境中取得来源关联的公开项目版本和验证器测试依赖。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "公开来源关联目标项目的验证器测试场景；本项目尚未准备或执行隔离复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [],
+    "expected_behavior": "新增 SSL 测试应能区分 use_ssl 对 URL 协议选择的真实影响，而不仅验证测试模式中的凭据匹配。",
+    "actual_behavior": "来源页面陈述的候选现象：新增 SSL 测试只经由 Mock 凭据分支，未构造 URL 或断言协议，因此撤销协议修复后仍会通过。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 的必要摘要整理；尚未由项目人员核实原始 PR、Mock 实现、许可或复现条件。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "mock_path_mutation_check",
+      "description": "检查测试所走的 Mock 路径，并在受控副本中撤销协议选择逻辑，观察新增 SSL 测试是否仍全部通过。",
+      "proves": "若撤销协议选择逻辑后测试仍通过，可证明该测试没有独立覆盖目标协议分支。",
+      "does_not_prove": "不能单独确认生产环境连接行为，也不能代替来源核实、人工去重或最终审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "git_diff",
+    "test_output",
+    "configuration_diff"
+  ],
+  "severity": "medium",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "本批次仅完成 URL、标题和失效机制初筛；需人工比较与其他 Mock 绕过候选是否同一根因。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-1 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0032; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=来源页面称关联代码 Agent PR 新增的 SSL 测试只检查 testing 模式中的 Mock 凭据，未构造 URL 或验证协议，撤销协议修复后仍会通过。; collector_inference=主分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=false; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对关联 PR 的测试和生产路径、Mock 行为、来源许可、可复现条件及是否与其他候选同根因。"
+}

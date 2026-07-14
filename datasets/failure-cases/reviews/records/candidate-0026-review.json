@@ -1,0 +1,42 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0026",
+  "source_accessible": true,
+  "source_check_result": "verified_partial",
+  "checked_url": "https://github.com/microsoft/vscode-copilot-release/issues/11236",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "closed",
+  "source_fact_summary": "Issue 记录 Remote SSH 编辑被写入本机路径；评论显示原报告者移除把扩展固定到 UI 的非默认配置后恢复。",
+  "unsupported_claims": [
+    "通用路径转换缺陷的归因过宽；原报告者通过移除非默认扩展运行位置配置恢复。"
+  ],
+  "suggested_primary_category": "data_integrity_failure",
+  "suggested_secondary_categories": [
+    "environment_dependency"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "merge_candidate",
+  "possible_duplicate_ids": [
+    "candidate-0029"
+  ],
+  "privacy_findings": [
+    "外部原文含本机与远端绝对路径，仓库候选已经抽象为 Remote SSH 路径差异。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "high",
+  "severity_reason": "影响关键代码修改、执行链路或重要工作区状态，建议高严重度供人工确认。",
+  "missing_information": [
+    "需要人工比较 candidate-0029 的评论、扩展运行位置和网络约束。",
+    "需要决定是否把本条合并为 candidate-0029 的补充来源。"
+  ],
+  "recommended_action": "merge_with_candidate",
+  "review_group": "C",
+  "candidate_fields_corrected": [
+    "title",
+    "root_cause",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

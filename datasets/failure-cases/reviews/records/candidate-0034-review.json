@@ -1,0 +1,42 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0034",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/fullsend-ai/fullsend/issues/1192",
+  "source_checked_on": "2026-07-12",
+  "source_issue_state": "open",
+  "source_fact_summary": "The public issue says a code agent added a test asserting that a dry-run install command returned no error, but dry-run short-circuited before the Google Cloud API branch where the auto-skip behavior should have run. The source says the test would pass even if the skip behavior were removed.",
+  "unsupported_claims": [],
+  "suggested_primary_category": "weakened_tests",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "No category change suggested: the source explicitly describes a success assertion that bypasses the behavior it claims to validate.",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "Only public GitHub issue or PR links and short factual summaries are retained; no credentials, private files, raw logs, or local absolute paths were copied."
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "medium",
+  "severity_reason": "The test could give false confidence for install behavior that matters in a real non-dry-run path.",
+  "missing_information": [
+    "Manual review should inspect the command path and decide whether a non-dry-run mocked API check is required for reproduction."
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "agentproof_scope": "core_in_scope",
+  "detectable_by_mvp": "yes",
+  "applicable_mvp_capabilities": [
+    "git_diff",
+    "existing_tests",
+    "file_or_config"
+  ],
+  "delivery_artifact_involved": true,
+  "completion_claim_involved": true,
+  "scope_reason": "This is a project-delivery test artifact that does not exercise the intended runtime branch. Existing tests plus a branch-coverage or mutation check can independently detect that dry-run bypasses the target logic.",
+  "final_scope_recommendation": "keep_for_final_review",
+  "manual_confirmation_required": true,
+  "notes": "Codex review suggestion only: public-source accessibility and category/scope recommendations do not mark the candidate source_verified, approved, or reproduced. Manual confirmation remains required."
+}

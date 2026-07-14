@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1039",
+  "title": "Code-agent PR passed pre-commit and tests but shipped unreachable skopeo optimization",
+  "normalized_title": "Code agent PR passed pre commit and tests but shipped unreachable skopeo optimization",
+  "primary_category": "build_runtime_mismatch",
+  "secondary_categories": [],
+  "description": "M0-02B-3 unverified candidate: public sources say a Fullsend code-agent PR added a skopeo-based digest comparison to skip sandbox image pulls. The PR's post-script verification reported pre-commit hooks passed and tests ran in the sandbox, but the target GitHub Actions runners did not have skopeo installed, so the optimization could never activate at runtime.",
+  "root_cause": "Collector inference: verification accepted a graceful fallback and did not assert that the newly introduced runtime dependency was available in the deployment environment where the feature's stated value proposition had to execute. This is not a source-confirmed final root cause.",
+  "trigger_condition": "Run the sandbox image cache optimization path on a GitHub Actions runner where skopeo is absent from PATH.",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Review agent should verify PRs achieve their stated goals given the deployment environment",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2235",
+    "source_date": "2026-06-12",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "Public GitHub issue; this candidate stores only the link and a short factual summary, with publication permissions still pending human review.",
+    "can_publish": true,
+    "redaction_notes": "No usernames, credentials, full diffs, or local absolute paths were copied into this record."
+  },
+  "additional_sources": [
+    {
+      "source_type": "public_github_issue",
+      "source_title": "perf(#2222): skip sandbox image pull when cached digest matches remote",
+      "source_reference": "https://github.com/fullsend-ai/fullsend/pull/2227",
+      "source_date": "2026-06-12",
+      "source_verification_status": "source_pending",
+      "verified": false,
+      "verified_at": null,
+      "verification_method": null,
+      "verification_actor_type": "not_applicable",
+      "verified_by_role": null,
+      "permission_or_authorization": "Public GitHub pull request; this candidate stores only the link and a short factual summary, with publication permissions still pending human review.",
+      "can_publish": true,
+      "redaction_notes": "No usernames, credentials, full diffs, or local absolute paths were copied into this record."
+    }
+  ],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "GitHub Actions",
+    "Shell script",
+    "podman",
+    "skopeo",
+    "pre-commit"
+  ],
+  "reproduction_status": "steps_available",
+  "reproduction": {
+    "prerequisites": [
+      "Use an isolated checkout of the public fullsend repository.",
+      "Use PR #2227 or an equivalent branch with the skopeo digest-comparison logic.",
+      "Run the relevant action or script in an environment where skopeo is not installed."
+    ],
+    "repository_or_demo_version": "fullsend-ai/fullsend PR #2227 / commit d002b609eca9cdb6bd3dc22f882570c582637da1",
+    "commit": "d002b609eca9cdb6bd3dc22f882570c582637da1",
+    "environment": "GitHub Actions runner scenario described by issue #2235; AgentProof has not reproduced it locally.",
+    "install_command": null,
+    "start_command": null,
+    "steps": [
+      "Inspect PR #2227 and confirm its post-script verification reports pre-commit hooks passed and tests ran inside the sandbox.",
+      "Run the sandbox image pull path on a GitHub Actions-style runner without skopeo in PATH.",
+      "Observe that the digest check is skipped through the missing-tool branch and the workflow falls back to unconditional image pull.",
+      "Compare with an environment where skopeo is installed and the digest-check path can actually execute."
+    ],
+    "expected_behavior": "A PR whose stated goal is to skip image pulls when digests match should make that optimization reachable in the deployment environment after passing pre-commit and sandbox tests.",
+    "actual_behavior": "The public issue and PR comments report that the code-agent PR passed its stated checks but did not install skopeo, so the optimization never fired on GitHub Actions runners.",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "This candidate is based on public issue and PR summaries only; human review still needs to verify logs, action image contents, source license, and a minimal deterministic reproduction."
+  },
+  "expected_detection_methods": [
+    {
+      "method": "post_build_runtime_dependency_smoke_check",
+      "description": "After pre-commit and tests pass, run the action path in the target runner image and assert both the dependency availability and the digest-skip branch behavior.",
+      "proves": "Can show whether the verified code path is actually reachable at runtime in the target deployment environment.",
+      "does_not_prove": "Does not prove every registry or cache scenario works, nor does it replace human source verification, root-cause review, or final approval.",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "test_output",
+    "build_log",
+    "console_log",
+    "exit_code",
+    "configuration_diff"
+  ],
+  "severity": "medium",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "Collection phase keeps only public issue and PR links plus short factual summaries; final redaction review is pending.",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "Current text avoids personal names, account handles, credentials, raw logs, and local absolute paths; comments and attachments were not imported."
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "M0-02B-3 only performed URL, title, and failure-mechanism screening; root-cause-level deduplication remains pending.",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-3 public-source candidate, waiting for M0-03 source verification, deduplication, privacy review, and reproduction decision.",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0039; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=Issue #2235 says the code agent created PR #2227, the PR used skopeo inspect for digest comparison, GHA runners did not have skopeo pre-installed, and the optimization could never activate; PR #2227 reports pre-commit hooks passed and tests ran inside the sandbox.; collector_inference=Primary category, root cause, severity, and detection method are provisional; has_reproduction_steps=true; possible_duplicate=false; priority_human_review=true; pending_human_questions=Verify PR checks, runner image contents, action script path, license, and whether the no-skopeo runner smoke test is sufficient for reproduction."
+}

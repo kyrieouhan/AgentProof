@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentproof.local/schemas/runner-profile.schema.json",
+  "title": "AgentProof M1 RunnerProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repo_path",
+    "commit",
+    "image",
+    "workdir",
+    "node_version",
+    "package_manager",
+    "commands",
+    "healthcheck",
+    "port",
+    "env_allowlist",
+    "resource_limits",
+    "network_policy",
+    "mount_policy",
+    "evidence_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0-m1"
+    },
+    "repo_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "commit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "image": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workdir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "node_version": {
+      "const": "20"
+    },
+    "package_manager": {
+      "enum": [
+        "npm",
+        "pnpm"
+      ]
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "install",
+        "build",
+        "test",
+        "start"
+      ],
+      "properties": {
+        "install": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "array",
+              "maxItems": 0
+            }
+          ]
+        },
+        "start": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "healthcheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "path",
+        "expected_status",
+        "timeout_ms",
+        "retries"
+      ],
+      "properties": {
+        "method": {
+          "enum": [
+            "GET",
+            "POST"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "expected_status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "env_allowlist": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "source"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z_][A-Z0-9_]*$"
+          },
+          "source": {
+            "enum": [
+              "runner",
+              "temporary_file",
+              "temporary_value"
+            ]
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "resource_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpu",
+        "memory_mb",
+        "pids",
+        "disk_mb",
+        "file_count",
+        "stdout_stderr_mb",
+        "command_timeout_ms",
+        "service_start_timeout_ms"
+      ],
+      "properties": {
+        "cpu": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memory_mb": {
+          "type": "integer",
+          "minimum": 128
+        },
+        "pids": {
+          "type": "integer",
+          "minimum": 16
+        },
+        "disk_mb": {
+          "type": "integer",
+          "minimum": 128
+        },
+        "file_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stdout_stderr_mb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "command_timeout_ms": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "service_start_timeout_ms": {
+          "type": "integer",
+          "minimum": 1000
+        }
+      }
+    },
+    "network_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default",
+        "install_phase"
+      ],
+      "properties": {
+        "default": {
+          "const": "deny"
+        },
+        "install_phase": {
+          "enum": [
+            "restricted_dependency_sources",
+            "deny"
+          ]
+        }
+      }
+    },
+    "mount_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "docker_socket",
+        "host_home",
+        "ssh_keys",
+        "real_env_files",
+        "rules",
+        "workspace"
+      ],
+      "properties": {
+        "docker_socket": {
+          "const": "forbidden"
+        },
+        "host_home": {
+          "const": "forbidden"
+        },
+        "ssh_keys": {
+          "const": "forbidden"
+        },
+        "real_env_files": {
+          "const": "forbidden"
+        },
+        "rules": {
+          "const": "read_only"
+        },
+        "workspace": {
+          "const": "temporary_copy"
+        }
+      }
+    },
+    "evidence_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capture_stdout_stderr",
+        "hash_outputs",
+        "redact_secrets",
+        "treat_target_outputs_as_untrusted"
+      ],
+      "properties": {
+        "capture_stdout_stderr": {
+          "const": true
+        },
+        "hash_outputs": {
+          "const": true
+        },
+        "redact_secrets": {
+          "const": true
+        },
+        "treat_target_outputs_as_untrusted": {
+          "const": true
+        }
+      }
+    }
+  }
+}

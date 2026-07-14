@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1033",
+  "title": "Code agent wrote a column-alignment test with equal values that left padding untested",
+  "normalized_title": "代码 Agent 使用相同值编写列对齐测试导致填充逻辑未被验证",
+  "primary_category": "weakened_tests",
+  "secondary_categories": [],
+  "description": "M0-02B-1 未核实候选：公开来源称代码 Agent 新增目录选择器列对齐测试时，两个条目都使用相同的会话数量，生成等长文本，令 rjust 填充成为无操作；来源页面称即使移除对齐逻辑，该测试仍会通过。",
+  "root_cause": "收集者初步推测：代码 Agent 选择的 Fixture 值没有制造可观察差异，使断言无法区分对齐逻辑存在或缺失。该判断不是来源已确认的根因结论。",
+  "trigger_condition": "代码 Agent 为目录选择器的列对齐或填充逻辑新增测试。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Code agent should write tests with values that exercise the logic under test",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1851",
+    "source_date": "2026-06-03",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、凭据、附件内容、完整 Diff 或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "Go",
+    "Terminal UI",
+    "Test fixture"
+  ],
+  "reproduction_status": "not_attempted",
+  "reproduction": {
+    "prerequisites": [
+      "需要在隔离环境中取得来源关联的公开项目版本和目录选择器测试依赖。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "公开来源关联目标项目的终端 UI 测试场景；本项目尚未准备或执行隔离复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [],
+    "expected_behavior": "列对齐测试应使用不同宽度的输入，并在移除填充或对齐逻辑时失败。",
+    "actual_behavior": "来源页面陈述的候选现象：代码 Agent 使用相同会话数量生成等长文本，导致填充成为无操作，测试无法验证对齐逻辑。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 的必要摘要整理；尚未由项目人员核实原始 PR、Fixture 选择、许可或复现条件。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "test_input_effect_check",
+      "description": "检查测试 Fixture 是否产生不同宽度的输出，并在受控副本中移除填充逻辑，确认测试是否会失败。",
+      "proves": "若移除填充逻辑后测试仍通过，可证明原 Fixture 和断言没有独立验证对齐行为。",
+      "does_not_prove": "不能单独证明所有终端渲染路径正确，也不能代替来源核实、人工去重或最终审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "git_diff",
+    "test_output",
+    "file_hash"
+  ],
+  "severity": "low",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "本批次仅完成 URL、标题和失效机制初筛；需人工比较与其他无效 Fixture 或断言候选是否同一根因。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-1 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0033; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=来源页面称关联代码 Agent PR 的列对齐测试让两个条目使用相同会话数量和等长文本，因而填充逻辑即使移除也不会令测试失败。; collector_inference=主分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=false; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对关联 PR 的完整测试修改、后续人工修正、来源许可、可复现条件及是否与其他候选同根因。"
+}

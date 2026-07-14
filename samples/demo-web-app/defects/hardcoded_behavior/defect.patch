@@ -1,0 +1,10 @@
+diff --git a/src/app.ts b/src/app.ts
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -87,3 +87,6 @@ export function buildApp() {
+     if (!password) {
+       return reply.code(400).send({ error: "Password must be at least 8 characters." });
+     }
++    if (email !== "demo@example.com") {
++      return reply.code(400).send({ error: "Only the demo account can register." });
++    }

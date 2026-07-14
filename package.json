@@ -1,0 +1,39 @@
+{
+  "name": "agentproof",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AgentProof local MVP CLI and runner contracts.",
+  "type": "module",
+  "bin": {
+    "agentproof": "./bin/agentproof.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "agentproof": "node bin/agentproof.mjs",
+    "demo:install": "cd samples/demo-web-app && corepack pnpm install --frozen-lockfile && corepack pnpm run prisma:generate",
+    "docker:check": "node bin/agentproof.mjs docker check --json",
+    "lint": "node --check bin/agentproof.mjs && node --check src/runner-profile.mjs && node --check src/docker-preflight.mjs && node --check src/docker-runner.mjs && node --check src/runner-policy.mjs && node --check src/domain/status.mjs && node --check src/domain/schemas.mjs && node --check src/domain/acceptance-versions.mjs && node --check src/domain/assertions.mjs && node --check src/domain/test-data.mjs && node --check src/domain/redaction.mjs && node --check src/domain/manifest.mjs && node --check src/domain/report.mjs && node --check src/domain/browser-flow.mjs && node --check src/domain/browser-evidence.mjs && node --check src/domain/joined-assertions.mjs && node --check src/domain/diff-risk.mjs && node --check src/domain/readonly-rules.mjs && node --check src/domain/hardcoded-detection.mjs && node --check src/web/server.mjs && node --check scripts/run-m1-repeatability.mjs && node --check scripts/run-m1-isolation-smoke.mjs && node --check scripts/generate-domain-schemas.mjs && node --check scripts/run-m2-demo-regression.mjs && node --check scripts/run-m3-browser-smoke.mjs && node --check scripts/run-m3-diff-risk-smoke.mjs && node --check scripts/run-m3-hardcoded-smoke.mjs && node --check scripts/run-m3-regression.mjs && node --check scripts/start-web.mjs && node --check scripts/run-m3-web-smoke.mjs",
+    "m1:isolation": "node scripts/run-m1-isolation-smoke.mjs --repo-root .",
+    "m1:repeatability": "node scripts/run-m1-repeatability.mjs --repo-root .",
+    "m2:demo-regression": "node scripts/run-m2-demo-regression.mjs --repo-root .",
+    "m3:browser-smoke": "node scripts/run-m3-browser-smoke.mjs --repo-root .",
+    "m3:diff-risk": "node scripts/run-m3-diff-risk-smoke.mjs --repo-root .",
+    "m3:hardcoded": "node scripts/run-m3-hardcoded-smoke.mjs --repo-root .",
+    "m3:regression": "node scripts/run-m3-regression.mjs --repo-root .",
+    "m3:web-smoke": "node scripts/run-m3-web-smoke.mjs --repo-root .",
+    "postinstall": "npm run demo:install",
+    "profile:validate": "node bin/agentproof.mjs profile validate --profile samples/demo-web-app/agentproof.runner-profile.json --repo-root .",
+    "run:demo": "node bin/agentproof.mjs run --profile samples/demo-web-app/agentproof.runner-profile.json --repo-root . --commands --json",
+    "schema:generate": "node scripts/generate-domain-schemas.mjs --repo-root .",
+    "smoke:docker": "node bin/agentproof.mjs run --profile samples/demo-web-app/agentproof.runner-profile.json --repo-root . --lifecycle-smoke --json",
+    "test": "node --test tests/*.test.mjs",
+    "web:dev": "node scripts/start-web.mjs --host 127.0.0.1 --port 4173",
+    "web:start": "node scripts/start-web.mjs --host 127.0.0.1 --port 4173"
+  },
+  "dependencies": {
+    "playwright-core": "1.61.1",
+    "zod": "4.4.3"
+  }
+}

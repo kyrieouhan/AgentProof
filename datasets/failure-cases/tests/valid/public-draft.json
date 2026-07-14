@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2099-0001",
+  "title": "测试夹具：结构完整的公开来源草稿候选",
+  "normalized_title": "结构完整的公开来源草稿候选",
+  "primary_category": "missing_implementation",
+  "secondary_categories": [],
+  "description": "这是仅用于校验器正向测试的完整草稿夹具，不对应真实链接、事故、用户或正式失败案例。",
+  "root_cause": "测试设定为某项要求尚未实现，但没有声称该设定来自真实项目。",
+  "trigger_condition": "读取这个测试夹具并执行结构与语义校验。",
+  "primary_source": {
+    "source_type": "public_bug_report",
+    "source_title": "测试夹具：待核实的公开错误报告候选（非真实来源）",
+    "source_reference": null,
+    "source_date": null,
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "仅用于本地测试；没有引用或授权任何真实外部材料。",
+    "can_publish": false,
+    "redaction_notes": "完全合成的测试数据，不含个人、组织、仓库或业务信息。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Node.js",
+    "TypeScript",
+    "Web"
+  ],
+  "reproduction_status": "not_attempted",
+  "reproduction": {
+    "prerequisites": [],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "测试夹具；未运行任何项目或外部服务。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [],
+    "expected_behavior": "结构与语义校验器应接受这个完整但尚未核实和复现的草稿记录。",
+    "actual_behavior": "该记录仅用于校验输入格式，不代表任何真实行为或测试结果。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "测试夹具不是正式 failure case，也不能用于证明检测能力。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "fixture_semantic_validation",
+      "description": "检查测试夹具是否满足冻结的数据结构和跨字段语义规则。",
+      "proves": "可以证明该测试输入是否满足当前校验规则。",
+      "does_not_prove": "不能证明任何真实项目缺陷存在或 AgentProof 已实现检测器。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "manual_observation"
+  ],
+  "severity": "informational",
+  "privacy_redaction": {
+    "status": "not_required",
+    "redacted_items": [],
+    "method": "从零构造测试字段，不引入真实材料。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "测试夹具不含真实个人或业务数据。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "测试夹具不参与正式案例去重。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "测试夹具保持 draft，不得自动批准。",
+    "rejection_reason": null
+  },
+  "is_example": true,
+  "notes": "TEST FIXTURE ONLY；位于 tests/，不得进入 cases/，不得计入 M0。"
+}

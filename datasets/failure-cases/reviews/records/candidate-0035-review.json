@@ -1,0 +1,43 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0035",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/fullsend-ai/fullsend/issues/2345",
+  "source_checked_on": "2026-07-12",
+  "source_issue_state": "closed",
+  "source_fact_summary": "The public issue says the code-agent reusable workflow hardcoded TARGET_BRANCH to main, using it for merge-base and PR base selection. It says repositories whose default branches are master, develop, or release branches fail after the agent pushes a branch, when PR creation targets the wrong base.",
+  "unsupported_claims": [
+    "The source proves a defect in the code-agent delivery workflow, but does not establish that the hardcoded workflow itself was authored by an AI coding Agent."
+  ],
+  "suggested_primary_category": "hardcoded_behavior",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "No category change suggested: the source directly identifies a fixed branch name that makes the workflow work only for main-based repositories.",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "Only public GitHub issue or PR links and short factual summaries are retained; no credentials, private files, raw logs, or local absolute paths were copied."
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "high",
+  "severity_reason": "The hardcoded branch can break PR creation across repositories with non-main defaults after the Agent has otherwise completed work.",
+  "missing_information": [
+    "Manual review should verify the workflow file diff and whether a default-branch API lookup is the expected correction."
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "agentproof_scope": "secondary_research",
+  "detectable_by_mvp": "partially",
+  "applicable_mvp_capabilities": [
+    "git_diff",
+    "file_or_config"
+  ],
+  "delivery_artifact_involved": true,
+  "completion_claim_involved": true,
+  "scope_reason": "The source supports that the delivery workflow hardcoded the target branch to main. However, it does not sufficiently establish that this workflow code itself was generated as an AI coding Agent delivery artifact for the target project. Full validation would also depend on GitHub default-branch API behavior, PR creation flow, or a remote GitHub Actions environment. The case is therefore valuable secondary research for future AgentProof GitHub workflow design, but should not count in the first M1-M3 local MVP core-case pool.",
+  "final_scope_recommendation": "keep_as_secondary_research",
+  "manual_confirmation_required": true,
+  "notes": "Codex review suggestion only: public-source accessibility and category/scope recommendations do not mark the candidate source_verified, approved, or reproduced. Manual confirmation remains required."
+}

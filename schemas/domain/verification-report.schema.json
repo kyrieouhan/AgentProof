@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0-m3"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "failed",
+              "insufficient_spec",
+              "infrastructure_error",
+              "unverifiable",
+              "unstable"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "evidence_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "request",
+                    "response",
+                    "database_snapshot",
+                    "command_log",
+                    "manifest",
+                    "redacted_report",
+                    "screenshot",
+                    "browser_event_log",
+                    "browser_trace",
+                    "joined_observation"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^sha256:[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "evidence_id",
+                "type",
+                "path",
+                "sha256"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "errors": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "blocking_security_issue": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "criterion_id",
+          "status",
+          "summary",
+          "evidence",
+          "errors",
+          "blocking_security_issue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "status_counts": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "insufficient_spec": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "infrastructure_error": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unverifiable": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unstable": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "passed",
+        "failed",
+        "insufficient_spec",
+        "infrastructure_error",
+        "unverifiable",
+        "unstable"
+      ],
+      "additionalProperties": false
+    },
+    "merge_recommendation": {
+      "type": "string",
+      "enum": [
+        "recommend_merge",
+        "do_not_merge",
+        "human_review",
+        "indeterminate"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "results",
+    "status_counts",
+    "merge_recommendation"
+  ],
+  "additionalProperties": false
+}

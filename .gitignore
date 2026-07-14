@@ -1,0 +1,51 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local secrets and environment
+.env
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Dependencies, build outputs, and local runtime files
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+.next/
+playwright-report/
+test-results/
+blob-report/
+*.trace
+*.trace.zip
+*.har
+
+# Runtime databases may contain test or personal data
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated verification artifacts are local-only in the public export
+artifacts/*
+!artifacts/.gitkeep
+
+# Source planning documents may contain private metadata; publish derived Markdown instead
+docs/source/*.docx
+
+# Local review scratch files
+.codex_tmp/
+.tmp/
+tmp/
+temp/
+.cache/
+*.tmp
+*.log

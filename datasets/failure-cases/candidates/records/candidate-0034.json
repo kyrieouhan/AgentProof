@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1034",
+  "title": "Code agent used a dry-run success assertion that bypassed the auto-skip branch",
+  "normalized_title": "代码 Agent 使用 dry-run 成功断言绕过自动跳过分支",
+  "primary_category": "weakened_tests",
+  "secondary_categories": [],
+  "description": "M0-02B-1 未核实候选：公开来源称代码 Agent 为自动跳过 Mint 检查新增测试，但测试只在 dry-run 下断言命令无错误；来源页面称 dry-run 在抵达相关 GCP 调用前短路，且 auto-skip 条件实际上没有触发，因此移除该逻辑后测试仍会通过。",
+  "root_cause": "收集者初步推测：代码 Agent 将最终无错误结果作为充分断言，没有验证 skip 标志或实际分支路径。该判断不是来源已确认的根因结论。",
+  "trigger_condition": "代码 Agent 为 per-repo 安装流程中的自动跳过 Mint 检查逻辑新增测试。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Code agent: tests should assert intermediate state, not just final outcome",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1192",
+    "source_date": "2026-05-19",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、凭据、附件内容、完整 Diff 或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "Go",
+    "CLI",
+    "Dry-run test mode"
+  ],
+  "reproduction_status": "not_attempted",
+  "reproduction": {
+    "prerequisites": [
+      "需要在隔离环境中取得来源关联的公开项目版本和 CLI 测试依赖。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "公开来源关联目标项目的 CLI dry-run 测试场景；本项目尚未准备或执行隔离复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [],
+    "expected_behavior": "自动跳过逻辑的测试应验证 skip 状态或实际分支被执行，并在移除该逻辑后失败。",
+    "actual_behavior": "来源页面陈述的候选现象：dry-run 成功断言在到达 Mint 调用前短路，且 auto-skip 条件未触发，令移除目标逻辑后测试仍可通过。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 的必要摘要整理；尚未由项目人员核实原始 PR、条件分支、许可或复现条件。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "branch_mutation_check",
+      "description": "检查测试是否断言 skip 状态或分支副作用，并在受控副本中移除 auto-skip 逻辑，确认 dry-run 测试是否仍通过。",
+      "proves": "若移除 auto-skip 逻辑后测试仍通过，可证明该断言没有独立验证目标分支。",
+      "does_not_prove": "不能单独确认真实云端调用行为，也不能代替来源核实、人工去重或最终审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "git_diff",
+    "test_output",
+    "console_log"
+  ],
+  "severity": "medium",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "本批次仅完成 URL、标题和失效机制初筛；需人工比较与其他 short-circuit 或 dry-run 测试候选是否同一根因。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-1 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0034; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=来源页面称关联代码 Agent PR 的 dry-run 测试只断言无错误，在抵达相关调用前短路，且自动跳过条件没有真正触发，移除逻辑后测试仍会通过。; collector_inference=主分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=false; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对关联 PR 的完整测试修改、条件分支、后续审阅、来源许可、可复现条件及是否与其他候选同根因。"
+}

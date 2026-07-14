@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgentProof 本地验收</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">AgentProof M3 · 本地运行</p>
+      <h1>从浏览器发起一次真实验收</h1>
+      <p class="muted">导入本地 Git 仓库，确认验收标准，调用现有 AgentProof CLI 与 M3 验证器，并查看证据和报告。</p>
+    </header>
+
+    <section class="card">
+      <h2>1. 项目导入</h2>
+      <label for="project-path">本地 Git 仓库路径</label>
+      <div class="row">
+        <input id="project-path" data-testid="project-path" placeholder="粘贴 samples/demo-web-app 的本地路径">
+        <button id="inspect-project" data-testid="inspect-project">检查项目</button>
+      </div>
+      <p id="project-error" class="error" data-testid="project-error"></p>
+      <div id="project-summary" class="summary" data-testid="project-summary"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title-row">
+        <h2>2. 需求与验收标准</h2>
+        <div class="secondary-actions">
+          <button id="load-example" data-testid="load-example" type="button" class="secondary">加载示例</button>
+          <button id="clear-content" data-testid="clear-content" type="button" class="secondary">清空内容</button>
+        </div>
+      </div>
+      <label for="requirement">需求</label>
+      <textarea id="requirement" data-testid="requirement" placeholder="描述你希望 AgentProof 验证的需求。可以手动填写，也可以点击“加载示例”体验官方 Demo。"></textarea>
+      <div class="criteria-header">
+        <h3>验收标准</h3>
+        <button id="add-criterion" type="button">添加验收项</button>
+      </div>
+      <div id="criteria" data-testid="criteria"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. 运行验收</h2>
+      <button id="start-run" data-testid="start-run" disabled>开始验收</button>
+      <p id="run-error" class="error" data-testid="run-error"></p>
+      <div id="run-panel" data-testid="run-panel"></div>
+    </section>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

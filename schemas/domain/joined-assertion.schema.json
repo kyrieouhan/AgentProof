@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0-m3"
+    },
+    "join_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {}
+    },
+    "sources": {
+      "minItems": 2,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "page",
+          "api",
+          "database"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "join_id",
+    "title",
+    "expected",
+    "sources"
+  ],
+  "additionalProperties": false
+}

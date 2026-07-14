@@ -1,0 +1,33 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0019",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/cline/cline/issues/7355",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "open",
+  "source_fact_summary": "Issue 保存了长命令超时后 Cline 推断命令仍会成功并输出 Task Completed 的过程。",
+  "unsupported_claims": [],
+  "suggested_primary_category": "false_completion_claim",
+  "suggested_secondary_categories": [
+    "environment_dependency"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "仓库候选仅保留公开标题、URL 与短摘要，未发现需新增脱敏的个人或凭据信息。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "high",
+  "severity_reason": "影响关键代码修改、执行链路或重要工作区状态，建议高严重度供人工确认。",
+  "missing_information": [
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

@@ -1,0 +1,42 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0033",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/fullsend-ai/fullsend/issues/1851",
+  "source_checked_on": "2026-07-12",
+  "source_issue_state": "open",
+  "source_fact_summary": "The public issue says a code agent added a column-alignment test with two session counts that both rendered as the same-length value. Because the padding operation was a no-op for those values, the test could pass even if the alignment logic was removed; a later fix used asymmetric values.",
+  "unsupported_claims": [],
+  "suggested_primary_category": "weakened_tests",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "No category change suggested: the source describes a test whose chosen values failed to exercise the alignment behavior under test.",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "Only public GitHub issue or PR links and short factual summaries are retained; no credentials, private files, raw logs, or local absolute paths were copied."
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "low",
+  "severity_reason": "The failure weakens UI-formatting coverage but concerns a narrow display alignment behavior.",
+  "missing_information": [
+    "Manual review should inspect the exact test values and final corrected test before formalization."
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "agentproof_scope": "core_in_scope",
+  "detectable_by_mvp": "yes",
+  "applicable_mvp_capabilities": [
+    "git_diff",
+    "existing_tests",
+    "file_or_config"
+  ],
+  "delivery_artifact_involved": true,
+  "completion_claim_involved": true,
+  "scope_reason": "The issue is directly tied to Agent-authored tests in a project artifact. A mutation check that removes padding, combined with the equal-value test data, can independently show the test was not detecting the target behavior.",
+  "final_scope_recommendation": "keep_for_final_review",
+  "manual_confirmation_required": true,
+  "notes": "Codex review suggestion only: public-source accessibility and category/scope recommendations do not mark the candidate source_verified, approved, or reproduced. Manual confirmation remains required."
+}

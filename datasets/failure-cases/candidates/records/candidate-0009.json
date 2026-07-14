@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1009",
+  "title": "permissions.deny + PreToolUse hook did not block a Task-tool subagent from reading a denied file (blocked correctly on retest)",
+  "normalized_title": "子 Agent 曾绕过 deny 与 PreToolUse 读取受限文件",
+  "primary_category": "authorization_bypass",
+  "secondary_categories": [
+    "nondeterministic_result",
+    "security_regression"
+  ],
+  "description": "M0-02 未核实候选：主 Agent 能被权限规则阻止，但子 Agent 曾返回受限文件内容；相同配置复测又被阻止。 来源页面可公开访问，但尚未经过人工来源核实、去重、脱敏复核或本地复现。",
+  "root_cause": "收集者初步推测：权限与 Hook 约束可能未在所有子 Agent 执行路径一致继承。 该判断不是来源已确认结论。",
+  "trigger_condition": "配置文件读取拒绝规则后，让 Task 子 Agent 广泛探索包含匹配文件的项目。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "permissions.deny + PreToolUse hook did not block a Task-tool subagent from reading a denied file (blocked correctly on retest)",
+    "source_reference": "https://github.com/anthropics/claude-code/issues/73380",
+    "source_date": "2026-07-02",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、邮箱、凭据、附件内容或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Claude Code",
+    "Subagent",
+    "Permission hooks"
+  ],
+  "reproduction_status": "steps_available",
+  "reproduction": {
+    "prerequisites": [
+      "仅在隔离环境中使用无敏感数据的测试仓库。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "待人工从来源核实并准备隔离环境；Codex 在 M0-02 未执行复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [
+      "按公开 Issue #73380 中记录的环境准备对应工具。",
+      "配置文件读取拒绝规则后，让 Task 子 Agent 广泛探索包含匹配文件的项目。",
+      "记录实际输出、文件状态与退出状态；本候选尚未执行该步骤。"
+    ],
+    "expected_behavior": "工具应完成请求的代码或运行操作，并让结构化状态、实际文件、测试和运行结果保持一致。",
+    "actual_behavior": "来源页面陈述的候选现象：主 Agent 能被权限规则阻止，但子 Agent 曾返回受限文件内容；相同配置复测又被阻止。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 正文整理；尚未由项目人员核实来源细节，也未在 AgentProof 环境复现。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "permission_boundary_probe",
+      "description": "在隔离环境中围绕“子 Agent 曾绕过 deny 与 PreToolUse 读取受限文件”执行确定性前后对照，并保存结构化状态与原始输出。",
+      "proves": "若按记录条件执行，可证明该次运行的实际状态是否与需求及完成声明一致。",
+      "does_not_prove": "不能证明所有版本和环境都受影响，也不能代替来源核实、根因分析或最终人工审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "test_output",
+    "console_log",
+    "file_hash"
+  ],
+  "severity": "blocking",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "M0-02 仅完成 URL 与标题自动初筛；根因级去重必须由人工确认。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0009; agent_or_tool=Claude Code; collected_at=2026-07-11; source_stated_facts=来源提供权限配置、观察步骤及一次泄露后一次正确阻断的不一致结果。; collector_inference=分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=true; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对原文上下文、评论、版本、许可、根因、复现条件与分类。"
+}

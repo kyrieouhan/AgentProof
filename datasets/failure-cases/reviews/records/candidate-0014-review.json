@@ -1,0 +1,39 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0014",
+  "source_accessible": true,
+  "source_check_result": "verified_partial",
+  "checked_url": "https://github.com/Aider-AI/aider/issues/4441",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "open",
+  "source_fact_summary": "Issue 与评论记录 Gemini 2.5 Pro 间歇返回空响应，相同请求重试有时成功；评论对 Aider、流式响应和上游过载存在不同解释。",
+  "unsupported_claims": [
+    "不能仅由该 Issue 证明空响应来自 Aider 重试逻辑；评论也指向上游模型过载。"
+  ],
+  "suggested_primary_category": "nondeterministic_result",
+  "suggested_secondary_categories": [
+    "environment_dependency"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "仓库候选仅保留公开标题、URL 与短摘要，未发现需新增脱敏的个人或凭据信息。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "weak",
+  "suggested_severity": "medium",
+  "severity_reason": "影响普通工具能力或一致性，有绕过或范围受限，建议中等严重度。",
+  "missing_information": [
+    "缺少完整环境、连续操作步骤和可保存的原始输出。",
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "needs_more_evidence",
+  "review_group": "B",
+  "candidate_fields_corrected": [
+    "title",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

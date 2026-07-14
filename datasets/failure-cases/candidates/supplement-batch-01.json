@@ -1,0 +1,166 @@
+{
+  "batch_version": "1.0.0",
+  "batch_id": "supplement-batch-01",
+  "collected_at": "2026-07-12",
+  "phase": "M0-02B-1",
+  "target_primary_category": "weakened_tests",
+  "collection_limit": 4,
+  "candidate_id_range": {
+    "first": "candidate-0031",
+    "last": "candidate-0034",
+    "count": 4
+  },
+  "inclusion_requirements": [
+    "Public source is reachable and describes a programming Agent delivery artifact.",
+    "The Agent modified, replaced, or added a test, assertion, Mock, Fixture, or CI-related check with lower independent verification strength.",
+    "The observation is likely_core_in_scope for an AgentProof-style Git Diff and test-evidence review.",
+    "The record remains draft, source_pending, verified=false, and unreproduced."
+  ],
+  "stop_reason": "Reached the user-authorized maximum of four eligible weakened_tests candidates.",
+  "candidates": [
+    {
+      "candidate_id": "candidate-0031",
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2555",
+      "agent_or_tool": "Fullsend Code Agent",
+      "scope_assessment": "likely_core_in_scope",
+      "test_weakening_mechanism": "The code Agent replaced the only Service spec-drift test with a label-stripping test, reducing coverage of the original spec-change behavior.",
+      "scope_reason": "The public report concerns a code Agent's test change in a target project; Git Diff and a controlled mutation of the Service restoration behavior can evaluate the lost verification.",
+      "manual_confirmation_required": true
+    },
+    {
+      "candidate_id": "candidate-0032",
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/4057",
+      "agent_or_tool": "Fullsend Code Agent",
+      "scope_assessment": "likely_core_in_scope",
+      "test_weakening_mechanism": "The code Agent's SSL tests exercised a Mock credential path rather than the changed URL protocol-selection branch.",
+      "scope_reason": "The public report concerns target-project test additions whose effectiveness can be checked by Diff inspection and reverting the protocol branch in a controlled copy.",
+      "manual_confirmation_required": true
+    },
+    {
+      "candidate_id": "candidate-0033",
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1851",
+      "agent_or_tool": "Fullsend Code Agent",
+      "scope_assessment": "likely_core_in_scope",
+      "test_weakening_mechanism": "The code Agent used equal Fixture values for a padding test, making the asserted formatting behavior a no-op.",
+      "scope_reason": "The public report concerns a target-project Fixture and assertion that can be evaluated by replacing the values and mutating the padding implementation.",
+      "manual_confirmation_required": true
+    },
+    {
+      "candidate_id": "candidate-0034",
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1192",
+      "agent_or_tool": "Fullsend Code Agent",
+      "scope_assessment": "likely_core_in_scope",
+      "test_weakening_mechanism": "The code Agent asserted dry-run command success even though dry-run bypassed the auto-skip branch the test claimed to cover.",
+      "scope_reason": "The public report concerns a target-project test whose branch coverage can be checked by Diff inspection and a controlled removal of the auto-skip logic.",
+      "manual_confirmation_required": true
+    }
+  ],
+  "excluded_lead_count": 0,
+  "notes": "This batch is a candidate-discovery record only. It does not verify sources, establish root causes, reproduce any behavior, approve cases, or modify the formal cases directory.",
+  "follow_up_batches": [
+    {
+      "phase": "M0-02B-2",
+      "target_primary_category": "hardcoded_behavior",
+      "collection_limit": 4,
+      "candidate_id_range": {
+        "first": "candidate-0035",
+        "last": "candidate-0037",
+        "count": 3
+      },
+      "inclusion_requirements": [
+        "Public source is reachable and directly describes a programming Agent code-delivery artifact with fixed-input, fixed-output, fixed-path, fixed-branch, or hardcoded-list behavior.",
+        "The source describes an observable failure or loss of portability when an equivalent input, branch, file, or repository layout differs.",
+        "The observation is likely_core_in_scope for an AgentProof-style Git Diff, configuration, file, or repeatable-run check.",
+        "The record remains draft, source_pending, verified=false, and unreproduced."
+      ],
+      "stop_reason": "Stopped after three eligible candidates because additional reviewed public leads did not meet the direct Agent-code-delivery and observable-hardcoded-behavior threshold; the fourth slot was deliberately left unused.",
+      "candidates": [
+        {
+          "candidate_id": "candidate-0035",
+          "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2345",
+          "agent_or_tool": "Fullsend Code Agent",
+          "scope_assessment": "likely_core_in_scope",
+          "hardcoded_behavior_mechanism": "The delivery workflow fixes the PR target branch to main, so equivalent repositories with another default branch fail after the Agent pushes its work.",
+          "scope_reason": "A configuration Diff and default-branch test matrix can independently observe whether a fixed branch value blocks target-project delivery.",
+          "manual_confirmation_required": true
+        },
+        {
+          "candidate_id": "candidate-0036",
+          "source_reference": "https://github.com/fullsend-ai/fullsend/issues/4037",
+          "agent_or_tool": "Fullsend Code Agent",
+          "scope_assessment": "likely_core_in_scope",
+          "hardcoded_behavior_mechanism": "The code Agent used a finite filename and directory exclusion list, leaving equivalent template files outside the fixed set visible to the feature.",
+          "scope_reason": "Git Diff plus a controlled file-list input can independently detect that the implementation only handles hardcoded entries.",
+          "manual_confirmation_required": true
+        },
+        {
+          "candidate_id": "candidate-0037",
+          "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1909",
+          "agent_or_tool": "Fullsend Code Agent",
+          "scope_assessment": "likely_core_in_scope",
+          "hardcoded_behavior_mechanism": "The code Agent copied a specific docs/plans path into a generic scaffold template deployed to repositories with different layouts.",
+          "scope_reason": "A template Diff and repository-layout matrix can independently detect fixed-path assumptions that fail to generalize across target projects.",
+          "manual_confirmation_required": true
+        }
+      ],
+      "rejected_lead_references": [
+        "https://github.com/fullsend-ai/fullsend/issues/1810",
+        "https://github.com/fullsend-ai/fullsend/issues/4067",
+        "https://github.com/fullsend-ai/fullsend/issues/3542"
+      ],
+      "notes": "This follow-up is candidate discovery only. It does not verify sources, establish root causes, reproduce behavior, approve cases, or modify the formal cases directory."
+    },
+    {
+      "phase": "M0-02B-3",
+      "target_primary_category": "build_runtime_mismatch",
+      "collection_limit": 4,
+      "candidate_id_range": {
+        "first": "candidate-0038",
+        "last": "candidate-0039",
+        "count": 2
+      },
+      "inclusion_requirements": [
+        "Public source is reachable and directly connects a programming Agent code-delivery artifact to successful build, compile, type, static, or test checks followed by a real runtime or critical-path failure.",
+        "The source includes separate evidence for the passing build/static checks and the failing runtime, API, workflow, or deployment path.",
+        "The observation is likely_core_in_scope for AgentProof build, existing_tests, API, log, or Playwright-style verification.",
+        "The record remains draft, source_pending, verified=false, and unreproduced."
+      ],
+      "stop_reason": "Stopped after two eligible candidates because additional reviewed public leads either lacked explicit build-success evidence, were runner/client/tooling environment failures, were human-authored changes, or did not prove Agent code delivery.",
+      "candidates": [
+        {
+          "candidate_id": "candidate-0038",
+          "source_reference": "https://github.com/fullsend-ai/fullsend/issues/3396",
+          "additional_source_reference": "https://github.com/fullsend-ai/fullsend/pull/2947",
+          "agent_or_tool": "Claude Code",
+          "scope_assessment": "likely_core_in_scope",
+          "build_success_evidence": "PR #2947 reports go vet ./... clean and go test ./internal/forge/... ./internal/cli/ all pass; the PR page also marks the change as generated with Claude Code.",
+          "runtime_failure_evidence": "Issue #3396 reports that after PR #2947 merged, functional-tests on main failed all four triage eval cases with an allowed_remote_resources harness-loading error.",
+          "scope_reason": "A post-build functional-test smoke can independently check whether a static/unit-green fallback change still works on the real harness-loading path.",
+          "manual_confirmation_required": true
+        },
+        {
+          "candidate_id": "candidate-0039",
+          "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2235",
+          "additional_source_reference": "https://github.com/fullsend-ai/fullsend/pull/2227",
+          "agent_or_tool": "Fullsend Code Agent",
+          "scope_assessment": "likely_core_in_scope",
+          "build_success_evidence": "PR #2227 post-script verification reports pre-commit hooks passed and tests ran inside the sandbox.",
+          "runtime_failure_evidence": "Issue #2235 and PR #2227 comments report that skopeo was not installed on GitHub Actions runners, so the digest-skip optimization would never activate.",
+          "scope_reason": "A target-runner smoke test can independently check both command availability and whether the feature branch is reachable after tests pass.",
+          "manual_confirmation_required": true
+        }
+      ],
+      "rejected_lead_references": [
+        "https://github.com/fullsend-ai/fullsend/issues/2715",
+        "https://github.com/fullsend-ai/fullsend/issues/2060",
+        "https://github.com/fullsend-ai/fullsend/issues/3708",
+        "https://github.com/fullsend-ai/fullsend/issues/2936",
+        "https://github.com/fullsend-ai/fullsend/issues/2805",
+        "https://github.com/anthropics/claude-code/issues/37818",
+        "https://github.com/anthropics/claude-code/issues/35042",
+        "https://github.com/fullsend-ai/fullsend/issues/2031"
+      ],
+      "notes": "This follow-up is candidate discovery only. It does not verify sources, establish root causes, reproduce behavior, approve cases, or modify the formal cases directory."
+    }
+  ]
+}

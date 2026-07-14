@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-0000",
+  "title": "示例：页面显示保存成功但刷新后状态丢失",
+  "normalized_title": "页面显示保存成功但刷新后状态丢失",
+  "primary_category": "non_persistent_state",
+  "secondary_categories": [
+    "superficial_completion"
+  ],
+  "description": "这是仅用于展示 M0-01 Schema 的完整合成示例，不来自真实用户、仓库、采访、事故或测试结果，也不得计入 M0 案例数量。",
+  "root_cause": "假设实现只更新页面内存状态，没有把变更写入持久化存储。",
+  "trigger_condition": "在假设页面提交保存操作后刷新页面或重新读取数据库状态。",
+  "primary_source": {
+    "source_type": "synthetic_demo",
+    "source_title": "AgentProof M0-01 Schema 合成格式示例",
+    "source_reference": null,
+    "source_date": null,
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verification_actor_type": "not_applicable",
+    "verified_by_role": null,
+    "permission_or_authorization": "项目自有合成示例，仅用于规范和 Schema 校验。",
+    "can_publish": true,
+    "redaction_notes": "未使用任何真实个人、仓库、组织或业务数据。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Node.js",
+    "TypeScript",
+    "Web",
+    "SQLite"
+  ],
+  "reproduction_status": "steps_available",
+  "reproduction": {
+    "prerequisites": [
+      "使用不含真实数据的假设本地 Demo",
+      "准备可查询的临时 SQLite 数据库"
+    ],
+    "repository_or_demo_version": "synthetic-taxonomy-example-v1",
+    "commit": null,
+    "environment": "假设的 Linux 临时容器、Node.js 20 与临时 SQLite；本示例未实际运行。",
+    "install_command": "npm ci",
+    "start_command": "npm run dev",
+    "steps": [
+      "打开假设的编辑页面并记录初始值。",
+      "输入新的合成内容并点击保存。",
+      "记录页面提示、API 响应和数据库状态。",
+      "刷新页面，再次比较 DOM 与数据库状态。"
+    ],
+    "expected_behavior": "保存操作成功后，API、数据库和刷新后的页面都应显示同一新值。",
+    "actual_behavior": "假设缺陷会让页面暂时显示成功，但数据库没有新值，刷新后页面恢复旧值。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "这是检测设计示例，只有复现步骤，未执行且不代表官方 Demo 已建立。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "persistence_state_comparison",
+      "description": "保存前后查询临时数据库，并在刷新页面后比较持久层与 DOM 状态。",
+      "proves": "可以证明记录环境中保存动作是否产生了预期持久化状态，并在刷新后可读取。",
+      "does_not_prove": "不能单独证明所有并发、权限、错误恢复和长期运行场景都正确。",
+      "deterministic": true
+    },
+    {
+      "method": "ui_api_consistency_check",
+      "description": "对照保存请求、响应结果和页面成功提示，检查三者是否一致。",
+      "proves": "可以证明该次操作中 UI 提示是否与记录到的 API 结果一致。",
+      "does_not_prove": "不能单独证明响应成功后数据一定已经持久化，也不能覆盖未执行的页面路径。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "api_request",
+    "api_response",
+    "database_query",
+    "dom_assertion",
+    "browser_screenshot"
+  ],
+  "severity": "high",
+  "privacy_redaction": {
+    "status": "not_required",
+    "redacted_items": [],
+    "method": "使用从零编写的合成描述，不引入真实材料。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "示例不含姓名、账号、凭据、本地绝对路径或真实业务数据。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "仅为固定格式示例，不参与正式案例去重或统计。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "示例保持 draft，任何自动工具或 Codex 都不得把它批准为正式案例。",
+    "rejection_reason": null
+  },
+  "is_example": true,
+  "notes": "完整合成示例；不是真实来源案例，不表示已复现，不表示检测器已经实现，不计入 M0 门禁。"
+}

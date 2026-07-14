@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0-m3"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "risk_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "risk_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "weakened_tests",
+              "ci_bypass",
+              "mock_or_fixture_change",
+              "test_config_change"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "line_number": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "risk_id",
+          "category",
+          "severity",
+          "file",
+          "line_number",
+          "summary",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": [
+        "no_diff_risk_detected",
+        "human_review"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "source",
+    "risk_count",
+    "risks",
+    "recommendation"
+  ],
+  "additionalProperties": false
+}

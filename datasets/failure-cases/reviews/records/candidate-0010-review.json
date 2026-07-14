@@ -1,0 +1,39 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0010",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/anthropics/claude-code/issues/75609",
+  "source_checked_on": "2026-07-11",
+  "source_issue_state": "open",
+  "source_fact_summary": "Issue 记录失败更新后活跃后台 Agent 的 Worktree 目录消失、会话崩溃，并出现已删除完成会话重新显示。",
+  "unsupported_claims": [
+    "日志只直接证明工作目录消失；来源对更新路径删除 Worktree 的归因仍含推断。"
+  ],
+  "suggested_primary_category": "data_integrity_failure",
+  "suggested_secondary_categories": [
+    "non_persistent_state",
+    "security_regression"
+  ],
+  "category_change_reason": "当前主次分类与冻结分类边界一致，暂不建议修改。",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "外部原文使用占位符隐藏工作目录标识，仓库没有保存日志原文。"
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "blocking",
+  "severity_reason": "涉及明显越权、凭据暴露可能性或用户数据/工作区破坏，建议阻断级供人工确认。",
+  "missing_information": [
+    "缺少 AgentProof 独立复现和最终人工来源确认。"
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [
+    "title",
+    "primary_source.source_title"
+  ],
+  "manual_confirmation_required": true,
+  "notes": "这是 Codex 对公开页面的核查建议，不会把候选改为 source_verified、approved 或 reproduced；最终来源、分类、去重、脱敏和严重度必须由人工确认。"
+}

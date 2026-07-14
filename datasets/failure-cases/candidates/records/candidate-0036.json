@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "fc-2026-1036",
+  "title": "Code agent hardcoded an incomplete non-content file exclusion list",
+  "normalized_title": "代码 Agent 将非内容文件排除表写死且遗漏模板文件",
+  "primary_category": "hardcoded_behavior",
+  "secondary_categories": [],
+  "description": "M0-02B-2 未核实候选：公开来源称代码 Agent 在侧边栏 Markdown 扫描中照搬固定排除文件和目录集合；该集合遗漏同目录中的模板文件，令该文件出现在不应展示的侧边栏中，后续修复改为模式化判断。",
+  "root_cause": "收集者初步推测：代码 Agent 用有限文件名集合替代对实际目录和命名模式的判断，导致功能只覆盖集合内的固定文件。该判断不是来源已确认的根因结论。",
+  "trigger_condition": "代码 Agent 实现目录扫描的非内容文件过滤，并遇到未列入固定排除集合但符合模板命名模式的文件。",
+  "primary_source": {
+    "source_type": "public_github_issue",
+    "source_title": "Code agent should validate enumerated filter lists by examining actual directory contents",
+    "source_reference": "https://github.com/fullsend-ai/fullsend/issues/4037",
+    "source_date": "2026-07-10",
+    "source_verification_status": "source_pending",
+    "verified": false,
+    "verified_at": null,
+    "verification_method": null,
+    "verified_by_role": null,
+    "permission_or_authorization": "公开 GitHub Issue；本记录仅保存链接与必要短摘要，公开许可范围仍待人工复核。",
+    "can_publish": true,
+    "redaction_notes": "未复制用户名、凭据、完整 Diff 或本地绝对路径。"
+  },
+  "additional_sources": [],
+  "affected_stack": [
+    "Fullsend Code Agent",
+    "TypeScript",
+    "Markdown sidebar",
+    "Directory filtering"
+  ],
+  "reproduction_status": "not_attempted",
+  "reproduction": {
+    "prerequisites": [
+      "需要在隔离环境中取得来源关联的公开项目版本及目录扫描测试依赖。"
+    ],
+    "repository_or_demo_version": null,
+    "commit": null,
+    "environment": "公开来源关联目标项目的 Markdown 侧边栏扫描场景；本项目尚未准备或执行隔离复现。",
+    "install_command": null,
+    "start_command": null,
+    "steps": [],
+    "expected_behavior": "非内容文件过滤应覆盖同类模板文件，或使用可解释的通用模式而不是有限的固定文件名集合。",
+    "actual_behavior": "来源页面陈述的候选现象：固定排除集合遗漏模板文件，导致该文件被扫描并显示为可点击侧边栏项。",
+    "attempts": 0,
+    "successful_reproductions": 0,
+    "random_seed": null,
+    "raw_output_location": null,
+    "known_limitations": "仅根据公开 Issue 的必要摘要整理；尚未由项目人员核实原始 PR、目录内容、模式修复、许可或复现条件。"
+  },
+  "expected_detection_methods": [
+    {
+      "method": "dynamic_file_list_check",
+      "description": "在受控目录中加入与被排除模板同类但名称不在固定集合中的文件，并检查扫描结果与过滤规则。",
+      "proves": "可证明固定集合是否只对预先列出的文件有效，以及等价模板文件是否被错误保留。",
+      "does_not_prove": "不能单独证明所有内容分类规则正确，也不能代替来源核实、人工去重或最终审核。",
+      "deterministic": true
+    }
+  ],
+  "expected_evidence": [
+    "git_diff",
+    "test_output",
+    "file_hash"
+  ],
+  "severity": "medium",
+  "privacy_redaction": {
+    "status": "pending",
+    "redacted_items": [],
+    "method": "收集阶段只保留公开 Issue 标题、链接和必要事实摘要；最终脱敏复核待人工完成。",
+    "performed_by_role": null,
+    "performed_at": null,
+    "review_status": "pending",
+    "reviewed_by_role": null,
+    "reviewed_at": null,
+    "notes": "当前文本未包含个人姓名、账号、凭据或本地绝对路径；附件和评论尚未纳入记录。"
+  },
+  "deduplication": {
+    "status": "not_checked",
+    "duplicate_of": null,
+    "related_cases": [],
+    "review_notes": "本批次仅完成 URL、标题和失效机制初筛；需人工比较与其他固定路径、名称或 allowlist 候选是否同一根因。",
+    "confirmed_by_role": null,
+    "confirmed_at": null
+  },
+  "review_status": "draft",
+  "review": {
+    "reviewer_type": null,
+    "reviewer_role": null,
+    "reviewed_at": null,
+    "checklist_version": "1.0.0",
+    "decision_notes": "M0-02B-2 公开来源候选，等待 M0-03 人工核实、去重、脱敏和复现决策。",
+    "rejection_reason": null
+  },
+  "is_example": false,
+  "notes": "temporary_candidate_id=candidate-0036; agent_or_tool=Fullsend Code Agent; collected_at=2026-07-12; source_stated_facts=来源页面称代码 Agent 照搬固定排除集合，遗漏同类模板文件，后续修复改用模式化判断。; collector_inference=主分类、根因、严重程度和检测方式均为初步建议； has_reproduction_steps=false; possible_duplicate=false; priority_human_review=true; pending_human_questions=核对关联 PR 的完整过滤逻辑、遗漏文件、后续修复、来源许可、可复现条件及是否与其他候选同根因。"
+}

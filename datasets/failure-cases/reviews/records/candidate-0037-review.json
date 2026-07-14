@@ -1,0 +1,43 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0037",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/fullsend-ai/fullsend/issues/1909",
+  "source_checked_on": "2026-07-12",
+  "source_issue_state": "open",
+  "source_fact_summary": "The public issue says a code-agent PR modified generic scaffold skill definitions but copied repo-specific docs/plans references from the originating issue into reusable templates. Human review comments requested removal because scaffolded skills should not hardcode those project paths.",
+  "unsupported_claims": [
+    "The exact breadth of downstream repositories affected by the generic scaffold templates still needs manual confirmation."
+  ],
+  "suggested_primary_category": "hardcoded_behavior",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "No category change suggested: the source ties the defect to fixed repo-specific paths being copied into generic reusable scaffold outputs.",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "Only public GitHub issue or PR links and short factual summaries are retained; no credentials, private files, raw logs, or local absolute paths were copied."
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "medium",
+  "suggested_severity": "medium",
+  "severity_reason": "Repo-specific hardcoded paths in reusable scaffolds can mislead generated skills across projects, but the source evidence is strongest for the PR review context.",
+  "missing_information": [
+    "Manual review should inspect the inline review comments and affected scaffold outputs before formal use."
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "agentproof_scope": "core_in_scope",
+  "detectable_by_mvp": "partially",
+  "applicable_mvp_capabilities": [
+    "git_diff",
+    "file_or_config"
+  ],
+  "delivery_artifact_involved": true,
+  "completion_claim_involved": true,
+  "scope_reason": "The source connects an Agent PR to a project artifact containing fixed paths inappropriate for generic scaffolds. Git diff and template/file inspection can detect it, but full downstream impact needs human confirmation.",
+  "final_scope_recommendation": "keep_for_final_review",
+  "manual_confirmation_required": true,
+  "notes": "Codex review suggestion only: public-source accessibility and category/scope recommendations do not mark the candidate source_verified, approved, or reproduced. Manual confirmation remains required."
+}

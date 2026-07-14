@@ -1,0 +1,42 @@
+{
+  "review_schema_version": "1.0.0",
+  "candidate_id": "candidate-0036",
+  "source_accessible": true,
+  "source_check_result": "verified_match",
+  "checked_url": "https://github.com/fullsend-ai/fullsend/issues/4037",
+  "source_checked_on": "2026-07-12",
+  "source_issue_state": "open",
+  "source_fact_summary": "The public issue says a code agent implemented issue-provided excludeFiles and excludeDirs lists verbatim for documentation sidebar filtering. The enumerated list missed a template file under docs/ADRs, so the scaffold/template artifact could leak into the sidebar until a pattern-based helper replaced the hardcoded list.",
+  "unsupported_claims": [],
+  "suggested_primary_category": "hardcoded_behavior",
+  "suggested_secondary_categories": [],
+  "category_change_reason": "No category change suggested: the source describes an incomplete fixed file/directory exclusion list rather than logic based on actual directory contents or patterns.",
+  "deduplication_result": "no_duplicate_signal",
+  "possible_duplicate_ids": [],
+  "privacy_findings": [
+    "Only public GitHub issue or PR links and short factual summaries are retained; no credentials, private files, raw logs, or local absolute paths were copied."
+  ],
+  "redaction_required": false,
+  "reproduction_information_quality": "strong",
+  "suggested_severity": "medium",
+  "severity_reason": "The behavior causes generated navigation to include unintended template files, but the impact is limited to documentation/sidebar generation.",
+  "missing_information": [
+    "Manual review should verify the exact omitted file and the corrected pattern-based implementation."
+  ],
+  "recommended_action": "accept_for_manual_review",
+  "review_group": "A",
+  "candidate_fields_corrected": [],
+  "agentproof_scope": "core_in_scope",
+  "detectable_by_mvp": "yes",
+  "applicable_mvp_capabilities": [
+    "git_diff",
+    "existing_tests",
+    "file_or_config"
+  ],
+  "delivery_artifact_involved": true,
+  "completion_claim_involved": true,
+  "scope_reason": "The case is an Agent-authored code artifact whose fixed list fails for an equivalent project file layout. File/config inspection and a fixture containing the omitted template can independently detect the hardcoding.",
+  "final_scope_recommendation": "keep_for_final_review",
+  "manual_confirmation_required": true,
+  "notes": "Codex review suggestion only: public-source accessibility and category/scope recommendations do not mark the candidate source_verified, approved, or reproduced. Manual confirmation remains required."
+}

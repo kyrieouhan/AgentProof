@@ -1,0 +1,89 @@
+{
+  "list_version": "1.0.0",
+  "collected_at": "2026-07-11",
+  "description": "M0-02 搜索期间打开或检视但未达到候选质量门槛的公开线索；这些条目不计入候选或正式案例。",
+  "rejected_lead_count": 16,
+  "leads": [
+    {
+      "source_reference": "https://github.com/openai/codex/issues/31164",
+      "source_title": "Enable users to input multiple prompt words in the Codex CLI",
+      "reason": "功能建议，没有已经发生的 Agent 交付失败现象。"
+    },
+    {
+      "source_reference": "https://github.com/anthropics/claude-code/issues/75483",
+      "source_title": "Claude Desktop did not provide a icon",
+      "reason": "正文主要是一般支持体验抱怨，未给出与代码交付直接相关的失败事实。"
+    },
+    {
+      "source_reference": "https://github.com/Aider-AI/aider/issues/5371",
+      "source_title": "Persistent cross-session memory via Dakera",
+      "reason": "集成和产品能力建议，不是已经发生的代码交付失败案例。"
+    },
+    {
+      "source_reference": "https://github.com/microsoft/vscode-copilot-release/issues/4786",
+      "source_title": "o3-mini Agent Mode",
+      "reason": "模型支持功能请求，没有可核对的失败执行或交付证据。"
+    },
+    {
+      "source_reference": "https://github.com/cline/cline/issues/10375",
+      "source_title": "Context window percentage display incorrectly caps at 32.8k",
+      "reason": "来源明确说明只是显示问题且实际上下文仍正常，不足以代表 Agent 代码交付失败。"
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/1810",
+      "source_title": "Code agent should discover and use existing constants instead of hardcoded strings",
+      "reason": "来源证明代码 Agent 使用了既有枚举的字符串字面量，但没有证明等价输入、固定输出或交付行为已经因该字面量失败；当前只足以构成可维护性线索。"
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/4067",
+      "source_title": "Review agent should flag hardcoded operational limits in operator-configurable software",
+      "reason": "公开关联 PR 显示初始实现由人类作者提交，不满足本批次必须由编程 Agent 生成或修改代码的来源门槛。"
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/3542",
+      "source_title": "Review agent should detect hardcoded-allowlist validation failures for newly-introduced dynamic inputs",
+      "reason": "来源描述的是 Review Agent 未发现已有集成问题，未明确证明本批次所需的代码 Agent 生成或修改了该硬编码逻辑。"
+    }
+    ,
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2715",
+      "source_title": "Code agent: pinact not installed in sandbox, blocks action.yml changes",
+      "reason": "Rejected for M0-02B-3 because the source describes a missing sandbox binary and pre-commit block, not a target project code delivery where build/static checks succeeded and a real runtime path failed."
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2060",
+      "source_title": "post-code: golangci-lint pre-commit fails when repo go.mod exceeds runner Go toolchain",
+      "reason": "Rejected for M0-02B-3 because the source explicitly identifies a runner-side toolchain gap and says the failure is not in the code the agent wrote."
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/3708",
+      "source_title": "Fix cutting-releases skill: add Agent to allowed-tools frontmatter",
+      "reason": "Rejected for M0-02B-3 because the runtime-breaking bug is tied to a human-authored and human-merged PR, so it does not meet the programming Agent code-delivery requirement."
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2936",
+      "source_title": "Review agent should detect env.sandbox references unsatisfied by calling workflows",
+      "reason": "Rejected for M0-02B-3 because the source is about review-agent detection on a migration PR, not a programming Agent-generated target code delivery with separate build-success and runtime-failure evidence."
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2805",
+      "source_title": "harness: config-registered URL agents skip ADR-0045 resource resolution",
+      "reason": "Rejected for M0-02B-3 because it has a clear runtime failure pattern, but the reviewed source did not establish that a programming Agent introduced the target code change."
+    },
+    {
+      "source_reference": "https://github.com/anthropics/claude-code/issues/37818",
+      "source_title": "Claude Code aggregate examples of tests passing while runtime behavior remains broken",
+      "reason": "Rejected for M0-02B-3 because the public report summarizes private or aggregated project examples without a public diff, build log, and runtime failure record that can be independently checked as a candidate."
+    },
+    {
+      "source_reference": "https://github.com/anthropics/claude-code/issues/35042",
+      "source_title": "Agent should run project test suite before committing",
+      "reason": "Rejected for M0-02B-3 because the source describes Claude Code shipping a runtime hang without first running the project tests, so the required build/static success evidence is absent."
+    },
+    {
+      "source_reference": "https://github.com/fullsend-ai/fullsend/issues/2031",
+      "source_title": "Code agent should check co-located tool compatibility when bumping language runtime versions",
+      "reason": "Rejected for M0-02B-3 because the source describes a review-time compatibility gap and human follow-up commit, but not a confirmed runtime failure after build/static success."
+    }
+  ]
+}

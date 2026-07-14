@@ -1,0 +1,20 @@
+diff --git a/src/app.ts b/src/app.ts
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -67,7 +67,3 @@ export function buildApp() {
+   app.get("/admin", async (request, reply) => {
+-    const user = await requireAdmin(request, reply);
+-    if (!user) {
+-      return reply;
+-    }
+     return reply.type("text/html").send("<h1>Admin console</h1><p>Admin-only page.</p>");
+   });
+@@ -127,8 +123,4 @@ export function buildApp() {
+   app.get("/api/admin/summary", async (request, reply) => {
+-    const user = await requireAdmin(request, reply);
+-    if (!user) {
+-      return reply;
+-    }
+     const [users, tasks] = await Promise.all([prisma.user.count(), prisma.task.count()]);
+     return { users, tasks };
+   });

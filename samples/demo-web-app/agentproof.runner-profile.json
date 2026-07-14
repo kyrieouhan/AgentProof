@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0-m1",
+  "repo_path": "samples/demo-web-app",
+  "commit": "HEAD",
+  "image": "node:20-bookworm",
+  "workdir": ".",
+  "node_version": "20",
+  "package_manager": "pnpm",
+  "commands": {
+    "install": "pnpm install --frozen-lockfile",
+    "build": "pnpm run prisma:generate && pnpm run build",
+    "test": "pnpm test",
+    "start": "pnpm start"
+  },
+  "healthcheck": {
+    "method": "GET",
+    "path": "/health",
+    "expected_status": 200,
+    "timeout_ms": 1000,
+    "retries": 20
+  },
+  "port": 3000,
+  "env_allowlist": [
+    {
+      "name": "NODE_ENV",
+      "source": "runner",
+      "value": "test"
+    },
+    {
+      "name": "PORT",
+      "source": "runner",
+      "value": "3000"
+    },
+    {
+      "name": "DATABASE_URL",
+      "source": "temporary_file"
+    }
+  ],
+  "resource_limits": {
+    "cpu": "2",
+    "memory_mb": 2048,
+    "pids": 512,
+    "disk_mb": 2048,
+    "file_count": 30000,
+    "stdout_stderr_mb": 20,
+    "command_timeout_ms": 600000,
+    "service_start_timeout_ms": 30000
+  },
+  "network_policy": {
+    "default": "deny",
+    "install_phase": "restricted_dependency_sources"
+  },
+  "mount_policy": {
+    "docker_socket": "forbidden",
+    "host_home": "forbidden",
+    "ssh_keys": "forbidden",
+    "real_env_files": "forbidden",
+    "rules": "read_only",
+    "workspace": "temporary_copy"
+  },
+  "evidence_policy": {
+    "capture_stdout_stderr": true,
+    "hash_outputs": true,
+    "redact_secrets": true,
+    "treat_target_outputs_as_untrusted": true
+  }
+}
