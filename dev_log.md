@@ -446,3 +446,13 @@
 - 状态文档：`AGENTS.md` 从旧的“当前处于 M0”修正为公开版本已完成并停止在 M3；`docs/execution-status.md` 明确是否可以自动继续为“否”，下一步 M4 规划或真实项目兼容验证均需用户确认。
 - 公开工程：新增基础 GitHub Actions CI（Node.js 20、`npm ci`、`npm run lint`、`npm test`）和 `SECURITY.md`；CI 不运行 Docker、完整 M3 browser regression 或需要本机 Chrome 的测试。
 - 边界：本轮不修改原始开发仓库，不进入 M4，不创建 GitHub App，不配置云服务，不推送远程。
+
+## 2026-07-14 - M3 Windows 桌面安装版
+
+- 背景：用户要求把当前本地 Web MVP 打包为可安装的 Windows 桌面软件；本轮仍属于 M3 分发与易用性增强，不进入 M4，不开发 GitHub App，不配置云端服务，不 push。
+- 实现：新增 Electron 桌面壳、单实例启动、随机空闲端口、本次启动随机会话令牌、最小 preload IPC 文件夹选择、桌面日志、官方 Demo 用户数据目录副本、统一子进程启动器、桌面 smoke 和 electron-builder NSIS 配置。
+- 安全边界：桌面窗口禁用 Node integration，启用 context isolation、sandbox 和 webSecurity；renderer 不能直接访问 `fs`、`child_process` 或环境变量；桌面模式下 API、报告和证据接口均校验 `x-agentproof-session`，令牌不写入日志、报告或 Manifest。
+- 数据目录：安装版默认写入 `%LOCALAPPDATA%\AgentProof\` 下的 `runs/`、`logs/`、`temp/`、`demo/`、`config/`，继续支持 `AGENTPROOF_DATA_DIR`；官方 Demo 首次复制到 `%LOCALAPPDATA%\AgentProof\demo\0.1.0\`，不在安装目录或被验收项目原地写数据库、报告、截图或临时文件。
+- 打包：新增 `npm run desktop:dev`、`npm run desktop:smoke`、`npm run desktop:pack`、`npm run desktop:dist:win`；生成 `dist-installer\AgentProof-Setup-0.1.0-x64.exe`，安装包未签名，可能触发 Windows SmartScreen，Docker Desktop 仍需单独安装。
+- 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\AgentProof.exe --smoke` 和 `npm run desktop:dist:win` 已通过；Electron 二进制下载曾因网络问题临时使用 `ELECTRON_MIRROR` 补齐，未写入仓库配置。
+- 边界：不做自动更新、代码签名、自定义图标、托盘、开机启动、macOS/Linux 安装包、GitHub App、云端 Runner 或账号系统。安装/卸载的完整人工验证步骤已记录在 `docs/windows-installer.md`。
