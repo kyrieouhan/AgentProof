@@ -13,6 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STATIC_DIR = path.join(__dirname, "static");
 const DEFAULT_PORT = 4173;
 const MAX_BODY_BYTES = 128 * 1024;
+const OFFICIAL_DEMO_TOKEN = "__AGENTPROOF_OFFICIAL_DEMO__";
 
 export const DEFAULT_WEB_CRITERIA = Object.freeze([
   {
@@ -42,12 +43,15 @@ export function createWebServer(options = {}) {
   const activeKeys = new Map();
   const dockerCommand = options.dockerCommand ?? process.env.AGENTPROOF_WEB_DOCKER ?? process.env.AGENTPROOF_DOCKER;
   const dataDir = options.dataDir;
+  const accessToken = options.accessToken;
+  const officialDemoRoot = options.officialDemoRoot ? path.resolve(options.officialDemoRoot) : null;
+  const desktopMode = options.desktopMode === true;
   const dockerCheck = options.dockerCheck ?? ((input) => checkDocker(input));
   const commandRunner = options.commandRunner ?? ((cwd, args, env) => runNode(cwd, args, env));
 
   const server = http.createServer(async (request, response) => {
     try {
-      await route({ request, response, agentproofRoot, jobs, activeKeys, dockerCommand, dataDir, dockerCheck, commandRunner });
+      await route({ request, response, agentproofRoot, jobs, activeKeys, dockerCommand, dataDir, accessToken, officialDemoRoot, desktopMode, dockerCheck, commandRunner });
     } catch (error) {
       respondJson(response, error.statusCode ?? 500, { error: error.message });
     }
@@ -76,6 +80,8 @@ async function route(context) {
   const method = request.method ?? "GET";
 
   if (method === "GET" && url.pathname === "/health") return respondJson(response, 200, { status: "ok" });
+  if (context.accessToken && protectedRoute(url.pathname) && !authorized(request, context.accessToken)) return respondJson(response, 401, { error: "未授权的桌面会话请求。" });
+  if (method === "GET" && url.pathname === "/api/desktop-info") return respondJson(response, 200, { desktop: context.desktopMode, official_demo_available: Boolean(context.officialDemoRoot) });
   if (method === "GET" && url.pathname === "/api/example") return respondJson(response, 200, { example: DEFAULT_WEB_EXAMPLE });
   if (method === "GET" && url.pathname === "/api/default-criteria") return respondJson(response, 200, { criteria: DEFAULT_WEB_CRITERIA });
   if (method === "POST" && url.pathname === "/api/project") return handleProject(context);
@@ -88,16 +94,16 @@ async function route(context) {
   respondJson(response, 404, { error: "未找到请求的资源。" });
 }
 
-async function handleProject({ request, response, agentproofRoot }) {
+async function handleProject({ request, response, agentproofRoot, officialDemoRoot }) {
   const body = await readJson(request);
-  const project = inspectProject(body.path, { agentproofRoot });
+  const project = inspectProject(body.path, { agentproofRoot, officialDemoRoot });
   respondJson(response, 200, { project });
 }
 
 async function handleStartRun(context) {
-  const { request, response, agentproofRoot, jobs, activeKeys, dataDir } = context;
+  const { request, response, agentproofRoot, jobs, activeKeys, dataDir, officialDemoRoot } = context;
   const body = await readJson(request);
-  const project = inspectProject(body.project_path, { agentproofRoot });
+  const project = inspectProject(body.project_path, { agentproofRoot, officialDemoRoot });
   if (!project.runner_profile) return respondJson(response, 400, { error: "未找到该项目的 Runner Profile。" });
   if (!project.runner_profile.valid) return respondJson(response, 400, { error: "Runner Profile 无效。", details: project.runner_profile.errors });
 
@@ -233,7 +239,7 @@ async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, command
   updateStage(job, "browser", "running", "正在执行 M3 浏览器流程。");
   updateStage(job, "api", "running", "等待同一登录会话的 API 证据。");
   updateStage(job, "database", "running", "等待 SQLite 持久化证据。");
-  const browser = await commandRunner(agentproofRoot, ["scripts/run-m3-browser-smoke.mjs", "--repo-root", agentproofRoot], childEnv);
+  const browser = await commandRunner(agentproofRoot, ["scripts/run-m3-browser-smoke.mjs", "--repo-root", agentproofRoot, "--demo-root", job.project.local_path], childEnv);
   job.logs.push({
     phase: "browser",
     exit_code: browser.exitCode,
@@ -334,18 +340,28 @@ function copyEvidence(job, browserSummary) {
   });
 }
 
-function inspectProject(inputPath, { agentproofRoot }) {
-  const projectPath = resolveDirectory(inputPath);
-  const gitRoot = git(projectPath, ["rev-parse", "--show-toplevel"]).trim();
-  const branch = git(projectPath, ["rev-parse", "--abbrev-ref", "HEAD"]).trim();
-  const commit = git(projectPath, ["rev-parse", "HEAD"]).trim();
-  const statusLines = git(projectPath, ["status", "--short"]).split(/\r?\n/).filter(Boolean);
+function inspectProject(inputPath, { agentproofRoot, officialDemoRoot }) {
+  const isDesktopDemo = inputPath === OFFICIAL_DEMO_TOKEN && officialDemoRoot;
+  const projectPath = isDesktopDemo ? officialDemoRoot : resolveDirectory(inputPath);
+  let gitRoot = projectPath;
+  let branch = isDesktopDemo ? "desktop-demo" : "unknown";
+  let commit = desktopDemoCommit(projectPath);
+  let statusLines = [];
+  if (!isDesktopDemo) {
+    gitRoot = git(projectPath, ["rev-parse", "--show-toplevel"]).trim();
+    branch = git(projectPath, ["rev-parse", "--abbrev-ref", "HEAD"]).trim();
+    commit = git(projectPath, ["rev-parse", "HEAD"]).trim();
+    statusLines = git(projectPath, ["status", "--short"]).split(/\r?\n/).filter(Boolean);
+  }
   const profilePath = path.join(projectPath, "agentproof.runner-profile.json");
   const profile = fs.existsSync(profilePath) ? JSON.parse(fs.readFileSync(profilePath, "utf8")) : null;
   const validation = profile ? validateRunnerProfile(profile, { repoRoot: gitRoot }) : null;
   return {
     name: path.basename(projectPath),
-    path_display: displayPath(projectPath, agentproofRoot),
+    local_path: projectPath,
+    request_path: isDesktopDemo ? OFFICIAL_DEMO_TOKEN : projectPath,
+    path_display: isDesktopDemo ? "官方 Demo（用户数据目录）" : displayPath(projectPath, agentproofRoot),
+    is_official_demo: isDesktopDemo || isOfficialDemoPath(projectPath, agentproofRoot),
     git_root: gitRoot,
     branch,
     commit,
@@ -366,6 +382,7 @@ function inspectProject(inputPath, { agentproofRoot }) {
 }
 
 function isOfficialDemoProject(project, agentproofRoot) {
+  if (project.is_official_demo) return true;
   const demoProfile = path.join(agentproofRoot, "samples", "demo-web-app", "agentproof.runner-profile.json");
   return path.resolve(project.git_root) === path.resolve(agentproofRoot) && path.resolve(project.runner_profile?.path ?? "") === path.resolve(demoProfile);
 }
@@ -426,6 +443,8 @@ function publicJob(job) {
     project: {
       name: job.project.name,
       path_display: job.project.path_display,
+      request_path: job.project.request_path,
+      is_official_demo: job.project.is_official_demo,
       branch: job.project.branch,
       short_commit: job.project.short_commit,
       workspace_status: job.project.workspace_status,
@@ -518,6 +537,16 @@ function resolveDirectory(inputPath) {
   return absolute;
 }
 
+function isOfficialDemoPath(projectPath, agentproofRoot) {
+  return path.resolve(projectPath) === path.resolve(agentproofRoot, "samples", "demo-web-app");
+}
+
+function desktopDemoCommit(projectPath) {
+  const marker = path.join(projectPath, ".agentproof-demo-version");
+  if (fs.existsSync(marker)) return `desktop-demo-${fs.readFileSync(marker, "utf8").trim()}`;
+  return "desktop-demo";
+}
+
 function userError(message, statusCode = 400) {
   const error = new Error(message);
   error.statusCode = statusCode;
@@ -536,13 +565,25 @@ function serveStatic(response, pathname) {
   if (!isInside(STATIC_DIR, target) || !fs.existsSync(target) || fs.statSync(target).isDirectory()) return respondJson(response, 404, { error: "未找到请求的资源。" });
   const ext = path.extname(target);
   const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8" };
-  response.writeHead(200, { "content-type": types[ext] ?? "application/octet-stream" });
+  response.writeHead(200, {
+    "content-type": types[ext] ?? "application/octet-stream",
+    "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' blob: data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+    "x-content-type-options": "nosniff"
+  });
   fs.createReadStream(target).pipe(response);
 }
 
 function respondJson(response, statusCode, payload) {
-  response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });
+  response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" });
   response.end(`${JSON.stringify(payload, null, 2)}\n`);
+}
+
+function protectedRoute(pathname) {
+  return pathname.startsWith("/api/");
+}
+
+function authorized(request, token) {
+  return request.headers["x-agentproof-session"] === token;
 }
 
 function readJson(request) {

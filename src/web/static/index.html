@@ -19,6 +19,8 @@
       <label for="project-path">本地 Git 仓库路径</label>
       <div class="row">
         <input id="project-path" data-testid="project-path" placeholder="粘贴 samples/demo-web-app 的本地路径">
+        <button id="choose-project" data-testid="choose-project" type="button" class="secondary desktop-only" hidden>选择项目文件夹</button>
+        <button id="use-official-demo" data-testid="use-official-demo" type="button" class="secondary desktop-only" hidden>使用官方 Demo</button>
         <button id="inspect-project" data-testid="inspect-project">检查项目</button>
       </div>
       <p id="project-error" class="error" data-testid="project-error"></p>

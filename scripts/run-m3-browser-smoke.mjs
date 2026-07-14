@@ -14,8 +14,8 @@ import { createVerificationReport, renderMarkdownReport } from "../src/domain/re
 import { DOMAIN_SCHEMA_VERSION } from "../src/domain/schemas.mjs";
 import { createSmokeRunPaths } from "../src/runtime-paths.mjs";
 
-const repoRoot = path.resolve(process.argv.includes("--repo-root") ? process.argv[process.argv.indexOf("--repo-root") + 1] : path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
-const demoRoot = path.join(repoRoot, "samples", "demo-web-app");
+const repoRoot = path.resolve(argValue("--repo-root") ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."));
+const demoRoot = path.resolve(argValue("--demo-root") ?? path.join(repoRoot, "samples", "demo-web-app"));
 const runId = `m3-browser-${Date.now().toString(36)}`;
 const runPaths = createSmokeRunPaths("m3-browser", runId);
 const artifactDir = runPaths.run_dir;
@@ -97,7 +97,7 @@ try {
     run: {
       schema_version: DOMAIN_SCHEMA_VERSION,
       run_id: runId,
-      commit: commandOutput("git", ["rev-parse", "HEAD"], { cwd: repoRoot }).trim(),
+      commit: readRunCommit(),
       runner_profile: "samples/demo-web-app/agentproof.runner-profile.json",
       image_digest: readIsolationDigest(),
       seed
@@ -343,6 +343,23 @@ function readIsolationDigest() {
   const summaryPath = path.join(repoRoot, "artifacts", "m1-isolation-smoke", "summary.json");
   if (!fs.existsSync(summaryPath)) return `sha256:${"0".repeat(64)}`;
   return JSON.parse(fs.readFileSync(summaryPath, "utf8")).image_digest;
+}
+
+function readRunCommit() {
+  try {
+    return commandOutput("git", ["rev-parse", "HEAD"], { cwd: repoRoot }).trim();
+  } catch {
+    try {
+      return `desktop-package-${JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8")).version ?? "unknown"}`;
+    } catch {
+      return "unknown";
+    }
+  }
+}
+
+function argValue(name) {
+  const index = process.argv.indexOf(name);
+  return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
 function writeJson(fileName, value) {
