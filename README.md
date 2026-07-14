@@ -94,6 +94,45 @@ AgentProof 默认不把验收报告、截图、数据库、trace 或临时文件
 6. 等待安装、构建、测试、启动服务、API 验证、浏览器验证、数据库验证和报告生成阶段完成。
 7. 在结果区查看每个验收项状态、失败原因、证据、合并建议，并打开 HTML 报告或下载 Markdown 报告。
 
+## Windows 安装版
+
+当前 M3 分发增强支持构建未签名的 Windows x64 桌面安装包：
+
+```powershell
+npm run desktop:dist:win
+```
+
+构建完成后，安装包位于：
+
+```text
+dist-installer\AgentProof-Setup-0.1.0-x64.exe
+```
+
+安装版说明：
+
+- 安装后可通过桌面快捷方式或开始菜单启动 AgentProof。
+- AgentProof 自身随安装包携带 Electron/Node 运行环境，用户不需要为 AgentProof 执行 `git clone`、`npm install` 或 `npm run web:start`，也不需要单独安装 Node.js。
+- Docker Desktop 仍需用户单独安装并启动；AgentProof 不捆绑 Docker，也不修改 Docker 设置。
+- 浏览器验证使用本机 Chrome 或 Microsoft Edge；找不到浏览器时可设置 `CHROME_PATH`。
+- 安装器为 NSIS x64，默认当前用户安装，允许选择 C 盘或 D 盘安装目录，创建桌面和开始菜单快捷方式，支持卸载。
+- 当前安装包未做代码签名，Windows SmartScreen 可能提示“无法识别的应用”。这是未签名测试版的预期限制，用户需自行确认发布来源后再选择是否继续运行。
+- 卸载程序不会默认删除 `%LOCALAPPDATA%\AgentProof\` 下的运行数据。
+
+安装版数据目录：
+
+```text
+%LOCALAPPDATA%\AgentProof\
+  runs\
+  logs\
+  temp\
+  demo\
+  config\
+```
+
+可以用 `AGENTPROOF_DATA_DIR` 覆盖默认数据目录。官方 Demo 会在首次运行时复制到用户数据目录，例如 `%LOCALAPPDATA%\AgentProof\demo\0.1.0\`，不会在安装目录或被验收项目中原地写入数据库、截图、报告或临时文件。
+
+安装版仍属于本地 M3 MVP：不包含自动更新、代码签名、托盘、开机启动、macOS/Linux 安装包、GitHub App、云端 Runner 或账号系统。
+
 ## 外部项目边界
 
 对于非官方 Demo 项目，AgentProof 当前可以按 RunnerProfile 执行 install/build/test，并保留结构化日志和报告。若项目没有显式配置专属浏览器流程、API 断言和数据库断言，则浏览器/API/数据库阶段会显示 `unverifiable`，最终建议为 `human_review` 或 `indeterminate`，不会因为 install/build/test 通过就自动给出 `recommend_merge`。
@@ -105,6 +144,9 @@ npm test
 npm run lint
 npm run m3:web-smoke
 npm run m3:regression
+npm run desktop:smoke
+npm run desktop:pack
+npm run desktop:dist:win
 ```
 
 这些命令会在本地数据目录下重新生成运行证据。公开导出分支默认不跟踪生成物，只保留 `artifacts/.gitkeep` 作为兼容目录锚点。

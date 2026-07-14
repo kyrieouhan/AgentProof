@@ -55,6 +55,42 @@ test("web server reports invalid paths and Docker infrastructure errors", async 
   }
 });
 
+test("desktop session token protects APIs, reports, and evidence", async () => {
+  const dataDir = tempPath("agentproof-web-token");
+  const app = await startWebServer({ port: 0, repoRoot: process.cwd(), dataDir, accessToken: "desktop-secret-token" });
+  const runDir = path.join(dataDir, "runs", "token-run");
+  const evidenceDir = path.join(runDir, "evidence");
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  fs.writeFileSync(path.join(runDir, "report.html"), "<h1>report</h1>", "utf8");
+  fs.writeFileSync(path.join(evidenceDir, "final-screen.png"), Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+  app.jobs.set("token-run", {
+    run_id: "token-run",
+    artifact_dir: runDir,
+    evidence: [{ file: "final-screen.png", content_type: "image/png" }]
+  });
+  try {
+    assert.equal((await get(`${app.url}/health`)).status, 200);
+    assert.equal((await get(`${app.url}/api/example`)).status, 401);
+    assert.equal((await get(`${app.url}/api/example`, "wrong-token")).status, 401);
+    const authorized = await get(`${app.url}/api/example`, "desktop-secret-token");
+    assert.equal(authorized.status, 200);
+    assert.match(authorized.body.example.requirement, /官方 Demo/);
+
+    assert.equal((await fetch(`${app.url}/api/runs/token-run/report.html`)).status, 401);
+    assert.equal((await fetch(`${app.url}/api/runs/token-run/evidence/final-screen.png`)).status, 401);
+
+    const report = await fetch(`${app.url}/api/runs/token-run/report.html`, { headers: auth("desktop-secret-token") });
+    assert.equal(report.status, 200);
+    assert.match(await report.text(), /report/);
+
+    const evidence = await fetch(`${app.url}/api/runs/token-run/evidence/final-screen.png`, { headers: auth("desktop-secret-token") });
+    assert.equal(evidence.status, 200);
+    assert.equal(evidence.headers.get("content-type"), "image/png");
+  } finally {
+    await close(app.server);
+  }
+});
+
 test("non-official projects do not run the official demo browser flow", async () => {
   const repo = createMinimalGitProject();
   const dataDir = tempPath("agentproof-web-generic");
@@ -141,8 +177,8 @@ test("official demo reports and evidence are served from the AgentProof data dir
   }
 });
 
-async function get(url) {
-  const response = await fetch(url);
+async function get(url, token) {
+  const response = await fetch(url, { headers: token ? auth(token) : {} });
   return { status: response.status, body: await response.json() };
 }
 
@@ -256,4 +292,8 @@ function runGit(cwd, args) {
 
 function gitStatus(cwd) {
   return runGit(cwd, ["status", "--short"]).trim();
+}
+
+function auth(token) {
+  return { "x-agentproof-session": token };
 }

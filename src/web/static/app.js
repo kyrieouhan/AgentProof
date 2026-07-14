@@ -2,6 +2,10 @@ let project = null;
 let activeRunId = null;
 let pollTimer = null;
 let criteria = [];
+let sessionToken = "";
+let desktopInfo = { desktop: false, official_demo_available: false };
+
+const OFFICIAL_DEMO_TOKEN = "__AGENTPROOF_OFFICIAL_DEMO__";
 
 const statusLabels = {
   pending: "未开始",
@@ -50,6 +54,8 @@ const evidenceLabels = {
 
 const els = {
   projectPath: document.querySelector("#project-path"),
+  chooseProject: document.querySelector("#choose-project"),
+  useOfficialDemo: document.querySelector("#use-official-demo"),
   inspectProject: document.querySelector("#inspect-project"),
   projectError: document.querySelector("#project-error"),
   projectSummary: document.querySelector("#project-summary"),
@@ -66,35 +72,63 @@ const els = {
 boot();
 
 async function boot() {
+  sessionToken = readSessionToken();
   criteria = [];
   renderCriteria();
   updateStartButton();
+  await loadDesktopInfo();
 }
 
-els.inspectProject.addEventListener("click", async () => {
-  els.projectError.textContent = "";
-  els.projectSummary.textContent = "正在检查项目……";
-  els.startRun.disabled = true;
-  try {
-    const payload = await postJson("/api/project", { path: els.projectPath.value });
-    project = payload.project;
-    renderProject(project);
-    updateStartButton();
-  } catch (error) {
-    project = null;
-    els.projectSummary.textContent = "";
-    els.projectError.textContent = error.message;
-    updateStartButton();
+function readSessionToken() {
+  const url = new URL(window.location.href);
+  const token = url.searchParams.get("token") ?? "";
+  if (token) {
+    url.searchParams.delete("token");
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
   }
+  return token;
+}
+
+async function loadDesktopInfo() {
+  try {
+    desktopInfo = await fetchJson("/api/desktop-info");
+  } catch {
+    desktopInfo = { desktop: false, official_demo_available: false };
+  }
+  if (desktopInfo.desktop) {
+    els.chooseProject.hidden = false;
+    els.useOfficialDemo.hidden = !desktopInfo.official_demo_available;
+    els.projectPath.placeholder = "手动输入路径，或点击“选择项目文件夹”";
+  }
+}
+
+els.chooseProject.addEventListener("click", async () => {
+  const api = window.agentproofDesktop;
+  if (!api?.selectProjectDirectory) {
+    els.projectError.textContent = "当前环境不支持原生文件夹选择，请手动输入项目路径。";
+    return;
+  }
+  const selected = await api.selectProjectDirectory();
+  if (!selected) return;
+  els.projectPath.value = selected;
+  project = null;
+  els.projectSummary.textContent = "";
+  updateStartButton();
+});
+
+els.useOfficialDemo.addEventListener("click", async () => {
+  await inspectProject(OFFICIAL_DEMO_TOKEN, { displayValue: "官方 Demo（用户数据目录）" });
+});
+
+els.inspectProject.addEventListener("click", async () => {
+  await inspectProject(projectPathForRequest());
 });
 
 els.loadExample.addEventListener("click", async () => {
   if (hasDraftContent() && !window.confirm("加载示例将覆盖当前填写的需求和验收项，是否继续？")) return;
   els.runError.textContent = "";
   try {
-    const response = await fetch("/api/example");
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || `请求失败，状态码 ${response.status}`);
+    const data = await fetchJson("/api/example");
     els.requirement.value = data.example.requirement;
     criteria = withUiIds(data.example.criteria);
     renderCriteria();
@@ -124,7 +158,7 @@ els.startRun.addEventListener("click", async () => {
   els.startRun.disabled = true;
   try {
     const payload = await postJson("/api/runs", {
-      project_path: els.projectPath.value,
+      project_path: project.request_path ?? projectPathForRequest(),
       requirement: els.requirement.value,
       criteria: readCriteria()
     });
@@ -137,6 +171,29 @@ els.startRun.addEventListener("click", async () => {
   }
 });
 
+async function inspectProject(pathValue, options = {}) {
+  els.projectError.textContent = "";
+  els.projectSummary.textContent = "正在检查项目……";
+  els.startRun.disabled = true;
+  try {
+    const payload = await postJson("/api/project", { path: pathValue });
+    project = payload.project;
+    if (options.displayValue) els.projectPath.value = options.displayValue;
+    renderProject(project);
+    updateStartButton();
+  } catch (error) {
+    project = null;
+    els.projectSummary.textContent = "";
+    els.projectError.textContent = error.message;
+    updateStartButton();
+  }
+}
+
+function projectPathForRequest() {
+  if (project?.is_official_demo && els.projectPath.value.includes("官方 Demo")) return project.request_path;
+  return els.projectPath.value;
+}
+
 function renderProject(item) {
   const commands = item.runner_profile?.commands ?? {};
   const profileText = item.runner_profile
@@ -146,6 +203,7 @@ function renderProject(item) {
     <h3>项目概览</h3>
     <dl>
       <dt>项目名称</dt><dd data-testid="project-name">${escapeHtml(item.name)}</dd>
+      <dt>路径</dt><dd>${escapeHtml(item.path_display ?? "")}</dd>
       <dt>分支</dt><dd data-testid="project-branch">${escapeHtml(item.branch)}</dd>
       <dt>提交哈希</dt><dd data-testid="project-commit"><code>${escapeHtml(item.short_commit)}</code></dd>
       <dt>工作区状态</dt><dd>${escapeHtml(item.workspace_status === "clean" ? "干净" : "有未提交修改")}</dd>
@@ -264,8 +322,7 @@ function updateStartButton() {
 
 async function pollRun() {
   if (!activeRunId) return;
-  const response = await fetch(`/api/runs/${activeRunId}`);
-  const run = await response.json();
+  const run = await fetchJson(`/api/runs/${activeRunId}`);
   renderRun(run);
   if (["queued", "running"].includes(run.status)) {
     pollTimer = setTimeout(pollRun, 1000);
@@ -289,6 +346,7 @@ function renderRun(run) {
     ${renderLogs(run.logs ?? [])}
   `;
   bindLogButtons();
+  bindProtectedLinks();
 }
 
 function renderStage(stage) {
@@ -325,9 +383,9 @@ function renderReport(run) {
         `).join("")}
       </ul>
       <div class="links" data-testid="report-links">
-        <a href="${run.report_urls.html}" target="_blank" rel="noreferrer">查看 HTML 报告</a>
-        <a href="${run.report_urls.markdown}" download>下载 Markdown 报告</a>
-        ${run.evidence.map(item => `<a href="${item.url}" target="_blank" rel="noreferrer">${escapeHtml(evidenceLabel(item.file))}</a>`).join("")}
+        <a href="${run.report_urls.html}" target="_blank" rel="noreferrer" data-protected-link>查看 HTML 报告</a>
+        <a href="${run.report_urls.markdown}" download="${escapeAttr(run.run_id)}-report.md" data-protected-link>下载 Markdown 报告</a>
+        ${run.evidence.map(item => `<a href="${item.url}" target="_blank" rel="noreferrer" data-protected-link>${escapeHtml(evidenceLabel(item.file))}</a>`).join("")}
       </div>
     </section>
   `;
@@ -374,15 +432,53 @@ function bindLogButtons() {
   });
 }
 
-async function postJson(url, payload) {
+function bindProtectedLinks() {
+  if (!sessionToken) return;
+  els.runPanel.querySelectorAll("[data-protected-link]").forEach(link => {
+    link.addEventListener("click", async event => {
+      event.preventDefault();
+      try {
+        const response = await fetch(link.getAttribute("href"), { headers: authHeaders() });
+        if (!response.ok) throw new Error(`请求失败，状态码 ${response.status}`);
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        if (link.hasAttribute("download")) {
+          const anchor = document.createElement("a");
+          anchor.href = objectUrl;
+          anchor.download = link.getAttribute("download") || "agentproof-report.md";
+          anchor.click();
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+        } else {
+          window.open(objectUrl, "_blank", "noopener,noreferrer");
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+        }
+      } catch (error) {
+        els.runError.textContent = `无法打开报告或证据：${error.message}`;
+      }
+    });
+  });
+}
+
+async function fetchJson(url, options = {}) {
   const response = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(payload)
+    ...options,
+    headers: { ...authHeaders(), ...(options.headers ?? {}) }
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || `请求失败，状态码 ${response.status}`);
   return data;
+}
+
+async function postJson(url, payload) {
+  return fetchJson(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
+
+function authHeaders() {
+  return sessionToken ? { "x-agentproof-session": sessionToken } : {};
 }
 
 function statusBadge(status, testId = "") {

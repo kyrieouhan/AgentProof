@@ -1,9 +1,9 @@
 ﻿# AgentProof 执行状态
 
 - 最近更新时间：2026-07-14
-- 当前里程碑：M3 completed（浏览器验证、防作弊与最小本地 Web 入口 MVP）
+- 当前里程碑：M3 completed（浏览器验证、防作弊、最小本地 Web 入口与 Windows 安装版 MVP）
 - 当前任务：停止，等待用户明确授权是否进入 M4 或继续真实项目兼容验证
-- 上一个完成任务：M3-07 最小本地 Web 用户入口与 Web 端到端验证
+- 上一个完成任务：M3-08 Windows x64 桌面壳与 NSIS 安装器
 - 最新相关 Commit：见当前文件所在提交
 - 是否可以自动继续：否
 
@@ -45,6 +45,7 @@
 - M3-06 官方 Demo 缺陷回归、3 次一致性与内部可用性检查：新增 `npm run m3:regression`、`artifacts/m3-regression/`、`docs/milestones/M3-exit-review.md` 和 ADR-016；M3 退出门禁通过。
 - M3-07 最小本地 Web 用户入口：新增 `src/web/`、`npm run web:dev`、`npm run web:start` 和 `npm run m3:web-smoke`；界面可导入官方 Demo、显示 Git/RunnerProfile 信息、编辑验收项、启动真实 Runner/M3 验收、显示阶段进度、查看证据并导出 HTML/Markdown 报告。外部项目当前可执行 RunnerProfile install/build/test；未配置项目专属浏览器/API/数据库断言时，相应阶段为 `unverifiable`。
 - 公开版运行数据隔离：M3 Web 与 smoke 当前默认把新运行数据写入 AgentProof 数据目录（Windows 为 `%LOCALAPPDATA%\AgentProof`，macOS/Linux 为 `~/.agentproof`，可用 `AGENTPROOF_DATA_DIR` 覆盖），不再默认写入被验收项目的 `artifacts/`。
+- M3-08 Windows 安装版：新增 Electron 桌面壳、随机端口本地 Web 服务、桌面会话令牌、原生选择项目文件夹 IPC、官方 Demo 用户数据目录副本、桌面 smoke、win-unpacked 验证和 NSIS x64 安装器。该安装版不捆绑 Docker Desktop，不包含 GitHub App、云端 Runner、自动更新、代码签名或账号系统。
 
 ## 未完成内容
 
@@ -84,6 +85,7 @@
 - M3-05 验证：`npm run schema:generate`、`npm run lint`、`npm test` 和 `npm run m3:hardcoded` 通过；测试总数为 54；领域 JSON Schema 数量为 11；`artifacts/m3-hardcoded-randomization/summary.json` 显示只读规则通过，官方 hardcoded_behavior 补丁触发 1 条 human_review 风险。
 - M3-06 验证：`npm run m3:regression` 通过；浏览器正确基线 3/3 一致，五类官方缺陷 5/5 `reproduced`，Diff 风险与 hardcoded 随机化检查通过，内部可用性检查通过。
 - M3-07 验证：`npm run m3:web-smoke` 通过；从真实浏览器打开 AgentProof Web UI，错误路径检查通过，导入官方 Demo，编辑/确认验收项，点击开始验收，真实执行 Docker Runner install/build/test 与 M3 browser/API/database/report，打开 HTML/Markdown 报告和截图/日志/Manifest 证据；连续 3 次均 `passed` / `recommend_merge`，Docker 不可用场景显示 `infrastructure_error`。
+- M3-08 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\AgentProof.exe --smoke` 和 `npm run desktop:dist:win` 已实际通过；生成 `dist-installer\AgentProof-Setup-0.1.0-x64.exe`。本地 Electron 二进制下载受网络影响时，曾临时使用 `ELECTRON_MIRROR` 补齐构建依赖；该镜像设置未写入仓库。
 
 ## 阻塞事项
 

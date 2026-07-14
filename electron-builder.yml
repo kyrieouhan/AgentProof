@@ -1,0 +1,46 @@
+appId: io.github.kyrieouhan.agentproof
+productName: AgentProof
+copyright: Copyright (c) 2026 AgentProof
+asar: false
+disableDefaultIgnoredFiles: true
+directories:
+  output: dist-installer
+files:
+  - desktop/**
+  - src/**
+  - bin/**
+  - scripts/**
+  - samples/demo-web-app/**
+  - package.json
+  - package-lock.json
+  - README.md
+  - LICENSE
+  - "!tests/**"
+  - "!artifacts/**"
+  - "!coverage/**"
+  - "!datasets/failure-cases/**"
+  - "!docs/source/**"
+  - "!dev_log.md"
+  - "!dist-installer/**"
+  - "!**/.git/**"
+  - "!**/*.db"
+  - "!**/*.sqlite"
+  - "!**/*.sqlite3"
+extraResources:
+  - from: samples/demo-web-app/pnpm-lock.yaml
+    to: app/samples/demo-web-app/pnpm-lock.yaml
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: AgentProof-Setup-${version}-${arch}.exe
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  runAfterFinish: true
+  deleteAppDataOnUninstall: false
+  shortcutName: AgentProof

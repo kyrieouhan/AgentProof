@@ -20,6 +20,8 @@ credentials/
 node_modules/
 .pnpm-store/
 dist/
+dist-installer/
+win-unpacked/
 coverage/
 .next/
 playwright-report/
@@ -50,3 +52,4 @@ temp/
 .cache/
 *.tmp
 *.log
+AgentProof-Setup-*.exe
