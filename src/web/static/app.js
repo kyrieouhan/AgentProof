@@ -340,8 +340,16 @@ function renderRun(run) {
       <p><strong>状态：</strong>${statusBadge(run.status, "run-status")}</p>
       <p><strong>当前阶段：</strong><span data-testid="current-stage">${escapeHtml(stageName(run.current_stage))}</span></p>
     </div>
-    <h3>运行进度</h3>
-    <div class="stages">${run.stages.map(renderStage).join("")}</div>
+    <div class="progress-title">
+      <svg class="progress-title-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="M8 6h12M8 12h12M8 18h12" />
+        <circle cx="4" cy="6" r="1.4" />
+        <circle cx="4" cy="12" r="1.4" />
+        <circle cx="4" cy="18" r="1.4" />
+      </svg>
+      <h3>运行进度</h3>
+    </div>
+    <div class="stages">${run.stages.map((stage, index) => renderStage(stage, index)).join("")}</div>
     ${run.report ? renderReport(run) : renderEmptyReport()}
     ${renderLogs(run.logs ?? [])}
   `;
@@ -349,18 +357,21 @@ function renderRun(run) {
   bindProtectedLinks();
 }
 
-function renderStage(stage) {
+function renderStage(stage, index) {
   const message = escapeHtml(stage.message || "暂无结果。");
   return `
     <article class="stage stage-${escapeAttr(stage.status)}">
-      <div class="stage-top">
-        <strong>${escapeHtml(stageName(stage.id))}</strong>
-        ${statusBadge(stage.status)}
+      <div class="stage-number" aria-hidden="true">${escapeHtml(index + 1)}</div>
+      <strong class="stage-name">${escapeHtml(stageName(stage.id))}</strong>
+      <div class="stage-duration">
+        <span class="stage-label">耗时：</span>
+        <span>${escapeHtml(formatDuration(stage.duration_ms))}</span>
       </div>
-      <dl class="stage-meta">
-        <dt>耗时</dt><dd>${escapeHtml(formatDuration(stage.duration_ms))}</dd>
-        <dt>结果</dt><dd class="stage-message">${message}</dd>
-      </dl>
+      <div class="stage-result">
+        <span class="stage-label">结果：</span>
+        <span class="stage-message">${message}</span>
+      </div>
+      <div class="stage-status">${statusBadge(stage.status)}</div>
     </article>
   `;
 }
