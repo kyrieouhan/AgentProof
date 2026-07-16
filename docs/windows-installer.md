@@ -68,7 +68,7 @@ $env:AGENTPROOF_DATA_DIR = "D:\AgentProofData"
 官方 Demo 随安装包提供，但不在安装目录原地运行。首次启动时，桌面应用会把 `samples/demo-web-app` 复制到：
 
 ```text
-%LOCALAPPDATA%\AgentProof\demo\0.1.0\
+%LOCALAPPDATA%\AgentProof\demo\0.1.1\
 ```
 
 复制过程可重复；如果目标版本目录已存在且用户修改过，不覆盖用户副本。桌面 Web 页面中的“使用官方 Demo”使用这份可写副本。
@@ -141,7 +141,7 @@ NSIS 配置：
 输出文件：
 
 ```text
-dist-installer\AgentProof-Setup-0.1.0-x64.exe
+dist-installer\AgentProof-Setup-0.1.1-x64.exe
 ```
 
 当前安装包未签名，可能触发 Windows SmartScreen。不要提供绕过系统安全检查的脚本；用户应确认来源后再自行决定是否运行。
