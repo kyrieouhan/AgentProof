@@ -1,6 +1,6 @@
 {
   "name": "agentproof",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "AgentProof local M3 MVP with CLI, web UI, and Windows desktop shell.",
   "type": "module",

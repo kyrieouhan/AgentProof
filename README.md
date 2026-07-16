@@ -105,7 +105,7 @@ npm run desktop:dist:win
 构建完成后，安装包位于：
 
 ```text
-dist-installer\AgentProof-Setup-0.1.0-x64.exe
+dist-installer\AgentProof-Setup-0.1.1-x64.exe
 ```
 
 安装版说明：
@@ -129,7 +129,7 @@ dist-installer\AgentProof-Setup-0.1.0-x64.exe
   config\
 ```
 
-可以用 `AGENTPROOF_DATA_DIR` 覆盖默认数据目录。官方 Demo 会在首次运行时复制到用户数据目录，例如 `%LOCALAPPDATA%\AgentProof\demo\0.1.0\`，不会在安装目录或被验收项目中原地写入数据库、截图、报告或临时文件。
+可以用 `AGENTPROOF_DATA_DIR` 覆盖默认数据目录。官方 Demo 会在首次运行时复制到用户数据目录，例如 `%LOCALAPPDATA%\AgentProof\demo\0.1.1\`，不会在安装目录或被验收项目中原地写入数据库、截图、报告或临时文件。
 
 安装版仍属于本地 M3 MVP：不包含自动更新、代码签名、托盘、开机启动、macOS/Linux 安装包、GitHub App、云端 Runner 或账号系统。
 
