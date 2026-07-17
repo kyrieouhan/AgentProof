@@ -1,6 +1,6 @@
-# AgentProof 自主执行规则
+# VeriCrate 自主执行规则
 
-本文记录 AgentProof 在 M0-M3 的自主推进规则。它是恢复上下文和判断下一步工作的运行手册，不替代 [AGENTS.md](../AGENTS.md)、[agentproof-plan.md](agentproof-plan.md) 或各里程碑文档。
+本文记录 VeriCrate 在 M0-M3 的自主推进规则。它是恢复上下文和判断下一步工作的运行手册，不替代 [AGENTS.md](../AGENTS.md)、[vericrate-plan.md](vericrate-plan.md) 或各里程碑文档。
 
 ## 自主执行范围
 
@@ -17,7 +17,7 @@
 2. [AGENTS.md](../AGENTS.md)。
 3. [docs/milestones/](milestones/)。
 4. [docs/decision-log.md](decision-log.md)。
-5. [docs/agentproof-plan.md](agentproof-plan.md)。
+5. [docs/vericrate-plan.md](vericrate-plan.md)。
 6. [dev_log.md](../dev_log.md)。
 7. 会话中的用户目标文件或历史对话。
 
@@ -32,7 +32,7 @@
 
 ## 必须暂停的事项
 
-- 需要修改 AgentProof 核心定位或明显扩大/缩小本地 MVP 范围。
+- 需要修改 VeriCrate 核心定位或明显扩大/缩小本地 MVP 范围。
 - 需要降低安全隔离标准。
 - 需要账号、API Key、信用卡、付费服务、GitHub App、OAuth、Webhook、域名或云服务。
 - 需要 push、公开发布或上传代码。

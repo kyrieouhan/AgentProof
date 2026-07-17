@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentproof.dev/schemas/failure-case-review/1.0.0/review-summary-schema.json",
-  "title": "AgentProof M0 Candidate Review Summary",
+  "$id": "https://vericrate.dev/schemas/failure-case-review/1.0.0/review-summary-schema.json",
+  "title": "VeriCrate M0 Candidate Review Summary",
   "type": "object",
   "additionalProperties": false,
   "required": [

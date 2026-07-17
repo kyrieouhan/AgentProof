@@ -95,7 +95,7 @@ function runProfileCommandsInWorkspace(context) {
 }
 
 function runContainer(run, dockerCommand, runId, workspace, image, command, options = {}) {
-  const containerName = `agentproof-${runId}`;
+  const containerName = `vericrate-${runId}`;
   const record = runDocker(run, dockerCommand, [
     "run",
     "--rm",

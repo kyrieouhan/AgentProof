@@ -1,8 +1,8 @@
 {
-  "name": "@agentproof/demo-web-app",
+  "name": "@vericrate/demo-web-app",
   "version": "0.1.0",
   "private": true,
-  "description": "AgentProof official demo web app correct baseline.",
+  "description": "VeriCrate official demo web app correct baseline.",
   "type": "commonjs",
   "packageManager": "pnpm@10.17.1",
   "engines": {

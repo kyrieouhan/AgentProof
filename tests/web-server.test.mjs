@@ -7,15 +7,15 @@ import test from "node:test";
 import { startWebServer } from "../src/web/server.mjs";
 
 test("web server reports invalid paths and Docker infrastructure errors", async () => {
-  const dataDir = tempPath("agentproof-web-infra");
-  const app = await startWebServer({ port: 0, repoRoot: process.cwd(), dataDir, dockerCommand: "__agentproof_missing_docker__" });
+  const dataDir = tempPath("vericrate-web-infra");
+  const app = await startWebServer({ port: 0, repoRoot: process.cwd(), dataDir, dockerCommand: "__vericrate_missing_docker__" });
   try {
     const example = await get(`${app.url}/api/example`);
     assert.equal(example.status, 200);
     assert.match(example.body.example.requirement, /官方 Demo/);
     assert.equal(example.body.example.criteria.length, 2);
 
-    const invalid = await post(`${app.url}/api/project`, { path: path.join(process.cwd(), "definitely-not-agentproof") });
+    const invalid = await post(`${app.url}/api/project`, { path: path.join(process.cwd(), "definitely-not-vericrate") });
     assert.equal(invalid.status, 400);
     assert.match(invalid.body.error, /不存在/);
 
@@ -56,7 +56,7 @@ test("web server reports invalid paths and Docker infrastructure errors", async 
 });
 
 test("desktop session token protects APIs, reports, and evidence", async () => {
-  const dataDir = tempPath("agentproof-web-token");
+  const dataDir = tempPath("vericrate-web-token");
   const app = await startWebServer({ port: 0, repoRoot: process.cwd(), dataDir, accessToken: "desktop-secret-token" });
   const runDir = path.join(dataDir, "runs", "token-run");
   const evidenceDir = path.join(runDir, "evidence");
@@ -93,7 +93,7 @@ test("desktop session token protects APIs, reports, and evidence", async () => {
 
 test("non-official projects do not run the official demo browser flow", async () => {
   const repo = createMinimalGitProject();
-  const dataDir = tempPath("agentproof-web-generic");
+  const dataDir = tempPath("vericrate-web-generic");
   const before = gitStatus(repo);
   const calls = [];
   const app = await startWebServer({
@@ -133,8 +133,8 @@ test("non-official projects do not run the official demo browser flow", async ()
   }
 });
 
-test("official demo reports and evidence are served from the AgentProof data directory", async () => {
-  const dataDir = tempPath("agentproof-web-demo");
+test("official demo reports and evidence are served from the VeriCrate data directory", async () => {
+  const dataDir = tempPath("vericrate-web-demo");
   const app = await startWebServer({
     port: 0,
     repoRoot: process.cwd(),
@@ -164,7 +164,7 @@ test("official demo reports and evidence are served from the AgentProof data dir
 
     const html = await fetch(`${app.url}${run.report_urls.html}`);
     assert.equal(html.status, 200);
-    assert.match(await html.text(), /AgentProof 验收报告/);
+    assert.match(await html.text(), /VeriCrate 验收报告/);
 
     const evidence = await fetch(`${app.url}/api/runs/${run.run_id}/evidence/final-screen.png`);
     assert.equal(evidence.status, 200);
@@ -211,13 +211,13 @@ function tempPath(prefix) {
 }
 
 function createMinimalGitProject() {
-  const repo = tempPath("agentproof-generic-project");
+  const repo = tempPath("vericrate-generic-project");
   fs.writeFileSync(path.join(repo, "package.json"), `${JSON.stringify({ name: "generic-project", version: "1.0.0" }, null, 2)}\n`);
   fs.writeFileSync(path.join(repo, "package-lock.json"), `${JSON.stringify({ name: "generic-project", version: "1.0.0", lockfileVersion: 3, packages: { "": { name: "generic-project", version: "1.0.0" } } }, null, 2)}\n`);
-  fs.writeFileSync(path.join(repo, "agentproof.runner-profile.json"), `${JSON.stringify(minimalProfile(), null, 2)}\n`);
+  fs.writeFileSync(path.join(repo, "vericrate.runner-profile.json"), `${JSON.stringify(minimalProfile(), null, 2)}\n`);
   runGit(repo, ["init"]);
-  runGit(repo, ["config", "user.name", "AgentProof Test"]);
-  runGit(repo, ["config", "user.email", "agentproof@example.invalid"]);
+  runGit(repo, ["config", "user.name", "VeriCrate Test"]);
+  runGit(repo, ["config", "user.email", "vericrate@example.invalid"]);
   runGit(repo, ["add", "."]);
   runGit(repo, ["commit", "-m", "init"]);
   return repo;
@@ -295,5 +295,5 @@ function gitStatus(cwd) {
 }
 
 function auth(token) {
-  return { "x-agentproof-session": token };
+  return { "x-vericrate-session": token };
 }

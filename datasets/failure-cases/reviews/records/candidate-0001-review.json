@@ -23,7 +23,7 @@
   "suggested_severity": "high",
   "severity_reason": "影响关键代码修改、执行链路或重要工作区状态，建议高严重度供人工确认。",
   "missing_information": [
-    "缺少 AgentProof 独立复现和最终人工来源确认。"
+    "缺少 VeriCrate 独立复现和最终人工来源确认。"
   ],
   "recommended_action": "reject_out_of_scope",
   "review_group": "C",

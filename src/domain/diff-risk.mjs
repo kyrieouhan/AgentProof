@@ -48,7 +48,7 @@ export function analyzeDiffRisk(diffText, { source = "git-diff" } = {}) {
 
 export function renderDiffRiskMarkdown(report) {
   const rows = report.risks.map(risk => `| ${cell(risk.risk_id)} | ${cell(risk.severity)} | ${cell(risk.category)} | ${cell(risk.file)}:${risk.line_number ?? "?"} | ${cell(risk.summary)} |`).join("\n");
-  return `# AgentProof Diff Risk Report
+  return `# VeriCrate Diff Risk Report
 
 - Source: ${report.source}
 - Recommendation: ${report.recommendation}

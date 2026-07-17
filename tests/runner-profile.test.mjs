@@ -5,7 +5,7 @@ import test from "node:test";
 import { loadRunnerProfile, validateRunnerProfile } from "../src/runner-profile.mjs";
 
 const repoRoot = path.resolve(".");
-const demoProfile = loadRunnerProfile("samples/demo-web-app/agentproof.runner-profile.json");
+const demoProfile = loadRunnerProfile("samples/demo-web-app/vericrate.runner-profile.json");
 
 test("accepts the official demo RunnerProfile", () => {
   assert.deepEqual(validateRunnerProfile(demoProfile, { repoRoot }), { valid: true, errors: [] });
@@ -53,5 +53,5 @@ test("rejects inline sensitive-looking environment values", () => {
 
 function makeTempProject() {
   fs.mkdirSync(path.join(repoRoot, ".tmp"), { recursive: true });
-  return fs.mkdtempSync(path.join(repoRoot, ".tmp", "agentproof-profile-test-"));
+  return fs.mkdtempSync(path.join(repoRoot, ".tmp", "vericrate-profile-test-"));
 }

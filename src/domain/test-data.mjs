@@ -27,9 +27,9 @@ export function demoRegistrationData(seed) {
   const rng = createSeededRng(seed);
   const suffix = rng.token(10);
   return seedRecord(seed, "demo-registration", {
-    email: `agentproof+${suffix}@example.test`,
+    email: `vericrate+${suffix}@example.test`,
     password: `AP-${rng.token(8)}-Password1!`,
-    display_name: `AgentProof ${rng.int(1000, 9999)}`
+    display_name: `VeriCrate ${rng.int(1000, 9999)}`
   });
 }
 

@@ -1,4 +1,4 @@
-﻿# AgentProof Failure Case 数据集
+﻿# VeriCrate Failure Case 数据集
 
 本数据集记录可追溯、可去重、可脱敏、可复现的编程 Agent 失败案例，用于 M0 的问题与技术可行性验证。当前规范版本为 `1.0.0`；后续所有 failure case 都必须通过 [schema.json](schema.json)、[validate.py](validate.py) 和 [review-checklist.md](review-checklist.md) 三层门禁。
 
@@ -56,7 +56,7 @@ python datasets/failure-cases/validate.py
 4. 结构校验与语义校验通过后，人工按审核清单决定 `approved` 或 `rejected`。Codex、模型或自动脚本不得填写最终批准。
 5. 被拒记录如需重新审核，先修正内容并回到 `draft`；必须保留原拒绝原因或在版本控制中可追溯。
 
-只有 `approved` 案例才有资格计入 M0 的 20 个案例；同时还必须满足：`is_example=false`，主来源不是 `synthetic_demo` 或 `model_generated_candidate`，来源已核实，分类已确定，去重与脱敏已完成人工复核。`approved` 只说明案例记录达到数据集质量门禁，不代表 AgentProof 已自动检测该问题，也不代表所有 `approved` 记录一定计入 M0。
+只有 `approved` 案例才有资格计入 M0 的 20 个案例；同时还必须满足：`is_example=false`，主来源不是 `synthetic_demo` 或 `model_generated_candidate`，来源已核实，分类已确定，去重与脱敏已完成人工复核。`approved` 只说明案例记录达到数据集质量门禁，不代表 VeriCrate 已自动检测该问题，也不代表所有 `approved` 记录一定计入 M0。
 
 ## 来源核实规则
 

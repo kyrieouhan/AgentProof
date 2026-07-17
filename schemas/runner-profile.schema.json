@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentproof.local/schemas/runner-profile.schema.json",
-  "title": "AgentProof M1 RunnerProfile",
+  "$id": "https://vericrate.local/schemas/runner-profile.schema.json",
+  "title": "VeriCrate M1 RunnerProfile",
   "type": "object",
   "additionalProperties": false,
   "required": [

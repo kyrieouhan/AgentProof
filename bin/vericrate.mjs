@@ -78,9 +78,9 @@ function usageWithMessage(message) {
 
 function usage(exitCode) {
   console.error("Usage:");
-  console.error("  agentproof profile validate --profile <path> [--repo-root <path>] [--json]");
-  console.error("  agentproof docker check [--json]");
-  console.error("  agentproof run --profile <path> --lifecycle-smoke [--repo-root <path>] [--json]");
-  console.error("  agentproof run --profile <path> --commands [--repo-root <path>] [--json]");
+  console.error("  vericrate profile validate --profile <path> [--repo-root <path>] [--json]");
+  console.error("  vericrate docker check [--json]");
+  console.error("  vericrate run --profile <path> --lifecycle-smoke [--repo-root <path>] [--json]");
+  console.error("  vericrate run --profile <path> --commands [--repo-root <path>] [--json]");
   process.exit(exitCode);
 }

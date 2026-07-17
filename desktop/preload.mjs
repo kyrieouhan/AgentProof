@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("agentproofDesktop", {
-  selectProjectDirectory: () => ipcRenderer.invoke("agentproof:select-project-directory"),
+contextBridge.exposeInMainWorld("vericrateDesktop", {
+  selectProjectDirectory: () => ipcRenderer.invoke("vericrate:select-project-directory"),
   platform: process.platform
 });

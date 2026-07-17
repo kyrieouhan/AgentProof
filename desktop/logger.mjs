@@ -5,7 +5,7 @@ const MAX_LOG_BYTES = 1024 * 1024;
 
 export function createDesktopLogger(logDir, { token } = {}) {
   fs.mkdirSync(logDir, { recursive: true });
-  const file = path.join(logDir, "agentproof-desktop.log");
+  const file = path.join(logDir, "vericrate-desktop.log");
   rotate(file);
   return {
     file,

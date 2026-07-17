@@ -1,8 +1,8 @@
 {
-  "name": "@agentproof/minimal-npm-files",
+  "name": "@vericrate/minimal-npm-files",
   "version": "0.1.0",
   "private": true,
-  "description": "Minimal npm file manifest sample for AgentProof M1 runner repeatability.",
+  "description": "Minimal npm file manifest sample for VeriCrate M1 runner repeatability.",
   "type": "module",
   "engines": {
     "node": ">=20"

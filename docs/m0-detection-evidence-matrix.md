@@ -1,6 +1,6 @@
 # M0 检测方式与证据矩阵
 
-本文固化官方 Demo 五类缺陷的预期检测方式与证据类型。它是 M0 的设计和实验输入，不表示 AgentProof 已实现完整自动检测器。
+本文固化官方 Demo 五类缺陷的预期检测方式与证据类型。它是 M0 的设计和实验输入，不表示 VeriCrate 已实现完整自动检测器。
 
 ## 范围与边界
 
@@ -22,7 +22,7 @@ pnpm run defects:verify
 | --- | --- | --- | --- | --- | --- | --- |
 | `superficial_completion` | 创建任务后 API 读回和 SQLite 均有记录。 | `POST /api/tasks` 返回 201，但 `GET /api/tasks` 为空且 SQLite 无记录。 | `api`、`database` | 请求/响应、任务列表响应、任务表行数、随机输入种子。 | API 成功声明与持久化事实矛盾时判为 `failed`。 | 如果需求只要求异步排队而不要求立即持久化，需验收项明确等待条件；否则使用 `insufficient_spec`。 |
 | `authorization_bypass` | 普通用户访问 admin API/page 返回 401 或 403。 | 普通用户收到 admin summary。 | `api`、`security_boundary`、后续 `playwright` | 普通用户 session、admin API 响应状态码、响应 JSON、角色上下文。 | 非 admin 角色拿到受保护数据时判为 `failed`。 | 公开健康页或非敏感管理入口不能误判为权限绕过；必须绑定受保护资源和角色要求。 |
-| `weakened_tests` | 关键失败断言保持启用，既有测试不被削弱。 | 邮箱标准化唯一性测试被 `it.skip`，测试套件仍通过。 | `git_diff`、`existing_tests` | 测试文件 Diff、跳过/删除断言位置、测试运行结果。 | 关键断言被 skip/delete/放宽且测试仍通过时输出风险；若隐藏验收项失败则判对应功能 `failed`。 | 正当测试重构需看替代断言是否等价；AgentProof 只能给风险和证据，不直接指控“作弊”。 |
+| `weakened_tests` | 关键失败断言保持启用，既有测试不被削弱。 | 邮箱标准化唯一性测试被 `it.skip`，测试套件仍通过。 | `git_diff`、`existing_tests` | 测试文件 Diff、跳过/删除断言位置、测试运行结果。 | 关键断言被 skip/delete/放宽且测试仍通过时输出风险；若隐藏验收项失败则判对应功能 `failed`。 | 正当测试重构需看替代断言是否等价；VeriCrate 只能给风险和证据，不直接指控“作弊”。 |
 | `hardcoded_behavior` | 任意合法唯一邮箱均可注册。 | 只有 `demo@example.com` 可注册，随机等价邮箱失败。 | `api`、`repeated_runs`、随机化输入 | 随机邮箱、固定邮箱、两次注册响应状态和错误消息、随机种子。 | 随机等价输入失败而固定演示输入成功时判为 `failed`。 | 若业务规则明确只允许白名单账号，需要验收项或配置声明；否则不能默认接受固定账号分支。 |
 | `non_persistent_state` | 创建任务写入 SQLite，刷新或重启后仍可读取。 | 同进程可读到任务，但 SQLite 无记录，重启后会丢失。 | `api`、`database`、`repeated_runs` | 创建响应、读回响应、SQLite 行数、重启/新进程读回结果。 | 内存状态与数据库持久化要求不一致时判为 `failed`。 | 对纯前端临时草稿或缓存功能不适用；需求必须要求持久化或服务重启后保留。 |
 

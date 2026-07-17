@@ -14,7 +14,7 @@ export function createVerificationReport({ run_id, results }) {
 export function renderMarkdownReport(report) {
   const parsed = VerificationReportSchema.parse(report);
   const rows = parsed.results.map(result => `| ${cell(result.criterion_id)} | ${cell(displayStatus(result.status))} | ${cell(displaySummary(result.summary))} | ${cell(result.errors.join("; "))} |`).join("\n");
-  return `# AgentProof 验收报告
+  return `# VeriCrate 验收报告
 
 - 运行编号：${parsed.run_id}
 - 合并建议：${displayMerge(parsed.merge_recommendation)}
@@ -37,9 +37,9 @@ export function renderHtmlReport(report) {
   const rows = parsed.results.map(result => `<tr><td>${escapeHtml(result.criterion_id)}</td><td>${escapeHtml(displayStatus(result.status))}</td><td>${escapeHtml(displaySummary(result.summary))}</td><td>${escapeHtml(result.errors.join("; "))}</td></tr>`).join("");
   return `<!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><title>AgentProof 验收报告</title></head>
+<head><meta charset="utf-8"><title>VeriCrate 验收报告</title></head>
 <body>
-<h1>AgentProof 验收报告</h1>
+<h1>VeriCrate 验收报告</h1>
 <p><strong>运行编号：</strong>${escapeHtml(parsed.run_id)}</p>
 <p><strong>合并建议：</strong>${escapeHtml(displayMerge(parsed.merge_recommendation))}</p>
 <h2>状态统计</h2>

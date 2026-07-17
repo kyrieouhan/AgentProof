@@ -28,7 +28,7 @@
   "recommended_action": "accept_for_manual_review",
   "review_group": "A",
   "candidate_fields_corrected": [],
-  "agentproof_scope": "core_in_scope",
+  "vericrate_scope": "core_in_scope",
   "detectable_by_mvp": "yes",
   "applicable_mvp_capabilities": [
     "build",

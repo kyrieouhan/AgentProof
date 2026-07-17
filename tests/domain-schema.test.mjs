@@ -38,7 +38,7 @@ test("verification run and report schemas share the domain version and known sta
     schema_version: DOMAIN_SCHEMA_VERSION,
     run_id: "vr-demo-001",
     commit: "abc123",
-    runner_profile: "samples/demo-web-app/agentproof.runner-profile.json",
+    runner_profile: "samples/demo-web-app/vericrate.runner-profile.json",
     image_digest: "sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5",
     seed: "seed-001",
     criteria: [

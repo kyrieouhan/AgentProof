@@ -3,23 +3,29 @@ import os from "node:os";
 import path from "node:path";
 
 const SAFE_ID = /^[A-Za-z0-9_.-]+$/;
+const LEGACY_WINDOWS_DATA_DIR = "AgentProof";
+const LEGACY_POSIX_DATA_DIR = ".agentproof";
 
 export function defaultDataRoot(env = process.env, platform = process.platform) {
-  if (env.AGENTPROOF_DATA_DIR) return validateDataRoot(env.AGENTPROOF_DATA_DIR);
+  if (env.VERICRATE_DATA_DIR) return validateDataRoot(env.VERICRATE_DATA_DIR);
   if (platform === "win32") {
     const localAppData = env.LOCALAPPDATA;
-    if (!localAppData) throw new Error("LOCALAPPDATA is required to choose the default AgentProof data directory on Windows.");
-    return path.resolve(localAppData, "AgentProof");
+    if (!localAppData) throw new Error("LOCALAPPDATA is required to choose the default VeriCrate data directory on Windows.");
+    const root = path.resolve(localAppData, "VeriCrate");
+    migrateLegacyDataRoot(path.resolve(localAppData, LEGACY_WINDOWS_DATA_DIR), root, env);
+    return root;
   }
-  return path.resolve(os.homedir(), ".agentproof");
+  const root = path.resolve(os.homedir(), ".vericrate");
+  migrateLegacyDataRoot(path.resolve(os.homedir(), LEGACY_POSIX_DATA_DIR), root, env);
+  return root;
 }
 
 export function validateDataRoot(value) {
   const root = String(value ?? "").trim();
-  if (!root) throw new Error("AGENTPROOF_DATA_DIR must not be empty.");
-  if (root.includes("\0")) throw new Error("AGENTPROOF_DATA_DIR contains an invalid null byte.");
-  if (!path.isAbsolute(root)) throw new Error("AGENTPROOF_DATA_DIR must be an absolute path.");
-  if (root.split(/[\\/]+/).includes("..")) throw new Error("AGENTPROOF_DATA_DIR must not contain '..' path segments.");
+  if (!root) throw new Error("VERICRATE_DATA_DIR must not be empty.");
+  if (root.includes("\0")) throw new Error("VERICRATE_DATA_DIR contains an invalid null byte.");
+  if (!path.isAbsolute(root)) throw new Error("VERICRATE_DATA_DIR must be an absolute path.");
+  if (root.split(/[\\/]+/).includes("..")) throw new Error("VERICRATE_DATA_DIR must not contain '..' path segments.");
   return path.resolve(root);
 }
 
@@ -63,6 +69,16 @@ function dataRoot(options) {
 
 function safePathId(value) {
   const id = String(value ?? "").trim();
-  if (!SAFE_ID.test(id)) throw new Error(`Unsafe AgentProof path id: ${id || "(empty)"}`);
+  if (!SAFE_ID.test(id)) throw new Error(`Unsafe VeriCrate path id: ${id || "(empty)"}`);
   return id;
+}
+
+function migrateLegacyDataRoot(legacyRoot, targetRoot, env) {
+  if (env.VERICRATE_SKIP_LEGACY_DATA_MIGRATION === "1") return;
+  try {
+    if (fs.existsSync(targetRoot) || !fs.existsSync(legacyRoot)) return;
+    fs.cpSync(legacyRoot, targetRoot, { recursive: true, force: false, errorOnExist: false });
+  } catch {
+    // Best-effort migration only: a copy failure must not block creating a fresh VeriCrate data root.
+  }
 }

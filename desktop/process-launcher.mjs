@@ -40,7 +40,7 @@ export function nodeEnv(baseEnv = process.env, extraEnv = {}, { electronRunAsNod
 }
 
 function isElectronRuntime(execPath) {
-  return /(?:electron|agentproof)\.exe$/i.test(execPath) || path.basename(execPath).toLowerCase() === "electron";
+  return /(?:electron|vericrate)\.exe$/i.test(execPath) || path.basename(execPath).toLowerCase() === "electron";
 }
 
 function runNodeProcess({ execPath, cwd, args, env, children, logger }) {

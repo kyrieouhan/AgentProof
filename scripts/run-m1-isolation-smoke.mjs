@@ -24,18 +24,18 @@ if (docker.status !== "passed") {
 }
 ensureImage(docker.dockerCommand);
 
-records.push(runIso("ISO-01", "host user paths are not mounted", "test ! -e /mnt/c/Users && test ! -e /host && test ! -e /Users/agentproof-user"));
+records.push(runIso("ISO-01", "host user paths are not mounted", "test ! -e /mnt/c/Users && test ! -e /host && test ! -e /Users/vericrate-user"));
 records.push(runIso("ISO-02", "ssh/git/npm/env credentials are absent", "test ! -e /workspace/.env && test ! -e /workspace/.npmrc && test ! -e /workspace/.ssh/id_rsa && test ! -e /workspace/.gitconfig && test ! -e /workspace/.git-credentials && test ! -e /root/.ssh && ! env | grep -Ei 'TOKEN|COOKIE|SECRET|PASSWORD'"));
 records.push(runIso("ISO-03", "docker socket and docker cli are absent", "test ! -S /var/run/docker.sock && test ! -e /var/run/docker.sock && ! command -v docker"));
-records.push(runIso("ISO-04", "only tmpfs is writable in read-only mode", "touch /tmp/iso04-ok && ! touch /workspace/iso04-forbidden && ! touch /agentproof-root-write-test"));
+records.push(runIso("ISO-04", "only tmpfs is writable in read-only mode", "touch /tmp/iso04-ok && ! touch /workspace/iso04-forbidden && ! touch /vericrate-root-write-test"));
 records.push(runIso("ISO-05", "default network cannot reach public, localhost, or metadata targets", networkProbeScript()));
 records.push(runIso("ISO-06", "memory and pid cgroup limits are visible", "test \"$(id -u)\" = \"1000\" && test \"$(cat /sys/fs/cgroup/pids.max)\" = \"64\" && node -e \"const fs=require('fs');const mem=fs.readFileSync('/sys/fs/cgroup/memory.max','utf8').trim();const cpu=fs.readFileSync('/sys/fs/cgroup/cpu.max','utf8').trim();if(mem==='max'||Number(mem)>300000000||cpu.startsWith('max')) process.exit(1);\""));
 records.push(runResourceLimitProbe());
 records.push(runTimeoutProbe());
 records.push(runIso("ISO-09", "non-root, no-new-privileges, and dropped capabilities are active", "test \"$(id -u)\" = \"1000\" && grep -Eq 'NoNewPrivs:[[:space:]]+1' /proc/self/status && grep -Eq 'CapEff:[[:space:]]+0000000000000000' /proc/self/status && test ! -e /dev/kvm"));
 records.push(runIso("ISO-10", "workspace path traversal does not expose host paths", "test ! -e /workspace/../.gitconfig && test ! -e /workspace/../../Users && test ! -e /workspace/../../host_mnt"));
-records.push(runIso("ISO-11", "target cannot write trusted manifest location", "mkdir -p /tmp/fake-artifacts && touch /tmp/fake-artifacts/manifest.json && ! touch /workspace/agentproof-manifest.json"));
-records.push(runIso("ISO-12", "canary sensitive values are not injected into container env", "! env | grep AGENTPROOF_ISO_CANARY"));
+records.push(runIso("ISO-11", "target cannot write trusted manifest location", "mkdir -p /tmp/fake-artifacts && touch /tmp/fake-artifacts/manifest.json && ! touch /workspace/vericrate-manifest.json"));
+records.push(runIso("ISO-12", "canary sensitive values are not injected into container env", "! env | grep VERICRATE_ISO_CANARY"));
 records.push(runReplayProbe());
 records.push(runCleanupFailureProbe());
 
@@ -59,7 +59,7 @@ if (status !== "passed") process.exit(1);
 
 function prepareWorkspace() {
   fs.cpSync(path.join(repoRoot, "samples", "minimal-npm-api"), source, { recursive: true });
-  fs.writeFileSync(path.join(source, ".env"), "AGENTPROOF_ISO_CANARY=secret\n");
+  fs.writeFileSync(path.join(source, ".env"), "VERICRATE_ISO_CANARY=secret\n");
   fs.writeFileSync(path.join(source, ".npmrc"), "//registry.example.invalid/:_authToken=secret\n");
   fs.mkdirSync(path.join(source, ".ssh"), { recursive: true });
   fs.writeFileSync(path.join(source, ".ssh", "id_rsa"), "secret\n");
@@ -92,7 +92,7 @@ function ensureImage(dockerCommand) {
 }
 
 function runIso(id, title, script, options = {}) {
-  const name = `agentproof-${id.toLowerCase()}-${Date.now().toString(36)}`;
+  const name = `vericrate-${id.toLowerCase()}-${Date.now().toString(36)}`;
   const args = [
     "run",
     "--rm",
@@ -168,7 +168,7 @@ function runReplayProbe() {
 }
 
 function runCleanupFailureProbe() {
-  const result = runLifecycleSmoke("samples/minimal-npm-api/agentproof.runner-profile.json", {
+  const result = runLifecycleSmoke("samples/minimal-npm-api/vericrate.runner-profile.json", {
     repoRoot,
     removeTempRoot: () => {
       throw new Error("injected cleanup failure");
@@ -186,7 +186,7 @@ function runCleanupFailureProbe() {
 }
 
 function tempProfile(name, patch) {
-  const profile = JSON.parse(fs.readFileSync(path.join(repoRoot, "samples", "minimal-npm-api", "agentproof.runner-profile.json"), "utf8"));
+  const profile = JSON.parse(fs.readFileSync(path.join(repoRoot, "samples", "minimal-npm-api", "vericrate.runner-profile.json"), "utf8"));
   profile.repo_path = "samples/minimal-npm-api";
   profile.commands = { ...profile.commands, ...patch.commands };
   profile.resource_limits = { ...profile.resource_limits, ...patch.resource_limits };

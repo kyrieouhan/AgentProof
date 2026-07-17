@@ -13,20 +13,20 @@ test("container policy denies network and drops privileges", () => {
   assert.equal(args.includes("<PROJECT_PATH>:/workspace:ro"), true);
 });
 
-test("container policy can mount an AgentProof-owned runner cache", () => {
-  const args = containerPolicyArgs("<PROJECT_PATH>", undefined, { cacheDir: "<AGENTPROOF_CACHE>" });
-  assert.equal(args.includes("<AGENTPROOF_CACHE>:/agentproof-cache:rw"), true);
+test("container policy can mount an VeriCrate-owned runner cache", () => {
+  const args = containerPolicyArgs("<PROJECT_PATH>", undefined, { cacheDir: "<VERICRATE_CACHE>" });
+  assert.equal(args.includes("<VERICRATE_CACHE>:/vericrate-cache:rw"), true);
 });
 
 test("lifecycle smoke script checks non-root, read-only mounts and denied network", () => {
   const script = lifecycleSmokeScript();
   assert.match(script, /id -u/);
-  assert.match(script, /agentproof-write-test/);
+  assert.match(script, /vericrate-write-test/);
   assert.match(script, /1\.1\.1\.1/);
 });
 
 test("runner command uses corepack for pnpm without enabling global shims", () => {
-  assert.match(runnerCommand("pnpm install --frozen-lockfile", "pnpm"), /COREPACK_HOME=\/agentproof-cache\/corepack/);
-  assert.match(runnerCommand("pnpm install --frozen-lockfile", "pnpm"), /pnpm_config_store_dir=\/agentproof-cache\/pnpm-store/);
+  assert.match(runnerCommand("pnpm install --frozen-lockfile", "pnpm"), /COREPACK_HOME=\/vericrate-cache\/corepack/);
+  assert.match(runnerCommand("pnpm install --frozen-lockfile", "pnpm"), /pnpm_config_store_dir=\/vericrate-cache\/pnpm-store/);
   assert.match(runnerCommand("pnpm install --frozen-lockfile", "pnpm"), /corepack pnpm install --frozen-lockfile/);
 });

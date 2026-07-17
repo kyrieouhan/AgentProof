@@ -57,7 +57,7 @@
     ],
     "repository_or_demo_version": "fullsend-ai/fullsend PR #2227 / commit d002b609eca9cdb6bd3dc22f882570c582637da1",
     "commit": "d002b609eca9cdb6bd3dc22f882570c582637da1",
-    "environment": "GitHub Actions runner scenario described by issue #2235; AgentProof has not reproduced it locally.",
+    "environment": "GitHub Actions runner scenario described by issue #2235; VeriCrate has not reproduced it locally.",
     "install_command": null,
     "start_command": null,
     "steps": [

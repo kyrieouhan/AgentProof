@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentproof.dev/schemas/failure-case-review/1.0.0/review-record-schema.json",
-  "title": "AgentProof M0 Candidate Review Record",
+  "$id": "https://vericrate.dev/schemas/failure-case-review/1.0.0/review-record-schema.json",
+  "title": "VeriCrate M0 Candidate Review Record",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -57,7 +57,7 @@
     "recommended_action": {"enum": ["accept_for_manual_review", "needs_correction", "needs_more_evidence", "merge_with_candidate", "reject_duplicate", "reject_out_of_scope", "reject_unverifiable", "reject_privacy_or_license_risk"]},
     "review_group": {"enum": ["A", "B", "C"]},
     "candidate_fields_corrected": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2, "maxLength": 100}},
-    "agentproof_scope": {"enum": ["core_in_scope", "secondary_research", "out_of_scope"]},
+    "vericrate_scope": {"enum": ["core_in_scope", "secondary_research", "out_of_scope"]},
     "detectable_by_mvp": {"enum": ["yes", "partially", "no"]},
     "applicable_mvp_capabilities": {
       "type": "array",

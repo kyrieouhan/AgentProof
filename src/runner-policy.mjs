@@ -25,12 +25,12 @@ export function containerPolicyArgs(workspace, policy = DEFAULT_CONTAINER_POLICY
   if (policy.readOnlyRoot) args.push("--read-only");
   args.push(
     "--tmpfs", policy.tmpfs,
-    "--env", "HOME=/tmp/agentproof-home",
+    "--env", "HOME=/tmp/vericrate-home",
     "--env", "COREPACK_HOME=/tmp/corepack",
     "--workdir", "/workspace",
     "--volume", `${workspace}:/workspace:${workspaceMode}`
   );
-  if (options.cacheDir) args.push("--volume", `${options.cacheDir}:/agentproof-cache:rw`);
+  if (options.cacheDir) args.push("--volume", `${options.cacheDir}:/vericrate-cache:rw`);
   return args;
 }
 
@@ -43,17 +43,17 @@ export function lifecycleSmokeScript() {
     "test ! -e /root/.ssh",
     "test ! -e /workspace/.env",
     "test ! -e /workspace/.npmrc",
-    "! touch /workspace/agentproof-write-test",
-    "! touch /agentproof-root-write-test",
+    "! touch /workspace/vericrate-write-test",
+    "! touch /vericrate-root-write-test",
     "node -e \"const net=require('node:net');const s=net.connect({host:'1.1.1.1',port:80,timeout:1000});s.on('connect',()=>process.exit(1));s.on('error',()=>process.exit(0));s.on('timeout',()=>process.exit(0));\"",
-    "echo agentproof-lifecycle-smoke-ok"
+    "echo vericrate-lifecycle-smoke-ok"
   ].join(" && ");
 }
 
 export function runnerCommand(command, packageManager) {
   const setup = [
-    "export HOME=/workspace/.agentproof-home npm_config_nodedir=/usr/local",
-    "if [ -d /agentproof-cache ]; then export COREPACK_HOME=/agentproof-cache/corepack PNPM_HOME=/agentproof-cache/pnpm-home pnpm_config_store_dir=/agentproof-cache/pnpm-store; else export COREPACK_HOME=/workspace/.agentproof-corepack PNPM_HOME=/workspace/.agentproof-pnpm-home pnpm_config_store_dir=/workspace/.agentproof-pnpm-store; fi",
+    "export HOME=/workspace/.vericrate-home npm_config_nodedir=/usr/local",
+    "if [ -d /vericrate-cache ]; then export COREPACK_HOME=/vericrate-cache/corepack PNPM_HOME=/vericrate-cache/pnpm-home pnpm_config_store_dir=/vericrate-cache/pnpm-store; else export COREPACK_HOME=/workspace/.vericrate-corepack PNPM_HOME=/workspace/.vericrate-pnpm-home pnpm_config_store_dir=/workspace/.vericrate-pnpm-store; fi",
     "mkdir -p \"$HOME\" \"$COREPACK_HOME\" \"$PNPM_HOME\" \"$pnpm_config_store_dir\""
   ].join(" && ");
   if (packageManager === "pnpm") return `${setup} && ${command.replace(/\bpnpm\b/g, "corepack pnpm")}`;

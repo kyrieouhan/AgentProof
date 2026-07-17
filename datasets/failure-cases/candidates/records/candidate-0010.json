@@ -54,7 +54,7 @@
     "successful_reproductions": 0,
     "random_seed": null,
     "raw_output_location": null,
-    "known_limitations": "仅根据公开 Issue 正文整理；尚未由项目人员核实来源细节，也未在 AgentProof 环境复现。"
+    "known_limitations": "仅根据公开 Issue 正文整理；尚未由项目人员核实来源细节，也未在 VeriCrate 环境复现。"
   },
   "expected_detection_methods": [
     {

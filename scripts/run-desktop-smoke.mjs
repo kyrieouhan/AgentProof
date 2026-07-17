@@ -8,11 +8,11 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const exe = argValue("--exe") ? path.resolve(argValue("--exe")) : electronExecutable();
 const timeoutMs = Number(argValue("--timeout-ms") ?? 120000);
-const dataRoot = fs.mkdtempSync(path.join(os.tmpdir(), "agentproof-desktop-smoke data "));
+const dataRoot = fs.mkdtempSync(path.join(os.tmpdir(), "vericrate-desktop-smoke data "));
 const args = argValue("--exe") ? ["--smoke"] : [repoRoot, "--smoke"];
 
 const result = await run(exe, args, {
-  env: { ...process.env, AGENTPROOF_DATA_DIR: dataRoot },
+  env: { ...process.env, VERICRATE_DATA_DIR: dataRoot },
   timeoutMs
 });
 
@@ -30,9 +30,9 @@ assert(summary.window_options.nodeIntegration === false, "nodeIntegration must b
 assert(summary.window_options.contextIsolation === true, "contextIsolation must be enabled");
 assert(summary.window_options.sandbox === true, "sandbox must be enabled");
 assert(summary.window_options.webSecurity === true, "webSecurity must be enabled");
-assert(summary.data_root === dataRoot, "AGENTPROOF_DATA_DIR override should be honored");
+assert(summary.data_root === dataRoot, "VERICRATE_DATA_DIR override should be honored");
 assert(fs.existsSync(summary.official_demo_root), "official demo copy should exist");
-assert(!result.stdout.includes("x-agentproof-session"), "session token header name should not be printed");
+assert(!result.stdout.includes("x-vericrate-session"), "session token header name should not be printed");
 
 console.log(JSON.stringify({
   status: "passed",

@@ -1,6 +1,6 @@
-appId: io.github.kyrieouhan.agentproof
-productName: AgentProof
-copyright: Copyright (c) 2026 AgentProof
+appId: io.github.kyrieouhan.vericrate
+productName: VeriCrate
+copyright: Copyright (c) 2026 VeriCrate
 asar: false
 disableDefaultIgnoredFiles: true
 directories:
@@ -34,7 +34,7 @@ win:
     - target: nsis
       arch:
         - x64
-  artifactName: AgentProof-Setup-${version}-${arch}.exe
+  artifactName: VeriCrate-Setup-${version}-${arch}.exe
 nsis:
   oneClick: false
   perMachine: false
@@ -43,4 +43,4 @@ nsis:
   createStartMenuShortcut: true
   runAfterFinish: true
   deleteAppDataOnUninstall: false
-  shortcutName: AgentProof
+  shortcutName: VeriCrate

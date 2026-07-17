@@ -1,8 +1,8 @@
 {
-  "name": "@agentproof/minimal-npm-api",
+  "name": "@vericrate/minimal-npm-api",
   "version": "0.1.0",
   "private": true,
-  "description": "Minimal npm HTTP sample for AgentProof M1 runner repeatability.",
+  "description": "Minimal npm HTTP sample for VeriCrate M1 runner repeatability.",
   "type": "module",
   "engines": {
     "node": ">=20"

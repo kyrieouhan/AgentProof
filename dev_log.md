@@ -2,7 +2,7 @@
 
 ## 2026-07-11 - 项目文档与数据规范初始化
 
-- 目标：完整读取总计划，在不开发业务代码的前提下初始化 AgentProof M0。
+- 目标：完整读取总计划，在不开发业务代码的前提下初始化 VeriCrate M0。
 - 操作：读取并渲染 13 页 DOCX；转换总计划；拆分 M0-M4；建立威胁模型、支持矩阵、ADR、术语表和 failure-case Schema。
 - 修改文件：见本次交付清单；原始 DOCX 复制到 `docs/source/`，未修改源文件。
 - 验证：渲染并逐页检查 13 页；提取 207 个段落、20 个表格、2 张图；检查 20 个 Markdown 文件中的 35 个本地链接、2 个 JSON、统一状态、里程碑名称、MVP 边界、安全基线、采访残留、空文件、乱码、源 DOCX 哈希和目录禁项。
@@ -12,7 +12,7 @@
 ## 2026-07-11 - DOCX 元数据清理与 Git 基线准备
 
 - 目标：清除仓库 DOCX 副本中的个人、软件和扩展属性，不改变正文、图片、表格、格式或文件名，并准备本地 Git 初始基线。
-- 操作：仅处理 `docs/source/AgentProof_项目阶段开发计划_优化版.docx`；清除 author、last_modified_by、subject、comments、category、keywords、revision、created/modified 时间、修订会话 ID，移除扩展属性部件，并确认不存在自定义属性部件；保留安全的 title。
+- 操作：仅处理 `docs/source/VeriCrate_项目阶段开发计划_优化版.docx`；清除 author、last_modified_by、subject、comments、category、keywords、revision、created/modified 时间、修订会话 ID，移除扩展属性部件，并确认不存在自定义属性部件；保留安全的 title。
 - 修改文件：DOCX 仓库副本、`.gitignore`、`dev_log.md`；`<PRIVATE_SOURCE_DIR>` 原始 Word 文件未修改。
 - 验证：清理前后均为 207 个段落、20 个表格、1 个节、2 张图片；图片哈希一致；13 页渲染 PNG 逐页哈希完全一致并完成目视检查；Markdown、JSON Schema、示例、文档一致性和隐私扫描通过。
 - 结果：仓库副本 SHA-256 为 `bc7328848391a376012f002cb007c4e7a5b05ff8d27ff8ac0910b7bf46d1ab2f`；原件仍为 `2816a879ec819755f33037427a118ebf4bb38e6243aa1a8d4c419b5a51c531b0`。未创建业务代码，未进入 M0-01。
@@ -24,7 +24,7 @@
 - 操作：新增 `category-taxonomy.md` 与 `review-checklist.md`；把 failure-case Schema 固定为 Draft 2020-12 / `1.0.0`，使用 `additionalProperties: false`；将来源核实、复现和最终审核拆为独立状态；更新完整合成示例、术语表、M0 状态和 ADR-011。
 - 修改文件：`datasets/failure-cases/README.md`、`schema.json`、`example.json`、`category-taxonomy.md`、`review-checklist.md`、`docs/glossary.md`、`docs/milestones/M0.md`、`docs/decision-log.md`、`dev_log.md`。
 - 验证：JSON 语法通过；无新增依赖，使用仓库外标准库检查器完成 Schema 关键字/本地引用/正则自检、示例校验、批准门禁负向用例和跨字段语义检查；检查 22 个 Markdown 文件的 53 个本地链接；核对 15 个分类及来源、复现、证据、严重度、审核状态枚举；确认 `cases/` 为 0 个文件、无业务目录，并通过 `git diff --check`。
-- 结果：M0-01 退出门禁通过；没有收集或虚构正式案例，没有创建官方 Demo、依赖或业务代码，没有进入 M0-02 或 M1。`approved` 只能由人工作出，且不等于 AgentProof 已实现自动检测。
+- 结果：M0-01 退出门禁通过；没有收集或虚构正式案例，没有创建官方 Demo、依赖或业务代码，没有进入 M0-02 或 M1。`approved` 只能由人工作出，且不等于 VeriCrate 已实现自动检测。
 - 后续：等待用户审核本次 Git Diff；只建议审核并提交 M0-01，不开始 M0-02。
 
 ## 2026-07-11 - M0-01 提交前逻辑门禁修正
@@ -54,14 +54,14 @@
 - 去重：`candidate-0017` 被维护者关闭为外部 `#2901` 的重复来源，等待改用主来源；建议把 `candidate-0026` 合并为 `candidate-0029` 的补充来源，内部合并建议 1 条。没有删除或移动候选。
 - 修正：对照当前 Issue 标题和评论，修正 16 条候选的 32 个客观字段，包括精确来源标题、标题、两处事实描述/根因边界；分类、严重度和去重结论只保留在审核建议中，没有写成最终决定。
 - 隐私：候选和审核记录未发现需要新增脱敏的个人或凭据信息，仓库未复制外部正文中的用户路径、反馈编号、SSH 配置、附件或长日志；脱敏修改数为 0，仍需人工复核许可和外部附件。
-- 分组：A 组 20 条，建议进入最终人工审核；B 组 4 条，需要补证或修正主来源；C 组 6 条，建议排除范围外或合并。复现信息质量为 strong 18、medium 10、weak 2，但全部仍未由 AgentProof 真实复现。
+- 分组：A 组 20 条，建议进入最终人工审核；B 组 4 条，需要补证或修正主来源；C 组 6 条，建议排除范围外或合并。复现信息质量为 strong 18、medium 10、weak 2，但全部仍未由 VeriCrate 真实复现。
 - 交付：新增 `datasets/failure-cases/reviews/`，包含说明、逐条审核 Schema、汇总 Schema、30 个审核记录和 `review-summary.json`；所有 `manual_confirmation_required=true`。
 - 边界：30 条候选仍为 `draft/source_pending/verified=false`，执行次数和成功复现次数均为 0；没有 `approved`、`reproduced`、人工审核人或人工审核时间；正式 `cases/` 保持为空。没有创建业务代码、官方 Demo，也没有进入 M0-04。
 - 后续：等待人工确认 A/B/C 分组、`candidate-0017` 主来源替换、`candidate-0026`/`candidate-0029` 合并、分类和严重度，再决定正式案例迁移。
 
 ## 2026-07-12 - M0-03 补充范围审计
 
-- 目标：只修正 M0-03 的首版范围判断，区分真正适合 AgentProof 首版正式案例池的代码交付失败、次级研究材料和应排除的普通工具/客户端 Bug。
+- 目标：只修正 M0-03 的首版范围判断，区分真正适合 VeriCrate 首版正式案例池的代码交付失败、次级研究材料和应排除的普通工具/客户端 Bug。
 - 操作：重新审查 30 条候选及对应 M0-03 审核记录，新增 `datasets/failure-cases/reviews/scope-audit.json`，并把范围统计同步到 `review-summary.json` 与 `reviews/README.md`；没有修改候选的来源核实、复现或最终审核状态。
 - 结果：`core_in_scope` 11 条，`secondary_research` 7 条，`out_of_scope` 12 条；MVP 可检测 8 条、部分可检测 10 条、不可检测 12 条。核心范围候选不足 20 条，缺口为 9 条。
 - 缺失类型：现有候选中没有可靠的 `weakened_tests`、`hardcoded_behavior` 或严格意义上的 `build_runtime_mismatch` 核心案例；不得强行为填满类别而改分类，需要回到 M0-02 补充收集。
@@ -143,7 +143,7 @@
 - 门禁例外：原计划核心案例目标为不少于 20 条；严格审核后如实保留 `core_in_scope=19`、`secondary_research=8`、`out_of_scope=12`。为避免降低来源真实性、AI Agent 交付关联性和本地 MVP 可检测性标准，不再为了数量补第 20 条。
 - 决策记录：该决定写入 `docs/milestones/M0.md` 与 `docs/decision-log.md`，作为明确的 M0 门禁例外；不得把统计伪造成 20，也不得把未人工批准候选迁移为正式案例。
 - 案例边界：正式 `datasets/failure-cases/cases/` 仍保持为空；本轮不设置 `approved`、`source_verified`、`reproduced`，不搜索新案例。
-- 下一工作：进入 M0-04 的官方 Demo 正确基线；本轮只建立正确版本，不创建五类缺陷分支，不进入 M1，不开发 Runner、GitHub App 或完整 AgentProof 前端。
+- 下一工作：进入 M0-04 的官方 Demo 正确基线；本轮只建立正确版本，不创建五类缺陷分支，不进入 M1，不开发 Runner、GitHub App 或完整 VeriCrate 前端。
 
 ## 2026-07-12 - M0-04 官方 Demo 正确基线完成
 
@@ -202,15 +202,15 @@
 ## 2026-07-12 - M1-01 RunnerProfile 与 CLI 契约
 
 - 目标：建立 M1 安全 Runner 的最小输入契约与本地 CLI 校验入口，不启动容器、不运行目标项目命令。
-- 实现：新增根 `package.json`、`bin/agentproof.mjs`、`src/runner-profile.mjs`、`schemas/runner-profile.schema.json`、`samples/demo-web-app/agentproof.runner-profile.json` 和 `tests/runner-profile.test.mjs`。
-- 能力：`agentproof profile validate` 可校验官方 Demo RunnerProfile，检查必需字段、路径边界、Node 20、npm/pnpm lockfile、健康检查、端口、环境变量、资源限制、默认拒绝网络、挂载策略和证据策略。
+- 实现：新增根 `package.json`、`bin/vericrate.mjs`、`src/runner-profile.mjs`、`schemas/runner-profile.schema.json`、`samples/demo-web-app/vericrate.runner-profile.json` 和 `tests/runner-profile.test.mjs`。
+- 能力：`vericrate profile validate` 可校验官方 Demo RunnerProfile，检查必需字段、路径边界、Node 20、npm/pnpm lockfile、健康检查、端口、环境变量、资源限制、默认拒绝网络、挂载策略和证据策略。
 - 校验：`npm install --package-lock-only --ignore-scripts`、`npm run lint`、`npm run profile:validate` 和 `npm test` 通过；测试覆盖合法 Demo profile、路径穿越、缺失 pnpm lockfile、放宽网络、Docker Socket 和内联敏感环境值。
 - 边界：本次不引入新运行时依赖，不开发 Docker Runner、Manifest、API 验证器、浏览器验证器、GitHub App 或完整 Web。
 
 ## 2026-07-12 - M1-02A Docker 前置诊断
 
 - 目标：在实现真实容器生命周期前，给 CLI 增加 Docker CLI/Engine 可用性预检，避免把本机环境缺失误判成项目失败或安全通过。
-- 实现：新增 `src/docker-preflight.mjs`、`agentproof docker check [--json]` 和 `tests/docker-preflight.test.mjs`；缺失 Docker CLI 或 Engine 时统一返回 `infrastructure_error`。
+- 实现：新增 `src/docker-preflight.mjs`、`vericrate docker check [--json]` 和 `tests/docker-preflight.test.mjs`；缺失 Docker CLI 或 Engine 时统一返回 `infrastructure_error`。
 - 校验：`npm run lint`、`npm run profile:validate` 和 `npm test` 通过；`npm run docker:check` 在当前机器按预期退出 1，并输出 `docker CLI not found`。
 - 阻塞：当前机器没有可调用 Docker CLI/Engine，常见 Docker Desktop 路径未发现，`com.docker.service` 不存在；因此不能真实创建容器、验证最小挂载或执行 ISO 隔离烟测。
 - 边界：本次不安装 Docker，不降低安全要求，不把 M1-02 标记为完成。
@@ -218,9 +218,9 @@
 ## 2026-07-13 - M1-02B 容器生命周期与最小挂载
 
 - 背景：用户安装 Docker Desktop 与 WSL 2 后继续 M1。当前 PowerShell PATH 仍没有 `docker`，但只读搜索发现 Docker CLI 可由 Docker Desktop bundled CLI 提供。
-- 实现：扩展 Docker 预检以自动发现 Docker Desktop CLI 路径；新增 `src/docker-runner.mjs` 与 `agentproof run --profile <path> --lifecycle-smoke --json`，把目标项目复制到 `.tmp/agentproof-runs/` 临时工作区后启动受限容器。
+- 实现：扩展 Docker 预检以自动发现 Docker Desktop CLI 路径；新增 `src/docker-runner.mjs` 与 `vericrate run --profile <path> --lifecycle-smoke --json`，把目标项目复制到 `.tmp/vericrate-runs/` 临时工作区后启动受限容器。
 - 安全参数：lifecycle smoke 使用 `--network none`、`--user 1000:1000`、`--cap-drop ALL`、`--security-opt no-new-privileges`、`--pids-limit 64`、`--memory 256m`、`--cpus 1`、`--read-only`、只读 `/workspace` 挂载和 `/tmp` tmpfs；验证容器内无 Docker Socket、无 `.env`、无 `.npmrc`。
-- 真实结果：`npm run smoke:docker` 通过；首次拉取 `node:20-alpine`，digest 为 `sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293`；容器输出 `agentproof-lifecycle-smoke-ok`；临时目录清理结果为 `removed`。
+- 真实结果：`npm run smoke:docker` 通过；首次拉取 `node:20-alpine`，digest 为 `sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293`；容器输出 `vericrate-lifecycle-smoke-ok`；临时目录清理结果为 `removed`。
 - 校验：`npm run lint`、`npm run profile:validate`、`npm test`、`npm run docker:check` 和 `npm run smoke:docker` 均通过。
 - 边界：本次只完成 M1-02 容器生命周期与最小挂载，不声称完成 M1-03 完整资源/网络/权限策略，也不声称 ISO-01 至 ISO-14 隔离烟测通过。
 
@@ -235,7 +235,7 @@
 ## 2026-07-13 - M1-04 install/build/test 结构化记录
 
 - 目标：在受限 Docker 容器内执行 RunnerProfile 的 install/build/test 命令，并输出后续验证器可消费的结构化命令记录。
-- 实现：新增 `agentproof run --profile <path> --commands [--json]` 和根脚本 `npm run run:demo`；Runner 复用临时 workspace，分别运行 install、build、test 三个容器阶段，并记录 phase、完整命令、退出码、stdout/stderr、开始/结束时间和耗时。
+- 实现：新增 `vericrate run --profile <path> --commands [--json]` 和根脚本 `npm run run:demo`；Runner 复用临时 workspace，分别运行 install、build、test 三个容器阶段，并记录 phase、完整命令、退出码、stdout/stderr、开始/结束时间和耗时。
 - Demo 调整：官方 Demo RunnerProfile 改用 `node:20-bookworm`、`pnpm@10.17.1`、`onlyBuiltDependencies`、`pids=512` 和 `command_timeout_ms=600000`；build 阶段显式运行 `pnpm run prisma:generate && pnpm run build`，避免断网 build 阶段再下载 Corepack 或缺 Prisma Client。
 - 真实结果：`npm run run:demo` 通过，runId 为 `m1-smoke-mriskluq`，镜像 digest 为 `sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5`；install 使用 `--network bridge`，build/test 使用 `--network none`，三阶段退出码均为 0，官方 Demo 测试 8 passed，临时目录清理为 `removed`。
 - 校验：`npm install --package-lock-only --ignore-scripts`、`npm run lint`、`npm run profile:validate`、`npm test`、`npm run smoke:docker` 和 `npm run run:demo` 均通过。
@@ -247,7 +247,7 @@
 - 实现：Docker 命令记录新增 `errorCode`、`signal`、`timedOut` 和 `cancelled` 字段；timeout/cancelled 不再笼统归为 `failed`，而是返回顶层 `timeout` 或 `cancelled`。
 - 清理：当容器命令 timeout 或 cancelled 时，Runner 会执行 `docker rm -f <container>`，并把该清理命令记录到原命令的 `containerCleanup` 字段；临时目录删除失败会保留 `cleanupError`。
 - 自动测试：`npm test` 新增 timeout 与 cancelled 两条路径，覆盖状态分类、错误原因、容器强制清理和临时 workspace 清理。
-- 真实结果：临时 timeout profile 将 install 命令设为 10 秒睡眠并把 `command_timeout_ms` 设为 1000ms；真实 Docker run 返回 `timeout`，错误为 `install command timed out`，`containerCleanup.exitCode=0`，`docker ps -a` 确认 `agentproof-m1-smoke-mrit40pz-install` 无遗留。
+- 真实结果：临时 timeout profile 将 install 命令设为 10 秒睡眠并把 `command_timeout_ms` 设为 1000ms；真实 Docker run 返回 `timeout`，错误为 `install command timed out`，`containerCleanup.exitCode=0`，`docker ps -a` 确认 `vericrate-m1-smoke-mrit40pz-install` 无遗留。
 - 校验：`npm run lint`、`npm test`、`npm run profile:validate`、`npm run smoke:docker` 和真实 Docker timeout smoke 均通过。
 - 边界：本次不实现 M1-06 的 3 个样例和 10 次重复测试，不进入 M2/M3，不开发浏览器验证器、GitHub App 或完整 Web。
 
@@ -360,7 +360,7 @@
 
 - 目标：在 M3-01 单流程浏览器执行基础上采集可审计证据，同时最小化敏感内容落盘。
 - 实现：新增 `src/domain/browser-evidence.mjs` 和 `tests/browser-evidence.test.mjs`；`npm run m3:browser-smoke` 现在写入 `browser-events.json`、`final-screen.png`、`manifest.json`、`summary.json` 和 `report.md`，并把 browser event log 与 screenshot 作为 evidence refs 挂入 report。
-- 脱敏：事件日志会移除 URL query 并脱敏 email/token/password 等文本；截图前主动把 DOM 中的邮箱和密码输入替换为脱敏值。Trace 支持通过 `AGENTPROOF_BROWSER_TRACE=1` 显式启用，默认禁用以避免保存 DOM/输入快照。
+- 脱敏：事件日志会移除 URL query 并脱敏 email/token/password 等文本；截图前主动把 DOM 中的邮箱和密码输入替换为脱敏值。Trace 支持通过 `VERICRATE_BROWSER_TRACE=1` 显式启用，默认禁用以避免保存 DOM/输入快照。
 - 验证：`npm run schema:generate` 通过，仍生成 7 个领域 JSON Schema；`npm run lint` 通过；`npm test` 通过，43 个测试全部通过；`npm run m3:browser-smoke` 通过，runId 为 `m3-browser-mrj13e5y`，1 个 browser criterion 为 `passed`，合并建议为 `recommend_merge`；已目检截图确认邮箱/密码明文不出现在截图中，artifact 脱敏扫描无邮箱/密码/token 明文。
 - 边界：本轮不做页面/API/数据库联合断言，不做测试 Diff 风险或硬编码检测，不进入 M4，不迁移正式 `cases/`，不设置 `approved`、`source_verified` 或 `reproduced`。
 - 后续：进入 M3-03，联合页面、API 与数据库证据判断同一验收项。
@@ -401,7 +401,7 @@
 
 ## 2026-07-13 - M3-07 最小本地 Web 用户入口
 
-- 背景：用户实际核查后指出 M3-06 的 `m3:regression`、静态报告和官方 Demo 页面不能等同于 AgentProof 可操作 Web 界面；本轮不进入 M4，只补齐 M3 本地 Web 入口。
+- 背景：用户实际核查后指出 M3-06 的 `m3:regression`、静态报告和官方 Demo 页面不能等同于 VeriCrate 可操作 Web 界面；本轮不进入 M4，只补齐 M3 本地 Web 入口。
 - 实现：新增 `src/web/` 本地服务和 vanilla HTML/CSS/JS 页面，新增 `scripts/start-web.mjs`、`npm run web:dev`、`npm run web:start` 和 `scripts/run-m3-web-smoke.mjs`。Web 后端复用现有 Docker preflight、Runner CLI、M3 browser smoke、领域状态、Evidence Manifest 和报告渲染模块，不复制第二套验收引擎。
 - 用户流程：页面可输入本地 Git 仓库路径、显示仓库名/分支/Commit/工作区状态、展示 RunnerProfile install/build/test/start 命令、编辑或标记验收项、点击开始验收、防止重复创建相同运行、显示 install/build/test/API/browser/database/report 阶段、展示逐项状态/失败原因/证据/merge recommendation，并打开 HTML 或下载 Markdown 报告。
 - Runner 稳定性修复：容器命令增加 `npm_config_nodedir=/usr/local`，避免 native SQLite fallback 编译时重新下载 Node headers；官方 Demo RunnerProfile 文件数上限从 20000 调整为 30000，以匹配当前依赖实际安装文件数。
@@ -438,10 +438,10 @@
 
 ## 2026-07-14 - 公开仓库 M3 范围与运行产物修正
 
-- 背景：用户要求继续完善 `AgentProof-public`，但不进入 M4、不开发 GitHub App、不 push；本轮重点是让公开描述与真实 M3 能力一致，并避免验收过程污染被验收项目。
+- 背景：用户要求继续完善 `VeriCrate-public`，但不进入 M4、不开发 GitHub App、不 push；本轮重点是让公开描述与真实 M3 能力一致，并避免验收过程污染被验收项目。
 - 范围修正：README、支持矩阵、M3 文档和执行状态明确说明：RunnerProfile、Docker、install/build/test 可用于符合支持矩阵的本地 Node.js 项目；完整 Playwright/API/SQLite 联合验收当前以官方 Demo 为参考实现，外部项目需要专属流程和断言配置，不能声称自动理解任意项目。
-- 产物隔离：新增统一运行数据路径模块，默认把 Web 验收、browser smoke、M3 回归、Runner 临时目录和 Runner 缓存写入 AgentProof 数据目录（Windows 为 `%LOCALAPPDATA%\AgentProof`，macOS/Linux 为 `~/.agentproof`，可用 `AGENTPROOF_DATA_DIR` 覆盖），不再默认写入被验收仓库的 `artifacts/` 或 `.tmp/`。
-- 稳定性：Runner 使用 AgentProof 自有 `cache/runner/` 挂载复用 Corepack/pnpm 缓存；当 Docker tag inspect 异常但本地镜像列表仍能匹配 tag 时，Runner 可回退到本地镜像 ID，避免不必要的 Docker Hub pull。
+- 产物隔离：新增统一运行数据路径模块，默认把 Web 验收、browser smoke、M3 回归、Runner 临时目录和 Runner 缓存写入 VeriCrate 数据目录（Windows 为 `%LOCALAPPDATA%\VeriCrate`，macOS/Linux 为 `~/.vericrate`，可用 `VERICRATE_DATA_DIR` 覆盖），不再默认写入被验收仓库的 `artifacts/` 或 `.tmp/`。
+- 稳定性：Runner 使用 VeriCrate 自有 `cache/runner/` 挂载复用 Corepack/pnpm 缓存；当 Docker tag inspect 异常但本地镜像列表仍能匹配 tag 时，Runner 可回退到本地镜像 ID，避免不必要的 Docker Hub pull。
 - 行为边界：非官方项目未配置专属验证流程时，浏览器、API、数据库阶段返回 `unverifiable`；仅 install/build/test 通过不会自动给出 `recommend_merge`。官方 Demo 仍按既有 M3 流程执行完整联合验收。
 - 状态文档：`AGENTS.md` 从旧的“当前处于 M0”修正为公开版本已完成并停止在 M3；`docs/execution-status.md` 明确是否可以自动继续为“否”，下一步 M4 规划或真实项目兼容验证均需用户确认。
 - 公开工程：新增基础 GitHub Actions CI（Node.js 20、`npm ci`、`npm run lint`、`npm test`）和 `SECURITY.md`；CI 不运行 Docker、完整 M3 browser regression 或需要本机 Chrome 的测试。
@@ -451,9 +451,18 @@
 
 - 背景：用户要求把当前本地 Web MVP 打包为可安装的 Windows 桌面软件；本轮仍属于 M3 分发与易用性增强，不进入 M4，不开发 GitHub App，不配置云端服务，不 push。
 - 实现：新增 Electron 桌面壳、单实例启动、随机空闲端口、本次启动随机会话令牌、最小 preload IPC 文件夹选择、桌面日志、官方 Demo 用户数据目录副本、统一子进程启动器、桌面 smoke 和 electron-builder NSIS 配置。
-- 安全边界：桌面窗口禁用 Node integration，启用 context isolation、sandbox 和 webSecurity；renderer 不能直接访问 `fs`、`child_process` 或环境变量；桌面模式下 API、报告和证据接口均校验 `x-agentproof-session`，令牌不写入日志、报告或 Manifest。
-- 数据目录：安装版默认写入 `%LOCALAPPDATA%\AgentProof\` 下的 `runs/`、`logs/`、`temp/`、`demo/`、`config/`，继续支持 `AGENTPROOF_DATA_DIR`；官方 Demo 首次复制到 `%LOCALAPPDATA%\AgentProof\demo\0.1.0\`，不在安装目录或被验收项目原地写数据库、报告、截图或临时文件。
-- 打包：新增 `npm run desktop:dev`、`npm run desktop:smoke`、`npm run desktop:pack`、`npm run desktop:dist:win`；生成 `dist-installer\AgentProof-Setup-0.1.0-x64.exe`，安装包未签名，可能触发 Windows SmartScreen，Docker Desktop 仍需单独安装。
-- 原生依赖修正：真实安装测试发现用 Electron Node 模式启动官方 Demo 时，`better-sqlite3` 普通 Node ABI 与 Electron ABI 不兼容；桌面启动器改为优先使用安装包内携带的受控 Node.js 运行时执行 AgentProof 子脚本和官方 Demo，只有找不到便携 Node 时才回退到 `ELECTRON_RUN_AS_NODE=1`。
-- 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\AgentProof.exe --smoke` 和 `npm run desktop:dist:win` 已通过；Electron 二进制下载曾因网络问题临时使用 `ELECTRON_MIRROR` 补齐，未写入仓库配置。
+- 安全边界：桌面窗口禁用 Node integration，启用 context isolation、sandbox 和 webSecurity；renderer 不能直接访问 `fs`、`child_process` 或环境变量；桌面模式下 API、报告和证据接口均校验 `x-vericrate-session`，令牌不写入日志、报告或 Manifest。
+- 数据目录：安装版默认写入 `%LOCALAPPDATA%\VeriCrate\` 下的 `runs/`、`logs/`、`temp/`、`demo/`、`config/`，继续支持 `VERICRATE_DATA_DIR`；官方 Demo 首次复制到 `%LOCALAPPDATA%\VeriCrate\demo\0.1.0\`，不在安装目录或被验收项目原地写数据库、报告、截图或临时文件。
+- 打包：新增 `npm run desktop:dev`、`npm run desktop:smoke`、`npm run desktop:pack`、`npm run desktop:dist:win`；生成 `dist-installer\VeriCrate-Setup-0.1.0-x64.exe`，安装包未签名，可能触发 Windows SmartScreen，Docker Desktop 仍需单独安装。
+- 原生依赖修正：真实安装测试发现用 Electron Node 模式启动官方 Demo 时，`better-sqlite3` 普通 Node ABI 与 Electron ABI 不兼容；桌面启动器改为优先使用安装包内携带的受控 Node.js 运行时执行 VeriCrate 子脚本和官方 Demo，只有找不到便携 Node 时才回退到 `ELECTRON_RUN_AS_NODE=1`。
+- 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\VeriCrate.exe --smoke` 和 `npm run desktop:dist:win` 已通过；Electron 二进制下载曾因网络问题临时使用 `ELECTRON_MIRROR` 补齐，未写入仓库配置。
 - 边界：不做自动更新、代码签名、自定义图标、托盘、开机启动、macOS/Linux 安装包、GitHub App、云端 Runner 或账号系统。安装/卸载的完整人工验证步骤已记录在 `docs/windows-installer.md`。
+
+## 2026-07-17 - 项目正式重命名为 VeriCrate
+
+- 背景：用户要求将公开仓库项目从旧名称全面更名为 `VeriCrate` / `vericrate`，但不提交、不推送、不修改 GitHub 远程仓库，也不重写 Git 历史。
+- 命名：正式产品名统一为 `VeriCrate`；JavaScript 包名、CLI 命令、普通代码标识符、RunnerProfile 文件名、GitHub URL slug 和 Docker 前缀统一为 `vericrate`；环境变量和常量前缀统一为 `VERICRATE_`。
+- 路径：当前公开仓库本地目录已改为 `D:\workspace\projects\vericrate`；另一个保留完整开发历史的原始仓库未修改。
+- 兼容：默认数据目录切换到 `%LOCALAPPDATA%\VeriCrate` / `~/.vericrate`，并保留一次性旧数据目录复制逻辑，避免已安装预览版用户的本地运行数据在升级后“消失”；未保留旧 CLI、旧环境变量或旧配置文件名别名。
+- 验证：`npm ci`、`npm run lint`、`npm test`、`npm run docker:check`、`npm run profile:validate`、`npm run m3:web-smoke`、`npm run m3:regression`、`npm run desktop:smoke`、后端 `/health` 检查、旧名称残留扫描和 `git diff --check` 均已执行；仅保留旧数据目录迁移所需的兼容字符串。
+- 边界：本轮不创建提交、不 push、不重命名 GitHub 远程仓库、不进入 M4。

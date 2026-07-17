@@ -1,10 +1,10 @@
-﻿# AgentProof 项目 SOP
+﻿# VeriCrate 项目 SOP
 
 ## 开始任务前
 
 1. 先读 `<WORKSPACE_ROOT>` 全局必读文档。
 2. 再读本项目 `AGENTS.md`、`README.md`、`requirements.md`、`tech_stack.md`、`dev_log.md`、`pitfalls.md`、`sop.md`、`retrospective.md`。
-3. 阅读 `docs/agentproof-plan.md`、安全与支持文档，以及当前里程碑。
+3. 阅读 `docs/vericrate-plan.md`、安全与支持文档，以及当前里程碑。
 4. 检查现有文件和 Git 状态；不回滚用户内容。
 5. 确认本次工作不越过当前里程碑门禁。
 

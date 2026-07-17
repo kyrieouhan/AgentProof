@@ -1,8 +1,8 @@
-# AgentProof Demo Web App
+# VeriCrate Demo Web App
 
-This is the official M0 demo app correct baseline. It is a deliberately small Node.js / TypeScript web app that AgentProof can later use for known-good behavior, defect branches, Runner input design, and evidence experiments.
+This is the official M0 demo app correct baseline. It is a deliberately small Node.js / TypeScript web app that VeriCrate can later use for known-good behavior, defect branches, Runner input design, and evidence experiments.
 
-It is not the AgentProof product UI, not a Runner, not a GitHub App, and not a defect branch.
+It is not the VeriCrate product UI, not a Runner, not a GitHub App, and not a defect branch.
 
 ## Stack
 

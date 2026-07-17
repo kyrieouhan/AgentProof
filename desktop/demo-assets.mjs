@@ -4,7 +4,7 @@ import path from "node:path";
 export function prepareOfficialDemo({ appRoot, dataRoot, version, logger } = {}) {
   const source = path.join(appRoot, "samples", "demo-web-app");
   const target = path.join(dataRoot, "demo", version);
-  const marker = path.join(target, ".agentproof-demo-version");
+  const marker = path.join(target, ".vericrate-demo-version");
   if (!fs.existsSync(source)) throw new Error(`Official demo source not found: ${source}`);
   if (fs.existsSync(marker)) return target;
 
@@ -18,7 +18,7 @@ export function prepareOfficialDemo({ appRoot, dataRoot, version, logger } = {})
   fs.cpSync(source, temp, { recursive: true, filter: sourcePath => copyFilter(source, sourcePath) });
   rewriteRunnerProfile(temp);
   repairPnpmNodeModules(temp);
-  fs.writeFileSync(path.join(temp, ".agentproof-demo-version"), `${version}\n`, "utf8");
+  fs.writeFileSync(path.join(temp, ".vericrate-demo-version"), `${version}\n`, "utf8");
   fs.renameSync(temp, target);
   logger?.info("Official demo copied to user data directory.", { target });
   return target;
@@ -34,7 +34,7 @@ function copyFilter(root, sourcePath) {
 }
 
 function rewriteRunnerProfile(demoRoot) {
-  const file = path.join(demoRoot, "agentproof.runner-profile.json");
+  const file = path.join(demoRoot, "vericrate.runner-profile.json");
   const profile = JSON.parse(fs.readFileSync(file, "utf8"));
   profile.repo_path = ".";
   profile.commit = "desktop-demo";

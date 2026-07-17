@@ -27,14 +27,14 @@ test("desktop navigation is limited to the local app and generated blob reports"
 });
 
 test("desktop child process environment runs Electron as Node without using shell strings", () => {
-  const env = nodeEnv({ PATH: "base" }, { AGENTPROOF_DATA_DIR: "D:\\AgentProofData" });
+  const env = nodeEnv({ PATH: "base" }, { VERICRATE_DATA_DIR: "D:\\VeriCrateData" });
   assert.equal(env.ELECTRON_RUN_AS_NODE, "1");
   assert.equal(env.PATH, "base");
-  assert.equal(env.AGENTPROOF_DATA_DIR, "D:\\AgentProofData");
+  assert.equal(env.VERICRATE_DATA_DIR, "D:\\VeriCrateData");
 });
 
 test("desktop child process launcher can use a bundled Node runtime", () => {
-  const appRoot = tempDir("agentproof-app-root");
+  const appRoot = tempDir("vericrate-app-root");
   const nodeExe = path.join(appRoot, "node_modules", "node", "bin", "node.exe");
   fs.mkdirSync(path.dirname(nodeExe), { recursive: true });
   fs.writeFileSync(nodeExe, "");
@@ -45,12 +45,12 @@ test("desktop child process launcher can use a bundled Node runtime", () => {
 });
 
 test("official demo is copied to user data, versioned, and not overwritten", () => {
-  const appRoot = tempDir("agentproof-app-root");
-  const dataRoot = tempDir("agentproof-data-root");
+  const appRoot = tempDir("vericrate-app-root");
+  const dataRoot = tempDir("vericrate-data-root");
   const source = path.join(appRoot, "samples", "demo-web-app");
   fs.mkdirSync(source, { recursive: true });
   fs.writeFileSync(path.join(source, "package.json"), "{}\n", "utf8");
-  fs.writeFileSync(path.join(source, "agentproof.runner-profile.json"), `${JSON.stringify({
+  fs.writeFileSync(path.join(source, "vericrate.runner-profile.json"), `${JSON.stringify({
     repo_path: "samples/demo-web-app",
     commit: "HEAD"
   }, null, 2)}\n`, "utf8");
@@ -65,7 +65,7 @@ test("official demo is copied to user data, versioned, and not overwritten", () 
 
   const first = prepareOfficialDemo({ appRoot, dataRoot, version: "0.1.0" });
   assert.equal(first, path.join(dataRoot, "demo", "0.1.0"));
-  const copiedProfile = JSON.parse(fs.readFileSync(path.join(first, "agentproof.runner-profile.json"), "utf8"));
+  const copiedProfile = JSON.parse(fs.readFileSync(path.join(first, "vericrate.runner-profile.json"), "utf8"));
   assert.equal(copiedProfile.repo_path, ".");
   assert.equal(copiedProfile.commit, "desktop-demo");
   assert.equal(fs.existsSync(path.join(first, "node_modules", "bindings", "package.json")), true);

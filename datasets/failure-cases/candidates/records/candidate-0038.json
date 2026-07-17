@@ -57,7 +57,7 @@
     ],
     "repository_or_demo_version": "fullsend-ai/fullsend PR #2947 / commit c9e24923",
     "commit": "c9e24923",
-    "environment": "Public GitHub Actions functional-tests path described by issue #3396; AgentProof has not reproduced it locally.",
+    "environment": "Public GitHub Actions functional-tests path described by issue #3396; VeriCrate has not reproduced it locally.",
     "install_command": null,
     "start_command": "make functional-tests",
     "steps": [

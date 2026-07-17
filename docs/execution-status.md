@@ -1,4 +1,4 @@
-﻿# AgentProof 执行状态
+﻿# VeriCrate 执行状态
 
 - 最近更新时间：2026-07-14
 - 当前里程碑：M3 completed（浏览器验证、防作弊、最小本地 Web 入口与 Windows 安装版 MVP）
@@ -20,11 +20,11 @@
 - M0-06 可行性实验：`pnpm run m0:feasibility` 已生成 `artifacts/m0-feasibility/summary.json` 和 `artifacts/m0-feasibility/report.md`，结论为 `passed`。
 - M0-07 Runner 输入规范：`docs/m1-runner-input-spec.md` 已固定 M1 可接收项目、命令、端口、环境变量、资源限制、网络策略、挂载策略和证据策略；`support-matrix.md` 与 `threat-model.md` 已完成对应评审结论。
 - M0-08 退出审计：`docs/milestones/M0-exit-review.md` 确认 M0 在 ADR-012 数量门禁例外下结束，并进入 M1。
-- M1-01 RunnerProfile 与 CLI 契约：根 `package.json`、`bin/agentproof.mjs`、`src/runner-profile.mjs`、`schemas/runner-profile.schema.json`、官方 Demo profile 和最小测试已完成。
-- M1-02A Docker 前置诊断：`agentproof docker check [--json]` 已实现，可把 Docker CLI/Engine 缺失报告为 `infrastructure_error`。
-- M1-02B 容器生命周期与最小挂载：`agentproof run --profile ... --lifecycle-smoke --json` 已实现并真实通过；临时 workspace 被清理，容器无网络、非 root、drop capabilities、只读挂载且无 Docker Socket。
+- M1-01 RunnerProfile 与 CLI 契约：根 `package.json`、`bin/vericrate.mjs`、`src/runner-profile.mjs`、`schemas/runner-profile.schema.json`、官方 Demo profile 和最小测试已完成。
+- M1-02A Docker 前置诊断：`vericrate docker check [--json]` 已实现，可把 Docker CLI/Engine 缺失报告为 `infrastructure_error`。
+- M1-02B 容器生命周期与最小挂载：`vericrate run --profile ... --lifecycle-smoke --json` 已实现并真实通过；临时 workspace 被清理，容器无网络、非 root、drop capabilities、只读挂载且无 Docker Socket。
 - M1-03 资源/网络/权限策略：`src/runner-policy.mjs` 已固化默认容器策略，并通过真实 Docker smoke 验证非 root、无网络、只读 root/workspace、无 Docker Socket、无 `.env`/`.npmrc`。
-- M1-04 install/build/test 结构化记录：`agentproof run --profile ... --commands --json` 已实现；官方 Demo 在临时 workspace 中完成 install/build/test 三阶段容器运行，记录 phase、命令、退出码、stdout/stderr、时间戳和耗时。
+- M1-04 install/build/test 结构化记录：`vericrate run --profile ... --commands --json` 已实现；官方 Demo 在临时 workspace 中完成 install/build/test 三阶段容器运行，记录 phase、命令、退出码、stdout/stderr、时间戳和耗时。
 - M1-05 取消、超时、清理与诊断：Docker 命令记录现在包含 `timedOut`、`cancelled`、`errorCode` 和 `signal`；timeout/cancelled 会返回对应顶层状态并执行 `docker rm -f` 容器清理，临时目录清理失败会记录 `cleanupError`。
 - M1-06 3 个样例与 10 次重复测试：新增三个零依赖 npm 样例和 `npm run m1:repeatability`；三个样例 install/build/test 均通过，`minimal-npm-state` 连续 10 次运行唯一签名数为 1。
 - M1-07 14 项隔离烟测与安全评审：新增 `npm run m1:isolation` 和 `artifacts/m1-isolation-smoke/` 证据；ISO-01 至 ISO-14 全部通过，覆盖宿主路径、凭据、Docker Socket、网络、资源、只读挂载、timeout 清理、权限、路径穿越、可信 Manifest 边界、敏感金丝雀、固定镜像重放和清理失败注入。
@@ -44,7 +44,7 @@
 - M3-05 只读规则与随机化硬编码检测：新增 `ReadOnlyRuleReportSchema`、`HardcodedProbeReportSchema`、只读规则检查、随机化硬编码检测和 `npm run m3:hardcoded`；官方 hardcoded_behavior 补丁可输出 human_review 风险。
 - M3-06 官方 Demo 缺陷回归、3 次一致性与内部可用性检查：新增 `npm run m3:regression`、`artifacts/m3-regression/`、`docs/milestones/M3-exit-review.md` 和 ADR-016；M3 退出门禁通过。
 - M3-07 最小本地 Web 用户入口：新增 `src/web/`、`npm run web:dev`、`npm run web:start` 和 `npm run m3:web-smoke`；界面可导入官方 Demo、显示 Git/RunnerProfile 信息、编辑验收项、启动真实 Runner/M3 验收、显示阶段进度、查看证据并导出 HTML/Markdown 报告。外部项目当前可执行 RunnerProfile install/build/test；未配置项目专属浏览器/API/数据库断言时，相应阶段为 `unverifiable`。
-- 公开版运行数据隔离：M3 Web 与 smoke 当前默认把新运行数据写入 AgentProof 数据目录（Windows 为 `%LOCALAPPDATA%\AgentProof`，macOS/Linux 为 `~/.agentproof`，可用 `AGENTPROOF_DATA_DIR` 覆盖），不再默认写入被验收项目的 `artifacts/`。
+- 公开版运行数据隔离：M3 Web 与 smoke 当前默认把新运行数据写入 VeriCrate 数据目录（Windows 为 `%LOCALAPPDATA%\VeriCrate`，macOS/Linux 为 `~/.vericrate`，可用 `VERICRATE_DATA_DIR` 覆盖），不再默认写入被验收项目的 `artifacts/`。
 - M3-08 Windows 安装版：新增 Electron 桌面壳、随机端口本地 Web 服务、桌面会话令牌、原生选择项目文件夹 IPC、官方 Demo 用户数据目录副本、桌面 smoke、win-unpacked 验证和 NSIS x64 安装器。该安装版不捆绑 Docker Desktop，不包含 GitHub App、云端 Runner、自动更新、代码签名或账号系统。
 
 ## 未完成内容
@@ -63,7 +63,7 @@
 - M0-07 文档验证：Runner 输入规范、安全评审和支持范围评审已完成，尚未开发正式 Runner。
 - M0-08 审计验证：failure-case 语义测试、JSON 解析、统计一致性、Demo install/prisma/lint/typecheck/test/build、五类缺陷回放、M0 feasibility、Markdown 链接和 `git diff --check` 均通过。
 - M1-01 验证：`npm install --package-lock-only --ignore-scripts`、`npm run lint`、`npm run profile:validate` 和 `npm test` 通过。
-- M1-02 验证：`npm run lint`、`npm run profile:validate`、`npm test`、`npm run docker:check` 和 `npm run smoke:docker` 通过；Docker CLI 自动解析为 Docker Desktop bundled CLI；容器 smoke 输出 `agentproof-lifecycle-smoke-ok`，临时目录清理为 `removed`。
+- M1-02 验证：`npm run lint`、`npm run profile:validate`、`npm test`、`npm run docker:check` 和 `npm run smoke:docker` 通过；Docker CLI 自动解析为 Docker Desktop bundled CLI；容器 smoke 输出 `vericrate-lifecycle-smoke-ok`，临时目录清理为 `removed`。
 - M1-03 验证：`npm run lint`、`npm test` 和 `npm run smoke:docker` 通过；smoke 中验证 `id -u=1000`、workspace/root FS 只读、网络连接未成功、Docker Socket 缺失。
 - M1-04 验证：`npm install --package-lock-only --ignore-scripts`、`npm run lint`、`npm run profile:validate`、`npm test`、`npm run smoke:docker` 和 `npm run run:demo` 通过。`run:demo` 的 runId 为 `m1-smoke-mriskluq`，镜像 digest 为 `sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5`；install/build/test 三阶段退出码均为 0，test 输出 8 passed，临时目录清理为 `removed`。
 - M1-05 验证：`npm run lint`、`npm test`、`npm run profile:validate`、`npm run smoke:docker` 和真实 Docker timeout smoke 通过；timeout smoke 返回 `timeout`、错误为 `install command timed out`，记录 `docker rm -f`，并确认无遗留容器。
@@ -84,8 +84,8 @@
 - M3-04 验证：`npm run schema:generate`、`npm run lint`、`npm test` 和 `npm run m3:diff-risk` 通过；测试总数为 48；领域 JSON Schema 数量为 9；`artifacts/m3-diff-risk/summary.json` 对官方 weakened_tests 补丁输出 1 条 high `weakened_tests` 风险，建议 `human_review`。
 - M3-05 验证：`npm run schema:generate`、`npm run lint`、`npm test` 和 `npm run m3:hardcoded` 通过；测试总数为 54；领域 JSON Schema 数量为 11；`artifacts/m3-hardcoded-randomization/summary.json` 显示只读规则通过，官方 hardcoded_behavior 补丁触发 1 条 human_review 风险。
 - M3-06 验证：`npm run m3:regression` 通过；浏览器正确基线 3/3 一致，五类官方缺陷 5/5 `reproduced`，Diff 风险与 hardcoded 随机化检查通过，内部可用性检查通过。
-- M3-07 验证：`npm run m3:web-smoke` 通过；从真实浏览器打开 AgentProof Web UI，错误路径检查通过，导入官方 Demo，编辑/确认验收项，点击开始验收，真实执行 Docker Runner install/build/test 与 M3 browser/API/database/report，打开 HTML/Markdown 报告和截图/日志/Manifest 证据；连续 3 次均 `passed` / `recommend_merge`，Docker 不可用场景显示 `infrastructure_error`。
-- M3-08 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\AgentProof.exe --smoke` 和 `npm run desktop:dist:win` 已实际通过；生成 `dist-installer\AgentProof-Setup-0.1.0-x64.exe`。本地 Electron 二进制下载受网络影响时，曾临时使用 `ELECTRON_MIRROR` 补齐构建依赖；该镜像设置未写入仓库。
+- M3-07 验证：`npm run m3:web-smoke` 通过；从真实浏览器打开 VeriCrate Web UI，错误路径检查通过，导入官方 Demo，编辑/确认验收项，点击开始验收，真实执行 Docker Runner install/build/test 与 M3 browser/API/database/report，打开 HTML/Markdown 报告和截图/日志/Manifest 证据；连续 3 次均 `passed` / `recommend_merge`，Docker 不可用场景显示 `infrastructure_error`。
+- M3-08 验证：`npm ci`、`npm run lint`、`npm test`、`npm run desktop:smoke`、`npm run desktop:pack`、打包后 `win-unpacked\VeriCrate.exe --smoke` 和 `npm run desktop:dist:win` 已实际通过；生成 `dist-installer\VeriCrate-Setup-0.1.0-x64.exe`。本地 Electron 二进制下载受网络影响时，曾临时使用 `ELECTRON_MIRROR` 补齐构建依赖；该镜像设置未写入仓库。
 
 ## 阻塞事项
 

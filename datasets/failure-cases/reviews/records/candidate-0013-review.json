@@ -24,7 +24,7 @@
   "severity_reason": "影响普通工具能力或一致性，有绕过或范围受限，建议中等严重度。",
   "missing_information": [
     "缺少部分环境、版本或稳定复现条件。",
-    "缺少 AgentProof 独立复现和最终人工来源确认。"
+    "缺少 VeriCrate 独立复现和最终人工来源确认。"
   ],
   "recommended_action": "accept_for_manual_review",
   "review_group": "A",

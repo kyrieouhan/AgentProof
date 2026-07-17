@@ -2,9 +2,9 @@
 
 ## Supported versions
 
-The currently supported public line is AgentProof `0.1.x`, the local M3 MVP.
+The currently supported public line is VeriCrate `0.1.x`, the local M3 MVP.
 
-AgentProof M4, GitHub App integration, cloud runners, external Alpha workflows, and large-scale real repository compatibility are not complete in this public version.
+VeriCrate M4, GitHub App integration, cloud runners, external Alpha workflows, and large-scale real repository compatibility are not complete in this public version.
 
 ## Reporting a vulnerability
 
@@ -20,15 +20,15 @@ Do not include Token, Cookie, password, private key, private repository code, pr
 Helpful reports include:
 
 - Minimal reproduction steps.
-- Affected AgentProof version or commit.
+- Affected VeriCrate version or commit.
 - Operating system, Node.js version, Docker version, and browser version when relevant.
 - The smallest necessary evidence, with secrets and personal data removed.
 - Impact description and whether the issue requires a malicious target project, a trusted local project, or host-level access.
 
 ## Local execution and Docker boundary
 
-AgentProof runs target projects locally and may execute their install/build/test/start commands inside Docker. Docker improves isolation, but it is not an absolute security boundary.
+VeriCrate runs target projects locally and may execute their install/build/test/start commands inside Docker. Docker improves isolation, but it is not an absolute security boundary.
 
-Do not use AgentProof to run unknown high-risk malicious projects on a sensitive machine. Avoid mounting private directories, real `.env` files, SSH keys, production credentials, browser profiles, or private package registry tokens into target projects.
+Do not use VeriCrate to run unknown high-risk malicious projects on a sensitive machine. Avoid mounting private directories, real `.env` files, SSH keys, production credentials, browser profiles, or private package registry tokens into target projects.
 
-AgentProof evidence, logs, screenshots, and reports may contain project-specific behavior. Review generated files before sharing them publicly.
+VeriCrate evidence, logs, screenshots, and reports may contain project-specific behavior. Review generated files before sharing them publicly.

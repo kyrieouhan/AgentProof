@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only cross-field validation for AgentProof failure-case JSON records."""
+"""Read-only cross-field validation for VeriCrate failure-case JSON records."""
 
 from __future__ import annotations
 

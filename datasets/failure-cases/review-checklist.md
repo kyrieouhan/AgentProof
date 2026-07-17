@@ -79,4 +79,4 @@
 - `rejected`：记录人工审核信息和 `rejection_reason`；重复记录同时填写 `duplicate_of`。
 - 保持 `draft`：信息仍不足，但记录值得继续调查。
 
-M0 20 个案例的计数还要排除 `is_example=true`、`synthetic_demo` 和 `model_generated_candidate`。批准代表数据集记录合格，不代表 AgentProof 已完成自动检测。
+M0 20 个案例的计数还要排除 `is_example=true`、`synthetic_demo` 和 `model_generated_candidate`。批准代表数据集记录合格，不代表 VeriCrate 已完成自动检测。

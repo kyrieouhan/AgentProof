@@ -28,7 +28,7 @@
   "recommended_action": "accept_for_manual_review",
   "review_group": "A",
   "candidate_fields_corrected": [],
-  "agentproof_scope": "secondary_research",
+  "vericrate_scope": "secondary_research",
   "detectable_by_mvp": "partially",
   "applicable_mvp_capabilities": [
     "git_diff",
@@ -36,7 +36,7 @@
   ],
   "delivery_artifact_involved": true,
   "completion_claim_involved": true,
-  "scope_reason": "The source supports that the delivery workflow hardcoded the target branch to main. However, it does not sufficiently establish that this workflow code itself was generated as an AI coding Agent delivery artifact for the target project. Full validation would also depend on GitHub default-branch API behavior, PR creation flow, or a remote GitHub Actions environment. The case is therefore valuable secondary research for future AgentProof GitHub workflow design, but should not count in the first M1-M3 local MVP core-case pool.",
+  "scope_reason": "The source supports that the delivery workflow hardcoded the target branch to main. However, it does not sufficiently establish that this workflow code itself was generated as an AI coding Agent delivery artifact for the target project. Full validation would also depend on GitHub default-branch API behavior, PR creation flow, or a remote GitHub Actions environment. The case is therefore valuable secondary research for future VeriCrate GitHub workflow design, but should not count in the first M1-M3 local MVP core-case pool.",
   "final_scope_recommendation": "keep_as_secondary_research",
   "manual_confirmation_required": true,
   "notes": "Codex review suggestion only: public-source accessibility and category/scope recommendations do not mark the candidate source_verified, approved, or reproduced. Manual confirmation remains required."

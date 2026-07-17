@@ -39,7 +39,7 @@ blob-report/
 # Generated verification artifacts are local-only in the public export
 artifacts/*
 !artifacts/.gitkeep
-.agentproof-data/
+.vericrate-data/
 
 # Source planning documents may contain private metadata; publish derived Markdown instead
 docs/source/*.docx
@@ -52,4 +52,4 @@ temp/
 .cache/
 *.tmp
 *.log
-AgentProof-Setup-*.exe
+VeriCrate-Setup-*.exe

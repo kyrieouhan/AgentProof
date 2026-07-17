@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentproof.dev/schemas/failure-case/1.0.0/schema.json",
-  "title": "AgentProof Failure Case",
+  "$id": "https://vericrate.dev/schemas/failure-case/1.0.0/schema.json",
+  "title": "VeriCrate Failure Case",
   "description": "M0-01 frozen, provenance-aware failure-case record. Schema version 1.0.0.",
   "type": "object",
   "additionalProperties": false,

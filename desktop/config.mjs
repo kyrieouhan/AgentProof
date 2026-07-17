@@ -1,4 +1,4 @@
-export const DESKTOP_PROTOCOL_TOKEN = "__AGENTPROOF_OFFICIAL_DEMO__";
+export const DESKTOP_PROTOCOL_TOKEN = "__VERICRATE_OFFICIAL_DEMO__";
 
 export function browserWindowOptions({ preload, show = true } = {}) {
   return {
@@ -7,7 +7,7 @@ export function browserWindowOptions({ preload, show = true } = {}) {
     minWidth: 960,
     minHeight: 680,
     show,
-    title: "AgentProof",
+    title: "VeriCrate",
     webPreferences: {
       preload,
       nodeIntegration: false,

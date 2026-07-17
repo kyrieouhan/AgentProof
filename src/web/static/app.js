@@ -5,7 +5,7 @@ let criteria = [];
 let sessionToken = "";
 let desktopInfo = { desktop: false, official_demo_available: false };
 
-const OFFICIAL_DEMO_TOKEN = "__AGENTPROOF_OFFICIAL_DEMO__";
+const OFFICIAL_DEMO_TOKEN = "__VERICRATE_OFFICIAL_DEMO__";
 
 const statusLabels = {
   pending: "未开始",
@@ -103,7 +103,7 @@ async function loadDesktopInfo() {
 }
 
 els.chooseProject.addEventListener("click", async () => {
-  const api = window.agentproofDesktop;
+  const api = window.vericrateDesktop;
   if (!api?.selectProjectDirectory) {
     els.projectError.textContent = "当前环境不支持原生文件夹选择，请手动输入项目路径。";
     return;
@@ -456,7 +456,7 @@ function bindProtectedLinks() {
         if (link.hasAttribute("download")) {
           const anchor = document.createElement("a");
           anchor.href = objectUrl;
-          anchor.download = link.getAttribute("download") || "agentproof-report.md";
+          anchor.download = link.getAttribute("download") || "vericrate-report.md";
           anchor.click();
           setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
         } else {
@@ -489,7 +489,7 @@ async function postJson(url, payload) {
 }
 
 function authHeaders() {
-  return sessionToken ? { "x-agentproof-session": sessionToken } : {};
+  return sessionToken ? { "x-vericrate-session": sessionToken } : {};
 }
 
 function statusBadge(status, testId = "") {

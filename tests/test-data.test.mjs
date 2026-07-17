@@ -18,14 +18,14 @@ test("different seeds produce different demo registration data", () => {
   const second = demoRegistrationData("seed-b");
 
   assert.notEqual(first.values.email, second.values.email);
-  assert.match(first.values.email, /^agentproof\+[a-z0-9]{10}@example\.test$/);
+  assert.match(first.values.email, /^vericrate\+[a-z0-9]{10}@example\.test$/);
   assert.equal(first.purpose, "demo-registration");
 });
 
 test("seed records preserve the seed alongside generated values", () => {
-  const record = seedRecord("fixed-seed", "api-register", { email: "agentproof@example.test" });
+  const record = seedRecord("fixed-seed", "api-register", { email: "vericrate@example.test" });
 
   assert.equal(record.schema_version, DOMAIN_SCHEMA_VERSION);
   assert.equal(record.seed, "fixed-seed");
-  assert.deepEqual(record.values, { email: "agentproof@example.test" });
+  assert.deepEqual(record.values, { email: "vericrate@example.test" });
 });

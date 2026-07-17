@@ -51,7 +51,7 @@
       "method": "fixture_semantic_validation",
       "description": "检查测试夹具是否满足冻结的数据结构和跨字段语义规则。",
       "proves": "可以证明该测试输入是否满足当前校验规则。",
-      "does_not_prove": "不能证明任何真实项目缺陷存在或 AgentProof 已实现检测器。",
+      "does_not_prove": "不能证明任何真实项目缺陷存在或 VeriCrate 已实现检测器。",
       "deterministic": true
     }
   ],

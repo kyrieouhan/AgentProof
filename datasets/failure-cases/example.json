@@ -12,7 +12,7 @@
   "trigger_condition": "在假设页面提交保存操作后刷新页面或重新读取数据库状态。",
   "primary_source": {
     "source_type": "synthetic_demo",
-    "source_title": "AgentProof M0-01 Schema 合成格式示例",
+    "source_title": "VeriCrate M0-01 Schema 合成格式示例",
     "source_reference": null,
     "source_date": null,
     "source_verification_status": "source_pending",

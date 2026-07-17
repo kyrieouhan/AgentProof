@@ -39,7 +39,7 @@ async function startDesktop() {
   const dataRoot = defaultDataRoot();
   for (const dir of ["runs", "logs", "temp", "demo", "config"]) fs.mkdirSync(path.join(dataRoot, dir), { recursive: true });
   logger = createDesktopLogger(path.join(dataRoot, "logs"), { token });
-  logger.info("AgentProof desktop starting.", { version: packageJson.version });
+  logger.info("VeriCrate desktop starting.", { version: packageJson.version });
 
   const officialDemoRoot = prepareOfficialDemo({ appRoot, dataRoot, version: packageJson.version, logger });
   launcher = createProcessLauncher({ execPath: resolveBundledNode(appRoot), logger });
@@ -54,7 +54,7 @@ async function startDesktop() {
     desktopMode: true,
     commandRunner: launcher.runNode
   });
-  logger.info("AgentProof local web server started.", { url: webApp.url });
+  logger.info("VeriCrate local web server started.", { url: webApp.url });
 
   await createMainWindow({ token, url: webApp.url });
   if (smokeMode) await runSmoke({ token, url: webApp.url, dataRoot, officialDemoRoot });
@@ -85,7 +85,7 @@ async function createMainWindow({ token, url }) {
   await loadLocalUrlWithRetry(mainWindow, `${url}/?token=${encodeURIComponent(token)}`);
 }
 
-ipcMain.handle("agentproof:select-project-directory", async () => {
+ipcMain.handle("vericrate:select-project-directory", async () => {
   if (!mainWindow) return null;
   const result = await dialog.showOpenDialog(mainWindow, {
     title: "选择本地 Git 项目文件夹",
@@ -138,7 +138,7 @@ async function loadLocalUrlWithRetry(window, targetUrl) {
 }
 
 async function fetchJson(url, token) {
-  const response = await fetch(url, { headers: token ? { "x-agentproof-session": token } : {} });
+  const response = await fetch(url, { headers: token ? { "x-vericrate-session": token } : {} });
   return { ok: response.ok, status: response.status, body: await response.json().catch(() => null) };
 }
 

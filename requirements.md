@@ -1,8 +1,8 @@
-﻿# AgentProof 需求基线
+﻿# VeriCrate 需求基线
 
 ## 背景与目标
 
-AgentProof 为 AI 编程 Agent 的交付提供独立、可复现、证据驱动的验收层。本阶段只建立长期可维护的项目文档、里程碑、威胁模型、支持矩阵和 failure-case 数据规范。
+VeriCrate 为 AI 编程 Agent 的交付提供独立、可复现、证据驱动的验收层。本阶段只建立长期可维护的项目文档、里程碑、威胁模型、支持矩阵和 failure-case 数据规范。
 
 ## 本次必须完成
 

@@ -59,7 +59,7 @@ export function checkDocker(options = {}) {
 }
 
 export function dockerCandidates(env = process.env) {
-  const candidates = [env.AGENTPROOF_DOCKER, "docker"];
+  const candidates = [env.VERICRATE_DOCKER, "docker"];
   for (const base of [env.LOCALAPPDATA, env.ProgramFiles, env["ProgramFiles(x86)"]]) {
     if (!base) continue;
     candidates.push(path.join(base, "Programs", "DockerDesktop", "resources", "bin", "docker.exe"));

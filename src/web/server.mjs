@@ -13,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STATIC_DIR = path.join(__dirname, "static");
 const DEFAULT_PORT = 4173;
 const MAX_BODY_BYTES = 128 * 1024;
-const OFFICIAL_DEMO_TOKEN = "__AGENTPROOF_OFFICIAL_DEMO__";
+const OFFICIAL_DEMO_TOKEN = "__VERICRATE_OFFICIAL_DEMO__";
 
 export const DEFAULT_WEB_CRITERIA = Object.freeze([
   {
@@ -38,10 +38,10 @@ export const DEFAULT_WEB_EXAMPLE = Object.freeze({
 });
 
 export function createWebServer(options = {}) {
-  const agentproofRoot = path.resolve(options.repoRoot ?? process.cwd());
+  const vericrateRoot = path.resolve(options.repoRoot ?? process.cwd());
   const jobs = new Map();
   const activeKeys = new Map();
-  const dockerCommand = options.dockerCommand ?? process.env.AGENTPROOF_WEB_DOCKER ?? process.env.AGENTPROOF_DOCKER;
+  const dockerCommand = options.dockerCommand ?? process.env.VERICRATE_WEB_DOCKER ?? process.env.VERICRATE_DOCKER;
   const dataDir = options.dataDir;
   const accessToken = options.accessToken;
   const officialDemoRoot = options.officialDemoRoot ? path.resolve(options.officialDemoRoot) : null;
@@ -51,7 +51,7 @@ export function createWebServer(options = {}) {
 
   const server = http.createServer(async (request, response) => {
     try {
-      await route({ request, response, agentproofRoot, jobs, activeKeys, dockerCommand, dataDir, accessToken, officialDemoRoot, desktopMode, dockerCheck, commandRunner });
+      await route({ request, response, vericrateRoot, jobs, activeKeys, dockerCommand, dataDir, accessToken, officialDemoRoot, desktopMode, dockerCheck, commandRunner });
     } catch (error) {
       respondJson(response, error.statusCode ?? 500, { error: error.message });
     }
@@ -94,16 +94,16 @@ async function route(context) {
   respondJson(response, 404, { error: "未找到请求的资源。" });
 }
 
-async function handleProject({ request, response, agentproofRoot, officialDemoRoot }) {
+async function handleProject({ request, response, vericrateRoot, officialDemoRoot }) {
   const body = await readJson(request);
-  const project = inspectProject(body.path, { agentproofRoot, officialDemoRoot });
+  const project = inspectProject(body.path, { vericrateRoot, officialDemoRoot });
   respondJson(response, 200, { project });
 }
 
 async function handleStartRun(context) {
-  const { request, response, agentproofRoot, jobs, activeKeys, dataDir, officialDemoRoot } = context;
+  const { request, response, vericrateRoot, jobs, activeKeys, dataDir, officialDemoRoot } = context;
   const body = await readJson(request);
-  const project = inspectProject(body.project_path, { agentproofRoot, officialDemoRoot });
+  const project = inspectProject(body.project_path, { vericrateRoot, officialDemoRoot });
   if (!project.runner_profile) return respondJson(response, 400, { error: "未找到该项目的 Runner Profile。" });
   if (!project.runner_profile.valid) return respondJson(response, 400, { error: "Runner Profile 无效。", details: project.runner_profile.errors });
 
@@ -149,7 +149,7 @@ async function handleStartRun(context) {
     finishJob(job, "infrastructure_error", [{
       criterion_id: "web-internal-error",
       status: "infrastructure_error",
-      summary: "AgentProof 本地 Web 验收运行异常中止。",
+      summary: "VeriCrate 本地 Web 验收运行异常中止。",
       evidence: [],
       errors: [error.message],
       blocking_security_issue: false
@@ -189,7 +189,7 @@ function handleEvidence({ response, jobs }, pathname) {
   fs.createReadStream(file).pipe(response);
 }
 
-async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, commandRunner }) {
+async function runJob(job, { vericrateRoot, dockerCommand, dockerCheck, commandRunner }) {
   job.status = "running";
   job.current_stage = "docker";
   updateStage(job, "docker", "running", "正在检查 Docker Desktop 和 Docker Engine。");
@@ -208,11 +208,11 @@ async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, command
   updateStage(job, "docker", "passed", "Docker 可用。");
 
   job.current_stage = "install";
-  updateStage(job, "install", "running", "正在通过现有 AgentProof Runner 安装依赖。");
+  updateStage(job, "install", "running", "正在通过现有 VeriCrate Runner 安装依赖。");
   updateStage(job, "build", "running", "等待构建命令结果。");
   updateStage(job, "test", "running", "等待测试命令结果。");
-  const childEnv = { AGENTPROOF_DATA_DIR: job.paths.data_root };
-  const runner = await commandRunner(agentproofRoot, ["bin/agentproof.mjs", "run", "--profile", job.project.runner_profile.path, "--repo-root", job.project.git_root, "--commands", "--json"], childEnv);
+  const childEnv = { VERICRATE_DATA_DIR: job.paths.data_root };
+  const runner = await commandRunner(vericrateRoot, ["bin/vericrate.mjs", "run", "--profile", job.project.runner_profile.path, "--repo-root", job.project.git_root, "--commands", "--json"], childEnv);
   const runnerResult = parseJsonOutput(runner.stdout);
   recordRunnerStages(job, runner, runnerResult);
   if (runner.exitCode !== 0 || runnerResult.status !== "passed") {
@@ -226,7 +226,7 @@ async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, command
     }], { runner: safeRunnerResult(runnerResult, job) });
   }
 
-  if (!isOfficialDemoProject(job.project, agentproofRoot)) {
+  if (!isOfficialDemoProject(job.project, vericrateRoot)) {
     updateStage(job, "start", "unverifiable", "该项目尚未配置专属启动与行为验收流程。");
     updateStage(job, "browser", "unverifiable", "当前项目未配置专属浏览器和联合断言流程。");
     updateStage(job, "api", "unverifiable", "当前项目未配置专属 API 断言流程。");
@@ -239,7 +239,7 @@ async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, command
   updateStage(job, "browser", "running", "正在执行 M3 浏览器流程。");
   updateStage(job, "api", "running", "等待同一登录会话的 API 证据。");
   updateStage(job, "database", "running", "等待 SQLite 持久化证据。");
-  const browser = await commandRunner(agentproofRoot, ["scripts/run-m3-browser-smoke.mjs", "--repo-root", agentproofRoot, "--demo-root", job.project.local_path], childEnv);
+  const browser = await commandRunner(vericrateRoot, ["scripts/run-m3-browser-smoke.mjs", "--repo-root", vericrateRoot, "--demo-root", job.project.local_path], childEnv);
   job.logs.push({
     phase: "browser",
     exit_code: browser.exitCode,
@@ -264,7 +264,7 @@ async function runJob(job, { agentproofRoot, dockerCommand, dockerCheck, command
 
   const browserOutput = parseJsonOutput(browser.stdout);
   const browserSummaryPath = path.resolve(browserOutput.summary_path ?? "");
-  if (!browserSummaryPath || !isInside(job.paths.data_root, browserSummaryPath)) throw new Error("浏览器验证摘要路径不在 AgentProof 数据目录内。");
+  if (!browserSummaryPath || !isInside(job.paths.data_root, browserSummaryPath)) throw new Error("浏览器验证摘要路径不在 VeriCrate 数据目录内。");
   const browserSummary = JSON.parse(fs.readFileSync(browserSummaryPath, "utf8"));
   updateStage(job, "start", "passed", "目标服务已启动并完成验证流程。", { duration_ms: browser.durationMs });
   updateStage(job, "browser", browserSummary.status === "passed" ? "passed" : "failed", "浏览器流程已完成。", { duration_ms: browser.durationMs });
@@ -323,7 +323,7 @@ function resultsForCriteria(criteria, actualResults) {
 
 function copyEvidence(job, browserSummary) {
   const sourceDir = path.resolve(browserSummary.output_dir ?? "");
-  if (!sourceDir || !isInside(job.paths.data_root, sourceDir)) throw new Error("浏览器证据目录不在 AgentProof 数据目录内。");
+  if (!sourceDir || !isInside(job.paths.data_root, sourceDir)) throw new Error("浏览器证据目录不在 VeriCrate 数据目录内。");
   const targetDir = job.paths.evidence_dir;
   fs.mkdirSync(targetDir, { recursive: true });
   const files = [
@@ -340,7 +340,7 @@ function copyEvidence(job, browserSummary) {
   });
 }
 
-function inspectProject(inputPath, { agentproofRoot, officialDemoRoot }) {
+function inspectProject(inputPath, { vericrateRoot, officialDemoRoot }) {
   const isDesktopDemo = inputPath === OFFICIAL_DEMO_TOKEN && officialDemoRoot;
   const projectPath = isDesktopDemo ? officialDemoRoot : resolveDirectory(inputPath);
   let gitRoot = projectPath;
@@ -353,15 +353,15 @@ function inspectProject(inputPath, { agentproofRoot, officialDemoRoot }) {
     commit = git(projectPath, ["rev-parse", "HEAD"]).trim();
     statusLines = git(projectPath, ["status", "--short"]).split(/\r?\n/).filter(Boolean);
   }
-  const profilePath = path.join(projectPath, "agentproof.runner-profile.json");
+  const profilePath = path.join(projectPath, "vericrate.runner-profile.json");
   const profile = fs.existsSync(profilePath) ? JSON.parse(fs.readFileSync(profilePath, "utf8")) : null;
   const validation = profile ? validateRunnerProfile(profile, { repoRoot: gitRoot }) : null;
   return {
     name: path.basename(projectPath),
     local_path: projectPath,
     request_path: isDesktopDemo ? OFFICIAL_DEMO_TOKEN : projectPath,
-    path_display: isDesktopDemo ? "官方 Demo（用户数据目录）" : displayPath(projectPath, agentproofRoot),
-    is_official_demo: isDesktopDemo || isOfficialDemoPath(projectPath, agentproofRoot),
+    path_display: isDesktopDemo ? "官方 Demo（用户数据目录）" : displayPath(projectPath, vericrateRoot),
+    is_official_demo: isDesktopDemo || isOfficialDemoPath(projectPath, vericrateRoot),
     git_root: gitRoot,
     branch,
     commit,
@@ -381,10 +381,10 @@ function inspectProject(inputPath, { agentproofRoot, officialDemoRoot }) {
   };
 }
 
-function isOfficialDemoProject(project, agentproofRoot) {
+function isOfficialDemoProject(project, vericrateRoot) {
   if (project.is_official_demo) return true;
-  const demoProfile = path.join(agentproofRoot, "samples", "demo-web-app", "agentproof.runner-profile.json");
-  return path.resolve(project.git_root) === path.resolve(agentproofRoot) && path.resolve(project.runner_profile?.path ?? "") === path.resolve(demoProfile);
+  const demoProfile = path.join(vericrateRoot, "samples", "demo-web-app", "vericrate.runner-profile.json");
+  return path.resolve(project.git_root) === path.resolve(vericrateRoot) && path.resolve(project.runner_profile?.path ?? "") === path.resolve(demoProfile);
 }
 
 function recordRunnerStages(job, runner, runnerResult) {
@@ -515,7 +515,7 @@ function runNode(cwd, args, extraEnv = {}) {
 
 function parseJsonOutput(stdout) {
   const start = stdout.lastIndexOf("{");
-  if (start < 0) throw new Error("Expected JSON output from AgentProof CLI.");
+  if (start < 0) throw new Error("Expected JSON output from VeriCrate CLI.");
   for (let index = 0; index < stdout.length; index += 1) {
     const candidate = stdout.slice(index).trim();
     if (!candidate.startsWith("{")) continue;
@@ -525,7 +525,7 @@ function parseJsonOutput(stdout) {
       // keep looking; CLI may print progress before JSON
     }
   }
-  throw new Error("Could not parse AgentProof CLI JSON output.");
+  throw new Error("Could not parse VeriCrate CLI JSON output.");
 }
 
 function resolveDirectory(inputPath) {
@@ -537,12 +537,12 @@ function resolveDirectory(inputPath) {
   return absolute;
 }
 
-function isOfficialDemoPath(projectPath, agentproofRoot) {
-  return path.resolve(projectPath) === path.resolve(agentproofRoot, "samples", "demo-web-app");
+function isOfficialDemoPath(projectPath, vericrateRoot) {
+  return path.resolve(projectPath) === path.resolve(vericrateRoot, "samples", "demo-web-app");
 }
 
 function desktopDemoCommit(projectPath) {
-  const marker = path.join(projectPath, ".agentproof-demo-version");
+  const marker = path.join(projectPath, ".vericrate-demo-version");
   if (fs.existsSync(marker)) return `desktop-demo-${fs.readFileSync(marker, "utf8").trim()}`;
   return "desktop-demo";
 }
@@ -583,7 +583,7 @@ function protectedRoute(pathname) {
 }
 
 function authorized(request, token) {
-  return request.headers["x-agentproof-session"] === token;
+  return request.headers["x-vericrate-session"] === token;
 }
 
 function readJson(request) {
@@ -617,7 +617,7 @@ function redactLocal(value, job) {
   for (const replacement of [
     [job.project.git_root, "[GIT_ROOT]"],
     [path.dirname(job.project.runner_profile.path), "[PROJECT]"],
-    [job.paths?.data_root, "[AGENTPROOF_DATA]"],
+    [job.paths?.data_root, "[VERICRATE_DATA]"],
     [process.env.USERPROFILE, "[HOME]"]
   ]) {
     if (replacement[0]) text = text.replaceAll(replacement[0], replacement[1]);

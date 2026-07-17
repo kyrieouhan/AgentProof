@@ -38,7 +38,7 @@ try {
 
   await page.close();
   const badDockerPort = await freePort();
-  const badDocker = await startWebServer({ host, port: badDockerPort, repoRoot, dataDir: paths.data_root, dockerCommand: "__agentproof_missing_docker__" });
+  const badDocker = await startWebServer({ host, port: badDockerPort, repoRoot, dataDir: paths.data_root, dockerCommand: "__vericrate_missing_docker__" });
   try {
     const badPage = await browser.newPage();
     await badPage.goto(badDocker.url);
@@ -92,7 +92,7 @@ async function runUiFlow(page, repeat) {
   const html = await fetchText(new URL(htmlHref, app.url));
   const markdown = await fetchText(new URL(mdHref, app.url));
   const screenshot = await fetch(new URL(screenshotHref, app.url));
-  if (!html.includes("AgentProof 验收报告")) throw new Error("HTML report did not render.");
+  if (!html.includes("VeriCrate 验收报告")) throw new Error("HTML report did not render.");
   if (!markdown.includes("合并建议：建议合并 (recommend_merge)")) throw new Error("Markdown report did not export.");
   if (!screenshot.ok || screenshot.headers.get("content-type") !== "image/png") throw new Error("Screenshot evidence did not open.");
   return { repeat, status: "passed", recommendation };
@@ -215,7 +215,7 @@ async function fetchText(url) {
 }
 
 function renderReport(summary) {
-  return `# AgentProof M3 Web Smoke Report
+  return `# VeriCrate M3 Web Smoke Report
 
 - Status: ${summary.status}
 - Address: ${summary.address}

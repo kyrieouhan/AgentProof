@@ -50,7 +50,7 @@ const manifest = createEvidenceManifest({
     schema_version: DOMAIN_SCHEMA_VERSION,
     run_id: runId,
     commit,
-    runner_profile: "samples/demo-web-app/agentproof.runner-profile.json",
+    runner_profile: "samples/demo-web-app/vericrate.runner-profile.json",
     image_digest: isolation.image_digest,
     seed
   },

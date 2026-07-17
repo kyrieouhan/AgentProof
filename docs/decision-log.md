@@ -129,6 +129,6 @@
 - 日期：2026-07-13
 - 状态：Accepted
 - 决策：在不进入 M4 的前提下，为 M3 增加最小本地 Web 用户入口；该入口复用现有 CLI、Runner、M3 browser smoke、Evidence Manifest 和报告模块，不重新实现第二套验收引擎。
-- 原因：M3-06 的 `m3:regression` 和 `usability=true` 只能证明 CLI/回归/证据链可运行，不能等同于用户可操作的 AgentProof Web 界面。
+- 原因：M3-06 的 `m3:regression` 和 `usability=true` 只能证明 CLI/回归/证据链可运行，不能等同于用户可操作的 VeriCrate Web 界面。
 - 后果：用户现在可以通过 `npm run web:dev` 打开 `http://127.0.0.1:4173`，导入官方 Demo、编辑/确认验收项、发起真实验收、查看阶段进度和证据，并导出 HTML/Markdown 报告。
 - 边界：该入口是本地单机最小界面，不包含账号系统、GitHub App、Alpha 发布、云端部署、外部项目验证或完整多项目平台；这些仍需 M4 或后续明确授权。

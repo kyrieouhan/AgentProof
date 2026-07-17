@@ -39,12 +39,12 @@ test("renders Markdown and escaped HTML reports", () => {
   const markdown = renderMarkdownReport(report);
   const html = renderHtmlReport(report);
 
-  assert.match(markdown, /AgentProof 验收报告/);
+  assert.match(markdown, /VeriCrate 验收报告/);
   assert.match(markdown, /失败 \(failed\)/);
   assert.match(markdown, /ac\\\|1/);
   assert.match(markdown, /bad \\\| value/);
   assert.match(html, /lang="zh-CN"/);
-  assert.match(html, /AgentProof 验收报告/);
+  assert.match(html, /VeriCrate 验收报告/);
   assert.doesNotMatch(html, /<script>alert/);
   assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
 });

@@ -41,7 +41,7 @@ try {
   const email = `m3-${seed}@example.test`;
   const taskTitle = `M3 browser smoke ${seed}`;
   const flow = demoBrowserFlow({ email, password: "CorrectHorse123!", taskTitle });
-  const traceEnabled = process.env.AGENTPROOF_BROWSER_TRACE === "1";
+  const traceEnabled = process.env.VERICRATE_BROWSER_TRACE === "1";
   const tracePath = path.join(artifactDir, "trace.zip");
   if (traceEnabled) await page.context().tracing.start({ screenshots: true, snapshots: true, sources: false });
   const result = await runBrowserFlow(flow, { page, baseUrl });
@@ -98,7 +98,7 @@ try {
       schema_version: DOMAIN_SCHEMA_VERSION,
       run_id: runId,
       commit: readRunCommit(),
-      runner_profile: "samples/demo-web-app/agentproof.runner-profile.json",
+      runner_profile: "samples/demo-web-app/vericrate.runner-profile.json",
       image_digest: readIsolationDigest(),
       seed
     },

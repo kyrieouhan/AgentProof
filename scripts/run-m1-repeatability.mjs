@@ -6,9 +6,9 @@ import { runProfileCommands } from "../src/docker-runner.mjs";
 const repoRoot = path.resolve(process.argv.includes("--repo-root") ? process.argv[process.argv.indexOf("--repo-root") + 1] : ".");
 const outputDir = path.join(repoRoot, "artifacts", "m1-repeatability");
 const sampleProfiles = [
-  { id: "minimal-npm-api", profile: "samples/minimal-npm-api/agentproof.runner-profile.json" },
-  { id: "minimal-npm-state", profile: "samples/minimal-npm-state/agentproof.runner-profile.json" },
-  { id: "minimal-npm-files", profile: "samples/minimal-npm-files/agentproof.runner-profile.json" }
+  { id: "minimal-npm-api", profile: "samples/minimal-npm-api/vericrate.runner-profile.json" },
+  { id: "minimal-npm-state", profile: "samples/minimal-npm-state/vericrate.runner-profile.json" },
+  { id: "minimal-npm-files", profile: "samples/minimal-npm-files/vericrate.runner-profile.json" }
 ];
 const repeatTarget = sampleProfiles[1];
 const repeatCount = 10;

@@ -114,7 +114,7 @@ function parseCommandJson(stdout) {
 }
 
 function renderReport(summary) {
-  return `# AgentProof M3 Regression Report
+  return `# VeriCrate M3 Regression Report
 
 - Status: ${summary.status}
 - Browser repeatability: ${summary.browser_repeatability.repeat_count}/3 runs, consistent=${summary.browser_repeatability.consistent}

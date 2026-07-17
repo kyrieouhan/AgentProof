@@ -21,7 +21,7 @@ export function evaluateHardcodedProbe(input) {
 }
 
 export function renderHardcodedMarkdown(report, readonlyReport) {
-  return `# AgentProof Hardcoded Behavior Probe
+  return `# VeriCrate Hardcoded Behavior Probe
 
 ## Read-only rules
 

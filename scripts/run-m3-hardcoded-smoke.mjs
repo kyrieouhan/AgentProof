@@ -13,8 +13,8 @@ const runId = `m3-hardcoded-${Date.now().toString(36)}`;
 const paths = createSmokeRunPaths("m3-hardcoded-randomization", runId);
 const artifactDir = paths.run_dir;
 
-const profile = JSON.parse(fs.readFileSync(path.join(demoRoot, "agentproof.runner-profile.json"), "utf8"));
-const readonlyReport = evaluateReadOnlyRules(profile, { source: "samples/demo-web-app/agentproof.runner-profile.json" });
+const profile = JSON.parse(fs.readFileSync(path.join(demoRoot, "vericrate.runner-profile.json"), "utf8"));
+const readonlyReport = evaluateReadOnlyRules(profile, { source: "samples/demo-web-app/vericrate.runner-profile.json" });
 const defect = run("node", ["scripts/verify-defect-scenarios.mjs", "hardcoded_behavior"], { cwd: demoRoot });
 const observed = parseDefectObservation(defect.stdout);
 const hardcodedReport = evaluateHardcodedProbe({

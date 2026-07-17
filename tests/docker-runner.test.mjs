@@ -3,7 +3,7 @@ import test from "node:test";
 import { runLifecycleSmoke, runProfileCommands } from "../src/docker-runner.mjs";
 
 test("lifecycle smoke builds a locked-down docker command with a fake runner", () => {
-  const result = runLifecycleSmoke("samples/demo-web-app/agentproof.runner-profile.json", {
+  const result = runLifecycleSmoke("samples/demo-web-app/vericrate.runner-profile.json", {
     repoRoot: ".",
     run: (command, args) => {
       if (args[0] === "--version") return { exitCode: 0, stdout: "Docker version 29.0.0\n", stderr: "" };
@@ -18,11 +18,11 @@ test("lifecycle smoke builds a locked-down docker command with a fake runner", (
   assert.equal(result.commands.at(-1).command.includes("--cap-drop"), true);
   assert.equal(result.commands.at(-1).command.includes("ALL"), true);
   assert.match(result.commands.at(-1).command.at(-1), /id -u/);
-  assert.match(result.commands.at(-1).command.at(-1), /agentproof-write-test/);
+  assert.match(result.commands.at(-1).command.at(-1), /vericrate-write-test/);
 });
 
 test("profile command run records install, build and test phases", () => {
-  const result = runProfileCommands("samples/demo-web-app/agentproof.runner-profile.json", {
+  const result = runProfileCommands("samples/demo-web-app/vericrate.runner-profile.json", {
     repoRoot: ".",
     run: (_command, args) => {
       if (args[0] === "--version") return { exitCode: 0, stdout: "Docker version 29.0.0\n", stderr: "" };
@@ -38,7 +38,7 @@ test("profile command run records install, build and test phases", () => {
 });
 
 test("profile command can fall back to a local image id when tag inspect is unavailable", () => {
-  const result = runProfileCommands("samples/demo-web-app/agentproof.runner-profile.json", {
+  const result = runProfileCommands("samples/demo-web-app/vericrate.runner-profile.json", {
     repoRoot: ".",
     run: (_command, args) => {
       if (args[0] === "--version") return { exitCode: 0, stdout: "Docker version 29.0.0\n", stderr: "" };
@@ -56,7 +56,7 @@ test("profile command can fall back to a local image id when tag inspect is unav
 
 
 test("timed out profile command is classified and force-cleans the container", () => {
-  const result = runProfileCommands("samples/demo-web-app/agentproof.runner-profile.json", {
+  const result = runProfileCommands("samples/demo-web-app/vericrate.runner-profile.json", {
     repoRoot: ".",
     run: (_command, args) => {
       if (args[0] === "--version") return { exitCode: 0, stdout: "Docker version 29.0.0\n", stderr: "" };
@@ -76,7 +76,7 @@ test("timed out profile command is classified and force-cleans the container", (
 });
 
 test("cancelled profile command is classified and force-cleans the container", () => {
-  const result = runProfileCommands("samples/demo-web-app/agentproof.runner-profile.json", {
+  const result = runProfileCommands("samples/demo-web-app/vericrate.runner-profile.json", {
     repoRoot: ".",
     run: (_command, args) => {
       if (args[0] === "--version") return { exitCode: 0, stdout: "Docker version 29.0.0\n", stderr: "" };

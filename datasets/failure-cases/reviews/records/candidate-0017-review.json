@@ -25,7 +25,7 @@
   "missing_information": [
     "需要打开维护者指向的 #2901 作为可能的主来源。",
     "需要人工确认本地模型和 Aider 的责任边界。",
-    "缺少 AgentProof 独立复现。"
+    "缺少 VeriCrate 独立复现。"
   ],
   "recommended_action": "needs_correction",
   "review_group": "B",

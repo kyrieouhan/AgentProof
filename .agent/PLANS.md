@@ -1,4 +1,4 @@
-# AgentProof M0 内部计划
+# VeriCrate M0 内部计划
 
 ## 当前计划状态
 

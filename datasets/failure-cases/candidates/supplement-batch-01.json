@@ -13,7 +13,7 @@
   "inclusion_requirements": [
     "Public source is reachable and describes a programming Agent delivery artifact.",
     "The Agent modified, replaced, or added a test, assertion, Mock, Fixture, or CI-related check with lower independent verification strength.",
-    "The observation is likely_core_in_scope for an AgentProof-style Git Diff and test-evidence review.",
+    "The observation is likely_core_in_scope for an VeriCrate-style Git Diff and test-evidence review.",
     "The record remains draft, source_pending, verified=false, and unreproduced."
   ],
   "stop_reason": "Reached the user-authorized maximum of four eligible weakened_tests candidates.",
@@ -70,7 +70,7 @@
       "inclusion_requirements": [
         "Public source is reachable and directly describes a programming Agent code-delivery artifact with fixed-input, fixed-output, fixed-path, fixed-branch, or hardcoded-list behavior.",
         "The source describes an observable failure or loss of portability when an equivalent input, branch, file, or repository layout differs.",
-        "The observation is likely_core_in_scope for an AgentProof-style Git Diff, configuration, file, or repeatable-run check.",
+        "The observation is likely_core_in_scope for an VeriCrate-style Git Diff, configuration, file, or repeatable-run check.",
         "The record remains draft, source_pending, verified=false, and unreproduced."
       ],
       "stop_reason": "Stopped after three eligible candidates because additional reviewed public leads did not meet the direct Agent-code-delivery and observable-hardcoded-behavior threshold; the fourth slot was deliberately left unused.",
@@ -122,7 +122,7 @@
       "inclusion_requirements": [
         "Public source is reachable and directly connects a programming Agent code-delivery artifact to successful build, compile, type, static, or test checks followed by a real runtime or critical-path failure.",
         "The source includes separate evidence for the passing build/static checks and the failing runtime, API, workflow, or deployment path.",
-        "The observation is likely_core_in_scope for AgentProof build, existing_tests, API, log, or Playwright-style verification.",
+        "The observation is likely_core_in_scope for VeriCrate build, existing_tests, API, log, or Playwright-style verification.",
         "The record remains draft, source_pending, verified=false, and unreproduced."
       ],
       "stop_reason": "Stopped after two eligible candidates because additional reviewed public leads either lacked explicit build-success evidence, were runner/client/tooling environment failures, were human-authored changes, or did not prove Agent code delivery.",
