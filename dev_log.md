@@ -466,3 +466,9 @@
 - 兼容：默认数据目录切换到 `%LOCALAPPDATA%\VeriCrate` / `~/.vericrate`，并保留一次性旧数据目录复制逻辑，避免已安装预览版用户的本地运行数据在升级后“消失”；未保留旧 CLI、旧环境变量或旧配置文件名别名。
 - 验证：`npm ci`、`npm run lint`、`npm test`、`npm run docker:check`、`npm run profile:validate`、`npm run m3:web-smoke`、`npm run m3:regression`、`npm run desktop:smoke`、后端 `/health` 检查、旧名称残留扫描和 `git diff --check` 均已执行；仅保留旧数据目录迁移所需的兼容字符串。
 - 边界：本轮不创建提交、不 push、不重命名 GitHub 远程仓库、不进入 M4。
+
+## 2026-07-17 - 清除旧项目名兼容残留
+
+- 背景：用户要求当前文件中旧项目名残留必须为 0。
+- 调整：删除旧数据目录的一次性兼容迁移逻辑和对应测试，默认仅使用 `%LOCALAPPDATA%\VeriCrate` / `~/.vericrate`。
+- 验证：重新执行旧项目名内容扫描、文件名扫描、`npm run lint`、`npm test` 和 `git diff --check`。

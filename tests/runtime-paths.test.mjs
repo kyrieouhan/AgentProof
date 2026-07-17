@@ -18,16 +18,6 @@ test("VERICRATE_DATA_DIR overrides the default data root", () => {
   assert.equal(defaultDataRoot({ VERICRATE_DATA_DIR: override, LOCALAPPDATA: path.join(os.tmpdir(), "ignored") }, "win32"), path.resolve(override));
 });
 
-test("default data root copies legacy data once when upgrading from the old name", () => {
-  const localAppData = fs.mkdtempSync(path.join(os.tmpdir(), "vericrate-local-appdata-"));
-  const legacyRoot = path.join(localAppData, "AgentProof");
-  fs.mkdirSync(legacyRoot, { recursive: true });
-  fs.writeFileSync(path.join(legacyRoot, "legacy-report.txt"), "keep me", "utf8");
-  const root = defaultDataRoot({ LOCALAPPDATA: localAppData }, "win32");
-  assert.equal(root, path.join(localAppData, "VeriCrate"));
-  assert.equal(fs.readFileSync(path.join(root, "legacy-report.txt"), "utf8"), "keep me");
-});
-
 test("data root rejects relative, traversal, and null-byte paths", () => {
   assert.throws(() => validateDataRoot("relative-vericrate-data"), /absolute/);
   assert.throws(() => validateDataRoot(`${path.resolve(os.tmpdir())}${path.sep}..${path.sep}elsewhere`), /must not contain/);

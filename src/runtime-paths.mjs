@@ -3,21 +3,15 @@ import os from "node:os";
 import path from "node:path";
 
 const SAFE_ID = /^[A-Za-z0-9_.-]+$/;
-const LEGACY_WINDOWS_DATA_DIR = "AgentProof";
-const LEGACY_POSIX_DATA_DIR = ".agentproof";
 
 export function defaultDataRoot(env = process.env, platform = process.platform) {
   if (env.VERICRATE_DATA_DIR) return validateDataRoot(env.VERICRATE_DATA_DIR);
   if (platform === "win32") {
     const localAppData = env.LOCALAPPDATA;
     if (!localAppData) throw new Error("LOCALAPPDATA is required to choose the default VeriCrate data directory on Windows.");
-    const root = path.resolve(localAppData, "VeriCrate");
-    migrateLegacyDataRoot(path.resolve(localAppData, LEGACY_WINDOWS_DATA_DIR), root, env);
-    return root;
+    return path.resolve(localAppData, "VeriCrate");
   }
-  const root = path.resolve(os.homedir(), ".vericrate");
-  migrateLegacyDataRoot(path.resolve(os.homedir(), LEGACY_POSIX_DATA_DIR), root, env);
-  return root;
+  return path.resolve(os.homedir(), ".vericrate");
 }
 
 export function validateDataRoot(value) {
@@ -71,14 +65,4 @@ function safePathId(value) {
   const id = String(value ?? "").trim();
   if (!SAFE_ID.test(id)) throw new Error(`Unsafe VeriCrate path id: ${id || "(empty)"}`);
   return id;
-}
-
-function migrateLegacyDataRoot(legacyRoot, targetRoot, env) {
-  if (env.VERICRATE_SKIP_LEGACY_DATA_MIGRATION === "1") return;
-  try {
-    if (fs.existsSync(targetRoot) || !fs.existsSync(legacyRoot)) return;
-    fs.cpSync(legacyRoot, targetRoot, { recursive: true, force: false, errorOnExist: false });
-  } catch {
-    // Best-effort migration only: a copy failure must not block creating a fresh VeriCrate data root.
-  }
 }
